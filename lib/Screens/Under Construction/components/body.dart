@@ -1,9 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_auth/Screens/Login/components/background.dart';
-import 'package:flutter_auth/Screens/Signup/signup_screen.dart';
+import 'package:flutter_auth/components/background.dart';
+import 'package:flutter_auth/Screens/email_signup_screen.dart';
 import 'package:flutter_auth/components/already_have_an_account_acheck.dart';
-import 'package:flutter_auth/components/google_sign_in.dart';
+import 'package:flutter_auth/components/sign_method.dart';
 import 'package:flutter_auth/components/rounded_button.dart';
 import 'package:flutter_auth/components/input_field.dart';
 import 'package:flutter_auth/components/password_field.dart';
@@ -67,7 +67,7 @@ class Body extends StatelessWidget {
                 minimumSize: Size(double.infinity, 50),
               ),
               child: Text(
-                  'Sign In',
+                  'Masuk',
                   style: TextStyle(color: Colors.white)
               ),
               onPressed: () {},
@@ -83,7 +83,7 @@ class Body extends StatelessWidget {
                     ),
                     recognizer: TapGestureRecognizer()..onTap = (){
                       final provider =
-                        Provider.of<GoogleSignInProvider>(context, listen: false);
+                        Provider.of<SignProvider>(context, listen: false);
                       provider.googleLogin();
                     },
                   ),
