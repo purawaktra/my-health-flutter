@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:flutter_auth/components/background.dart';
 import '../constants.dart';
 
-
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
 
@@ -15,7 +14,6 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-
   final _auth = FirebaseAuth.instance;
   final TextEditingController emailController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -31,8 +29,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           return ("Mohon Masukkan Email Anda");
         }
 
-        if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
-            .hasMatch(value)){
+        if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]").hasMatch(value)) {
           return ("Mohon Masukkan Email yang Valid");
         }
 
@@ -50,29 +47,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
 
     final loginButton = ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        primary: Colors.lightBlue,
-        onPrimary: Colors.black,
-        minimumSize: Size(double.infinity, 50),
-      ),
-      child: Text(
-          'Verifikasi Email',
-          style: TextStyle(color: Colors.white)
-      ),
-      onPressed: () {
-        if (_formKey.currentState!.validate()) {
-          final providerEmailSignUp =
-            Provider.of<SignProvider>(context, listen: false);
-          providerEmailSignUp.emailSignUp(emailController.text);
+        style: ElevatedButton.styleFrom(
+          primary: Colors.lightBlue,
+          onPrimary: Colors.black,
+          minimumSize: Size(double.infinity, 50),
+        ),
+        child: Text('Verifikasi Email', style: TextStyle(color: Colors.white)),
+        onPressed: () {
+          if (_formKey.currentState!.validate()) {
+            final providerEmailSignUp =
+                Provider.of<SignProvider>(context, listen: false);
+            providerEmailSignUp.emailSignUp(emailController.text);
 
-          final user = FirebaseAuth.instance.currentUser!;
-          _auth.sendPasswordResetEmail(email: emailController.text);
-          Fluttertoast.showToast(msg: "Silahkan cek kotak masuk Email "
-              "anda untuk melanjutkan.");
-
-        }
-      }
-    );
+            _auth.sendPasswordResetEmail(email: emailController.text);
+            Fluttertoast.showToast(
+                msg: "Silahkan cek kotak masuk Email "
+                    "anda untuk melanjutkan.");
+          }
+        });
 
     Size size = MediaQuery.of(context).size;
     return Scaffold(

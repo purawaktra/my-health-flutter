@@ -8,38 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1040141320839:android:d3f61fad3ad6dee2a8ae22",
+        "mobilesdk_app_id": "1:1040141320839:android:d08e81a3a256a392a8ae22",
         "android_client_info": {
           "package_name": "com.eprototype.myhealth"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "1040141320839-u3iir5eu651ciggjs3rrpt7mrckskk3t.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBih9DxGwq4zwdVD6-QcRG1aLLWCvx5u-s"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1040141320839-u3iir5eu651ciggjs3rrpt7mrckskk3t.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:1040141320839:android:7532959567b3a33ea8ae22",
-        "android_client_info": {
-          "package_name": "com.example.flutter_auth"
         }
       },
       "oauth_client": [

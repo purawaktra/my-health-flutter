@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_auth/components/text_field_container.dart';
 import 'package:flutter_auth/constants.dart';
 
 class InputField extends StatelessWidget {
@@ -16,16 +15,16 @@ class InputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
-        onChanged: onChanged,
-        cursorColor: kBlack,
-        decoration: InputDecoration(
-          prefixIcon: Icon(
-            icon,
-            color: Colors.black54,
-          ),
-          hintText: hintText,
-          border: InputBorder.none,
+      onChanged: onChanged,
+      cursorColor: kBlack,
+      decoration: InputDecoration(
+        prefixIcon: Icon(
+          icon,
+          color: Colors.black54,
         ),
-      );
+        hintText: hintText,
+        border: InputBorder.none,
+      ),
+    );
   }
 }

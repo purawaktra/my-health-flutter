@@ -12,31 +12,10 @@ class LoggedInScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
 
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Background(
         child: Scaffold(
           drawer: NavigationDrawerWidget(),
-          appBar: AppBar(
-            title: Text('Logged In',
-              style: TextStyle(color: Colors.white, fontSize: 24),),
-            centerTitle: true,
-            backgroundColor: Colors.blue,
-            foregroundColor: Colors.white,
-            shadowColor: Colors.lightBlue,
-            actions: [
-              TextButton(
-                child: Text('Logout',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-                onPressed: () {
-                  final provider =
-                  Provider.of<SignProvider>(context, listen: false);
-                  provider.logout();
-                },
-              )
-            ],
-          ),
           body: Container(
             alignment: Alignment.center,
             child: Column(
@@ -51,12 +30,16 @@ class LoggedInScreen extends StatelessWidget {
                   radius: 40,
                   backgroundImage: NetworkImage(user.photoURL!),
                 ),
-                SizedBox(height: 8,),
+                SizedBox(
+                  height: 8,
+                ),
                 Text(
                   'Name: ' + user.displayName!,
                   style: TextStyle(color: Colors.black, fontSize: 16),
                 ),
-                SizedBox(height: 8,),
+                SizedBox(
+                  height: 8,
+                ),
                 Text(
                   'Email: ' + user.email!,
                   style: TextStyle(color: Colors.black, fontSize: 16),

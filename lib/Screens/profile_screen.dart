@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -13,16 +12,16 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      backgroundColor: Colors.blue,
-      title: Text(name),
-      centerTitle: true,
-    ),
-    body: Image.network(
-      urlImage,
-      width: double.infinity,
-      height: double.infinity,
-      fit: BoxFit.cover,
-    ),
-  );
+        appBar: AppBar(
+          backgroundColor: Colors.blue,
+          title: Text(name),
+          centerTitle: true,
+        ),
+        body: Image.network(
+          urlImage,
+          width: double.infinity,
+          height: double.infinity,
+          fit: BoxFit.cover,
+        ),
+      );
 }
