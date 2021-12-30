@@ -36,6 +36,7 @@ dependencies:
   provider: ^6.0.1
 
   fluttertoast: ^8.0.8
+  double_back_to_close: ^2.0.0
 
 dev_dependencies:
   flutter_test:

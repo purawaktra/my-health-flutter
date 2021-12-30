@@ -23,7 +23,7 @@ class WelcomeScreen extends StatelessWidget {
             child: CircularProgressIndicator(),
           );
         } else if (snapshot.hasData) {
-          return LoggedInScreen();
+          return HomeScreen();
         } else if (snapshot.hasError) {
           return Center(
             child: Text('Something Went Wrong!'),

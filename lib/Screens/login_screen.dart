@@ -128,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: CircularProgressIndicator(),
           );
         } else if (snapshot.hasData) {
-          return LoggedInScreen();
+          return HomeScreen();
         } else if (snapshot.hasError) {
           return Center(
             child: Text('Something Went Wrong!'),

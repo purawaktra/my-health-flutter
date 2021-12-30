@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth/Screens/black_screen.dart';
+import 'package:flutter_auth/Screens/home_screen.dart';
 import 'package:flutter_auth/Screens/profile_screen.dart';
 import 'package:flutter_auth/components/sign_method.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +24,8 @@ class NavigationDrawerWidget extends StatelessWidget {
               urlImage: urlImage,
               name: name,
               email: email,
-              onClicked: () => Navigator.of(context).push(MaterialPageRoute(
+              onClicked: () =>
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
                 builder: (context) => ProfileScreen(
                   name: name,
                   urlImage: urlImage,
@@ -35,9 +37,17 @@ class NavigationDrawerWidget extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   buildMenuItem(
+                    text: "Halaman Utama",
+                    icon: Icons.home_rounded,
+                    onClicked: () => selectedItem(context, 0),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  buildMenuItem(
                     text: "Rekam Medis",
                     icon: Icons.health_and_safety_outlined,
-                    onClicked: () => selectedItem(context, 0),
+                    onClicked: () => selectedItem(context, 1),
                   ),
                   const SizedBox(
                     height: 16,
@@ -45,7 +55,7 @@ class NavigationDrawerWidget extends StatelessWidget {
                   buildMenuItem(
                     text: "Izin Akses",
                     icon: Icons.workspaces_outline,
-                    onClicked: () => selectedItem(context, 1),
+                    onClicked: () => selectedItem(context, 2),
                   ),
                   const SizedBox(
                     height: 16,
@@ -53,7 +63,7 @@ class NavigationDrawerWidget extends StatelessWidget {
                   buildMenuItem(
                     text: "Sinkronisasi Data",
                     icon: Icons.update,
-                    onClicked: () => selectedItem(context, 2),
+                    onClicked: () => selectedItem(context, 3),
                   ),
                   const SizedBox(
                     height: 24,
@@ -65,7 +75,7 @@ class NavigationDrawerWidget extends StatelessWidget {
                   buildMenuItem(
                     text: "Pengaturan",
                     icon: Icons.settings,
-                    onClicked: () => selectedItem(context, 3),
+                    onClicked: () => selectedItem(context, 4),
                   ),
                   const SizedBox(
                     height: 16,
@@ -73,7 +83,7 @@ class NavigationDrawerWidget extends StatelessWidget {
                   buildMenuItem(
                     text: "Keluar",
                     icon: Icons.logout,
-                    onClicked: () => selectedItem(context, 4),
+                    onClicked: () => selectedItem(context, 5),
                   ),
                   const SizedBox(
                     height: 16,
@@ -151,26 +161,31 @@ class NavigationDrawerWidget extends StatelessWidget {
     Navigator.of(context).pop();
     switch (index) {
       case 0:
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => BlankScreen()));
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => HomeScreen()));
         break;
 
       case 1:
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => BlankScreen()));
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => BlankScreen()));
         break;
 
       case 2:
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => BlankScreen()));
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => BlankScreen()));
         break;
 
       case 3:
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => BlankScreen()));
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => BlankScreen()));
         break;
 
       case 4:
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => BlankScreen()));
+        break;
+
+      case 5:
         final provider = Provider.of<SignProvider>(context, listen: false);
         provider.logout();
     }

@@ -1,4 +1,7 @@
+import 'package:double_back_to_close/double_back_to_close.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_auth/components/navigation_drawer.dart';
+import 'package:flutter_auth/components/prevent_pop.dart';
 
 class ProfileScreen extends StatelessWidget {
   final String name;
@@ -11,17 +14,24 @@ class ProfileScreen extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.blue,
-          title: Text(name),
-          centerTitle: true,
-        ),
-        body: Image.network(
-          urlImage,
-          width: double.infinity,
-          height: double.infinity,
-          fit: BoxFit.cover,
+  Widget build(BuildContext context) => MaterialApp(
+        home: DoubleBack(
+          onFirstBackPress: (context) {
+            final snackBar =
+                SnackBar(content: Text('Press back again to exit'));
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          },
+          child: Scaffold(
+            body: Scaffold(
+              drawer: NavigationDrawerWidget(),
+              body: Scaffold(
+                drawer: NavigationDrawerWidget(),
+                backgroundColor: Colors.white,
+              ),
+            ),
+          ),
         ),
       );
 }
+
+
