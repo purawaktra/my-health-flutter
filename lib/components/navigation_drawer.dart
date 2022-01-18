@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_auth/Screens/black_screen.dart';
+import 'package:flutter_auth/Screens/blank_screen.dart';
 import 'package:flutter_auth/Screens/home_screen.dart';
 import 'package:flutter_auth/Screens/profile_screen.dart';
 import 'package:flutter_auth/components/sign_method.dart';
@@ -17,80 +17,65 @@ class NavigationDrawerWidget extends StatelessWidget {
     final urlImage = user.photoURL!;
     return Drawer(
       child: Material(
-        color: Colors.blue,
         child: ListView(
+          padding: EdgeInsets.zero,
           children: <Widget>[
-            buildHeader(
-              urlImage: urlImage,
-              name: name,
-              email: email,
-              onClicked: () =>
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) => ProfileScreen(
-                  name: name,
-                  urlImage: urlImage,
+            UserAccountsDrawerHeader(
+              accountName: Text(name),
+              accountEmail: Text(email),
+              currentAccountPicture: CircleAvatar(
+                child: ClipOval(
+                  child: Image.network(
+                    urlImage,
+                    width: 90,
+                    height: 150,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              )),
-            ),
-            Container(
-              padding: padding,
-              child: Column(
-                children: <Widget>[
-                  buildMenuItem(
-                    text: "Halaman Utama",
-                    icon: Icons.home_rounded,
-                    onClicked: () => selectedItem(context, 0),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  buildMenuItem(
-                    text: "Rekam Medis",
-                    icon: Icons.health_and_safety_outlined,
-                    onClicked: () => selectedItem(context, 1),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  buildMenuItem(
-                    text: "Izin Akses",
-                    icon: Icons.workspaces_outline,
-                    onClicked: () => selectedItem(context, 2),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  buildMenuItem(
-                    text: "Sinkronisasi Data",
-                    icon: Icons.update,
-                    onClicked: () => selectedItem(context, 3),
-                  ),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  Divider(color: Colors.white70),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  buildMenuItem(
-                    text: "Pengaturan",
-                    icon: Icons.settings,
-                    onClicked: () => selectedItem(context, 4),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  buildMenuItem(
-                    text: "Keluar",
-                    icon: Icons.logout,
-                    onClicked: () => selectedItem(context, 5),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                ],
               ),
-            )
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/images/profile-bg3.jpg"),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home_rounded),
+              title: Text("Halaman Utama"),
+              onTap: () => selectedItem(context, 0),
+            ),
+            ListTile(
+              leading: Icon(Icons.person_outline),
+              title: Text("Profil"),
+              onTap: () => selectedItem(context, 1),
+            ),
+            ListTile(
+              leading: Icon(Icons.health_and_safety_outlined),
+              title: Text("Rekam Medis"),
+              onTap: () => selectedItem(context, 2),
+            ),
+            ListTile(
+              leading: Icon(Icons.workspaces_outline),
+              title: Text("Izin Akses"),
+              onTap: () => selectedItem(context, 3),
+            ),
+            ListTile(
+              leading: Icon(Icons.update),
+              title: Text("Sinkronisasi Data"),
+              onTap: () => selectedItem(context, 4),
+            ),
+            Divider(color: Colors.black38),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text("Pengaturan"),
+              onTap: () => selectedItem(context, 5),
+            ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text("Keluar"),
+              onTap: () => selectedItem(context, 6),
+            ),
           ],
         ),
       ),
@@ -146,8 +131,8 @@ class NavigationDrawerWidget extends StatelessWidget {
 
   Widget buildMenuItem(
       {required String text, required IconData icon, VoidCallback? onClicked}) {
-    final color = Colors.white;
-    final hoverColor = Colors.white70;
+    final color = Colors.black;
+    final hoverColor = Colors.black87;
 
     return ListTile(
       leading: Icon(icon, color: color),
@@ -167,7 +152,7 @@ class NavigationDrawerWidget extends StatelessWidget {
 
       case 1:
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => BlankScreen()));
+            MaterialPageRoute(builder: (context) => ProfileScreen()));
         break;
 
       case 2:
@@ -186,6 +171,11 @@ class NavigationDrawerWidget extends StatelessWidget {
         break;
 
       case 5:
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => BlankScreen()));
+        break;
+
+      case 6:
         final provider = Provider.of<SignProvider>(context, listen: false);
         provider.logout();
     }
