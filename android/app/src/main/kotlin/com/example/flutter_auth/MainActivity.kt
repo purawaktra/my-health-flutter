@@ -1,4 +1,4 @@
-package com.example.flutter_auth
+package com.example.myhealth
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

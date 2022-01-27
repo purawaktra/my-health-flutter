@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_auth/components/sign_method.dart';
+import 'package:myhealth/components/sign_method.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_auth/components/background.dart';
 import '../constants.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -48,8 +47,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     final loginButton = ElevatedButton(
         style: ElevatedButton.styleFrom(
-          primary: Colors.lightBlue,
-          onPrimary: Colors.black,
+          primary: Color(0xFFF8B501),
+          onPrimary: Colors.white,
           minimumSize: Size(double.infinity, 50),
         ),
         child: Text('Verifikasi Email', style: TextStyle(color: Colors.white)),
@@ -68,49 +67,46 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Background(
-        child: Padding(
-          padding: EdgeInsets.all(32),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Spacer(),
-                Image.asset(
-                  "assets/images/Asset 11@2x.png",
-                  width: size.width * 0.25,
-                ),
-                Spacer(),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Ayo Gunakan Aplikasi \nmyHealth!",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: kBlack,
-                    ),
+      body: Padding(
+        padding: EdgeInsets.all(32),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Spacer(),
+              Image.asset(
+                "assets/images/app_logo.png",
+                width: size.width * 0.35,
+              ),
+              Spacer(),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Ayo Gunakan Aplikasi \nmyHealth!",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: kBlack,
                   ),
                 ),
-                SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Masukkan email anda.",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: kBlack,
-                    ),
+              ),
+              SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Masukkan email anda.",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: kBlack,
                   ),
                 ),
-                SizedBox(height: 40),
-                emailField,
-                SizedBox(height: 20),
-                loginButton,
-                SizedBox(height: 20),
-              ],
-            ),
+              ),
+              SizedBox(height: 40),
+              emailField,
+              SizedBox(height: 20),
+              loginButton,
+            ],
           ),
         ),
       ),

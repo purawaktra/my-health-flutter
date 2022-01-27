@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_auth/constants.dart';
+import 'package:myhealth/constants.dart';
 
 class InputField extends StatelessWidget {
   final String hintText;

@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_auth/Screens/blank_screen.dart';
-import 'package:flutter_auth/Screens/home_screen.dart';
-import 'package:flutter_auth/Screens/profile_screen.dart';
-import 'package:flutter_auth/components/sign_method.dart';
+import 'package:myhealth/Screens/blank_screen.dart';
+import 'package:myhealth/Screens/home_screen.dart';
+import 'package:myhealth/Screens/profile_screen.dart';
+import 'package:myhealth/components/sign_method.dart';
 import 'package:provider/provider.dart';
 
 class NavigationDrawerWidget extends StatelessWidget {
