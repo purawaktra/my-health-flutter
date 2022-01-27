@@ -137,8 +137,11 @@ class _LoginScreenState extends State<LoginScreen> {
           return MaterialApp(
               home: DoubleBack(
             onFirstBackPress: (context) {
-              final snackBar =
-                  SnackBar(content: Text('Press back again to exit'));
+              final snackBar = SnackBar(
+                content: Text('Press back again to exit',
+                    style: TextStyle(color: Colors.black)),
+                backgroundColor: Color(0xFFF8B501),
+              );
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
             },
             child: Scaffold(

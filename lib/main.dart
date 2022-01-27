@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myhealth/Screens/testtt/test.dart';
 import 'package:myhealth/Screens/welcome_screen.dart';
 import 'package:myhealth/components/sign_method.dart';
 import 'package:myhealth/constants.dart';
@@ -20,10 +21,21 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'myHealth',
           theme: ThemeData(
-            primaryColor: kPrimaryColor,
-            scaffoldBackgroundColor: Colors.white,
-          ),
-          home: WelcomeScreen(),
+              colorScheme: ColorScheme(
+                  primary: kYellow,
+                  primaryVariant: kYellow,
+                  secondary: kYellow,
+                  secondaryVariant: kYellow,
+                  surface: kYellow,
+                  background: kYellow,
+                  error: kYellow,
+                  onPrimary: kYellow,
+                  onSecondary: kYellow,
+                  onSurface: kYellow,
+                  onBackground: kYellow,
+                  onError: kYellow,
+                  brightness: Brightness.dark)),
+          home: TestDisek(),
         ),
       );
 }
