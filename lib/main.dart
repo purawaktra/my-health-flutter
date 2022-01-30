@@ -1,3 +1,4 @@
+import 'package:double_back_to_close/double_back_to_close.dart';
 import 'package:flutter/material.dart';
 import 'package:myhealth/Screens/testtt/test.dart';
 import 'package:myhealth/Screens/welcome_screen.dart';
@@ -18,24 +19,23 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) => ChangeNotifierProvider(
         create: (context) => SignProvider(),
         child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'myHealth',
-          theme: ThemeData(
-              colorScheme: ColorScheme(
-                  primary: kYellow,
-                  primaryVariant: kYellow,
-                  secondary: kYellow,
-                  secondaryVariant: kYellow,
-                  surface: kYellow,
-                  background: kYellow,
-                  error: kYellow,
-                  onPrimary: kYellow,
-                  onSecondary: kYellow,
-                  onSurface: kYellow,
-                  onBackground: kYellow,
-                  onError: kYellow,
-                  brightness: Brightness.dark)),
-          home: TestDisek(),
-        ),
+            debugShowCheckedModeBanner: false,
+            title: 'myHealth',
+            theme: ThemeData(
+                colorScheme: ColorScheme(
+                    primary: kBlack,
+                    primaryVariant: kBlack,
+                    secondary: kYellow,
+                    secondaryVariant: kYellow,
+                    surface: kYellow,
+                    background: kYellow,
+                    error: kRed,
+                    onPrimary: kBlack,
+                    onSecondary: kYellow,
+                    onSurface: kYellow,
+                    onBackground: kYellow,
+                    onError: kRed,
+                    brightness: Brightness.dark)),
+            home: WelcomeScreen()),
       );
 }

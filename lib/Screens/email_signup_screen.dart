@@ -1,3 +1,4 @@
+import 'package:double_back_to_close/double_back_to_close.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myhealth/components/sign_method.dart';
@@ -5,14 +6,14 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import '../constants.dart';
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
+class EmailSignUpScreen extends StatefulWidget {
+  const EmailSignUpScreen({Key? key}) : super(key: key);
 
   @override
-  _SignUpScreenState createState() => _SignUpScreenState();
+  _EmailSignUpScreenState createState() => _EmailSignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _EmailSignUpScreenState extends State<EmailSignUpScreen> {
   final _auth = FirebaseAuth.instance;
   final TextEditingController emailController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -23,6 +24,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       autofocus: false,
       controller: emailController,
       keyboardType: TextInputType.emailAddress,
+      style: TextStyle(color: kBlack),
       validator: (value) {
         if (value!.isEmpty) {
           return ("Mohon Masukkan Email Anda");
@@ -39,8 +41,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
       },
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(
-        prefixIcon: Icon(Icons.person),
+        prefixIcon: Icon(
+          Icons.person,
+          color: kBlack,
+        ),
         hintText: "Email",
+        hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
       ),
     );
@@ -66,47 +72,58 @@ class _SignUpScreenState extends State<SignUpScreen> {
         });
 
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(32),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Spacer(),
-              Image.asset(
-                "assets/images/app_logo.png",
-                width: size.width * 0.35,
-              ),
-              Spacer(),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Ayo Gunakan Aplikasi \nmyHealth!",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: kBlack,
+    return DoubleBack(
+      onFirstBackPress: (context) {
+        final snackBar = SnackBar(
+          content: Text('Press back again to exit',
+              style: TextStyle(color: Colors.black)),
+          backgroundColor: Color(0xFFF8B501),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Padding(
+          padding: EdgeInsets.all(32),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Spacer(),
+                Image.asset(
+                  "assets/images/app_logo.png",
+                  width: size.width * 0.35,
+                ),
+                Spacer(),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Ayo Gunakan Aplikasi \nmyHealth!",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: kBlack,
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 8),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Masukkan email anda.",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: kBlack,
+                SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Masukkan email anda.",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: kBlack,
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 40),
-              emailField,
-              SizedBox(height: 20),
-              loginButton,
-            ],
+                SizedBox(height: 20),
+                emailField,
+                SizedBox(height: 20),
+                loginButton,
+              ],
+            ),
           ),
         ),
       ),

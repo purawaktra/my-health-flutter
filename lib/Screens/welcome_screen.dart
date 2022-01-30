@@ -23,106 +23,116 @@ class WelcomeScreen extends StatelessWidget {
             child: CircularProgressIndicator(),
           );
         } else if (snapshot.hasData) {
-          return HomeScreen();
+          if (FirebaseAuth.instance.currentUser != null) {
+            return HomeScreen();
+          }
+          return Center(
+            child: Text('Gagal mendownload data, cek koneksi anda!'),
+          );
         } else if (snapshot.hasError) {
           return Center(
             child: Text('Something Went Wrong!'),
           );
         } else {
-          return Padding(
-            padding: EdgeInsets.all(32),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Spacer(),
-                Image.asset(
-                  "assets/images/app_logo.png",
-                  width: size.width * 0.35,
-                ),
-                Spacer(),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Haloo, \nSelamat Datang!",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: kBlack,
+          return Scaffold(
+            backgroundColor: Colors.white,
+            body: Padding(
+              padding: EdgeInsets.all(32),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Spacer(),
+                  Image.asset(
+                    "assets/images/app_logo.png",
+                    width: size.width * 0.35,
+                  ),
+                  Spacer(),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Haloo, \nSelamat Datang!",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: kBlack,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Silahkan mendaftar untuk melanjutkan.",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: kBlack,
+                  SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Silahkan mendaftar untuk melanjutkan.",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: kBlack,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 40),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Color(0xFFF8B501),
-                    onPrimary: Colors.white,
-                    minimumSize: Size(double.infinity, 50),
-                  ),
-                  child: Text('Daftar Dengan Email',
-                      style: TextStyle(color: Colors.white)),
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) {
-                        return SignUpScreen();
-                      },
-                    ));
-                  },
-                ),
-                SizedBox(height: 10),
-                ElevatedButton(
+                  SizedBox(height: 40),
+                  ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.white,
-                      onPrimary: Color(0xFFF8B501),
+                      primary: Color(0xFFF8B501),
+                      onPrimary: Colors.white,
                       minimumSize: Size(double.infinity, 50),
                     ),
-                    child: Text(
-                      'Daftar Dengan Google',
-                      style: TextStyle(
-                        color: kBlack,
-                      ),
-                    ),
+                    child: Text('Daftar Dengan Email',
+                        style: TextStyle(color: Colors.white)),
                     onPressed: () {
-                      final provider =
-                          Provider.of<SignProvider>(context, listen: false);
-                      provider.googleLogin();
-                    }),
-                SizedBox(height: 20),
-                RichText(
-                    text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'Sudah punya akun? ',
-                      style: TextStyle(
-                        color: kBlack,
-                      ),
-                    ),
-                    TextSpan(
-                      text: 'Masuk',
-                      style: TextStyle(
-                          color: kBlack, decoration: TextDecoration.underline),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.pushReplacement(context, MaterialPageRoute(
-                            builder: (context) {
-                              return LoginScreen();
-                            },
-                          ));
+                      Navigator.pushReplacement(context, MaterialPageRoute(
+                        builder: (context) {
+                          return EmailSignUpScreen();
                         },
-                    ),
-                  ],
-                )),
-              ],
+                      ));
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.white,
+                        onPrimary: Color(0xFFF8B501),
+                        minimumSize: Size(double.infinity, 50),
+                      ),
+                      child: Text(
+                        'Daftar Dengan Google',
+                        style: TextStyle(
+                          color: kBlack,
+                        ),
+                      ),
+                      onPressed: () {
+                        final provider =
+                            Provider.of<SignProvider>(context, listen: false);
+                        provider.googleLogin();
+                      }),
+                  SizedBox(height: 20),
+                  RichText(
+                      text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Sudah punya akun? ',
+                        style: TextStyle(
+                          color: kBlack,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'Masuk',
+                        style: TextStyle(
+                            color: kBlack,
+                            decoration: TextDecoration.underline),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.pushReplacement(context,
+                                MaterialPageRoute(
+                              builder: (context) {
+                                return LoginScreen();
+                              },
+                            ));
+                          },
+                      ),
+                    ],
+                  )),
+                ],
+              ),
             ),
           );
         }

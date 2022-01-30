@@ -4,6 +4,7 @@ import 'package:myhealth/Screens/blank_screen.dart';
 import 'package:myhealth/Screens/home_screen.dart';
 import 'package:myhealth/Screens/profile_screen.dart';
 import 'package:myhealth/components/sign_method.dart';
+import 'package:myhealth/constants.dart';
 import 'package:provider/provider.dart';
 
 class NavigationDrawerWidget extends StatelessWidget {
@@ -41,38 +42,41 @@ class NavigationDrawerWidget extends StatelessWidget {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.home_rounded),
+              leading: Icon(
+                Icons.home_rounded,
+                color: kYellow,
+              ),
               title: Text("Halaman Utama"),
               onTap: () => selectedItem(context, 0),
             ),
             ListTile(
-              leading: Icon(Icons.person_outline),
+              leading: Icon(Icons.person_outline, color: kYellow),
               title: Text("Profil"),
               onTap: () => selectedItem(context, 1),
             ),
             ListTile(
-              leading: Icon(Icons.health_and_safety_outlined),
+              leading: Icon(Icons.health_and_safety_outlined, color: kYellow),
               title: Text("Rekam Medis"),
               onTap: () => selectedItem(context, 2),
             ),
             ListTile(
-              leading: Icon(Icons.workspaces_outline),
+              leading: Icon(Icons.workspaces_outline, color: kYellow),
               title: Text("Izin Akses"),
               onTap: () => selectedItem(context, 3),
             ),
             ListTile(
-              leading: Icon(Icons.update),
+              leading: Icon(Icons.update, color: kYellow),
               title: Text("Sinkronisasi Data"),
               onTap: () => selectedItem(context, 4),
             ),
-            Divider(color: Colors.black38),
+            Divider(color: kYellow),
             ListTile(
-              leading: Icon(Icons.settings),
+              leading: Icon(Icons.settings, color: kYellow),
               title: Text("Pengaturan"),
               onTap: () => selectedItem(context, 5),
             ),
             ListTile(
-              leading: Icon(Icons.logout),
+              leading: Icon(Icons.logout, color: kYellow),
               title: Text("Keluar"),
               onTap: () => selectedItem(context, 6),
             ),
