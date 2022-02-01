@@ -8,6 +8,9 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
+    final name = user.displayName!;
+    final email = user.email!;
+    final urlImage = user.photoURL!;
 
     return Background(
       child: SingleChildScrollView(
@@ -22,20 +25,20 @@ class HomeScreen extends StatelessWidget {
             SizedBox(height: 32),
             CircleAvatar(
               radius: 40,
-              backgroundImage: NetworkImage(user.photoURL!),
+              backgroundImage: NetworkImage(urlImage),
             ),
             SizedBox(
               height: 8,
             ),
             Text(
-              'Name: ' + user.displayName!,
+              'Name: ' + name,
               style: TextStyle(color: Colors.black, fontSize: 16),
             ),
             SizedBox(
               height: 8,
             ),
             Text(
-              'Email: ' + user.email!,
+              'Email: ' + email,
               style: TextStyle(color: Colors.black, fontSize: 16),
             ),
           ],

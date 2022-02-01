@@ -38,6 +38,7 @@ dependencies:
   fluttertoast: ^8.0.8
   double_back_to_close: ^2.0.0
   flutter_launcher_icons: ^0.9.2
+  firebase_database: ^9.0.6
 
 dev_dependencies:
   flutter_test:
