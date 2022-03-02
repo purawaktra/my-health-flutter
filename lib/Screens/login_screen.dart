@@ -134,107 +134,113 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Text('Something Went Wrong!'),
           );
         } else {
-          return MaterialApp(
-              home: DoubleBack(
-            onFirstBackPress: (context) {
-              final snackBar = SnackBar(
-                content: Text('Press back again to exit',
-                    style: TextStyle(color: Colors.black)),
-                backgroundColor: Color(0xFFF8B501),
-              );
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            },
-            child: Scaffold(
-              body: Padding(
-                padding: EdgeInsets.all(32),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Spacer(),
-                      Image.asset(
-                        "assets/images/app_logo.png",
-                        width: size.width * 0.35,
-                      ),
-                      Spacer(),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Simpan Riwayat Medis Berhargamu di \nmyHealth!",
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: kBlack,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Masukkan email dan password anda.",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: kBlack,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 40),
-                      emailField,
-                      passwordField,
-                      SizedBox(height: 20),
-                      loginButton,
-                      SizedBox(height: 20),
-                      Row(
-                        children: [
-                          RichText(
-                              text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'Halaman Utama',
-                                style: TextStyle(
-                                    color: kBlack,
-                                    decoration: TextDecoration.underline),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    Navigator.pushReplacement(context,
-                                        MaterialPageRoute(
-                                      builder: (context) {
-                                        return WelcomeScreen();
-                                      },
-                                    ));
-                                  },
-                              ),
-                            ],
-                          )),
+          return LayoutBuilder(builder:
+              (BuildContext context, BoxConstraints viewportConstraints) {
+            return SingleChildScrollView(
+              child: SizedBox(
+                height: size.height,
+                child: Padding(
+                  padding: EdgeInsets.all(32),
+                  child: Form(
+                    key: _formKey,
+                    child: DoubleBack(
+                      onFirstBackPress: (context) {
+                        final snackBar = SnackBar(
+                          content: Text('Press back again to exit',
+                              style: TextStyle(color: Colors.black)),
+                          backgroundColor: Color(0xFFF8B501),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
                           Spacer(),
-                          RichText(
-                              text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'Masuk dengan Google?',
-                                style: TextStyle(
-                                    color: kBlack,
-                                    decoration: TextDecoration.underline),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    final providerGoogleLogin =
-                                        Provider.of<SignProvider>(context,
-                                            listen: false);
-                                    providerGoogleLogin.googleLogin();
-                                  },
+                          Image.asset(
+                            "assets/images/app_logo.png",
+                            width: size.width * 0.35,
+                          ),
+                          Spacer(),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "Simpan Riwayat Medis Berhargamu di \nmyHealth!",
+                              style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: kBlack,
+                                  decoration: TextDecoration.none),
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "Masukkan email dan password anda.",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: kBlack,
                               ),
+                            ),
+                          ),
+                          SizedBox(height: 40),
+                          emailField,
+                          passwordField,
+                          SizedBox(height: 20),
+                          loginButton,
+                          SizedBox(height: 20),
+                          Row(
+                            children: [
+                              RichText(
+                                  text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'Halaman Utama',
+                                    style: TextStyle(
+                                        color: kBlack,
+                                        decoration: TextDecoration.underline),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        Navigator.pushReplacement(context,
+                                            MaterialPageRoute(
+                                          builder: (context) {
+                                            return WelcomeScreen();
+                                          },
+                                        ));
+                                      },
+                                  ),
+                                ],
+                              )),
+                              Spacer(),
+                              RichText(
+                                  text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'Masuk dengan Google?',
+                                    style: TextStyle(
+                                        color: kBlack,
+                                        decoration: TextDecoration.underline),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        final providerGoogleLogin =
+                                            Provider.of<SignProvider>(context,
+                                                listen: false);
+                                        providerGoogleLogin.googleLogin();
+                                      },
+                                  ),
+                                ],
+                              )),
                             ],
-                          )),
+                          ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ));
+            );
+          });
         }
       },
     ));

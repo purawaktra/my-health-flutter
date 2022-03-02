@@ -30,12 +30,12 @@ class MyApp extends StatelessWidget {
                     surface: kYellow,
                     background: kYellow,
                     error: kRed,
-                    onPrimary: kBlack,
-                    onSecondary: kYellow,
-                    onSurface: kYellow,
-                    onBackground: kYellow,
+                    onPrimary: Colors.white,
+                    onSecondary: kBlack,
+                    onSurface: kBlack,
+                    onBackground: kBlack,
                     onError: kRed,
-                    brightness: Brightness.dark)),
+                    brightness: Brightness.light)),
             home: WelcomeScreen()),
       );
 }
