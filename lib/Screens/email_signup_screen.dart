@@ -53,7 +53,7 @@ class _EmailSignUpScreenState extends State<EmailSignUpScreen> {
 
     final loginButton = ElevatedButton(
         style: ElevatedButton.styleFrom(
-          primary: Color(0xFFF8B501),
+          primary: kLightBlue1,
           onPrimary: Colors.white,
           minimumSize: Size(double.infinity, 50),
         ),
@@ -92,7 +92,7 @@ class _EmailSignUpScreenState extends State<EmailSignUpScreen> {
               children: <Widget>[
                 Spacer(),
                 Image.asset(
-                  "assets/images/app_logo.png",
+                  "assets/images/logo_app.png",
                   width: size.width * 0.35,
                 ),
                 Spacer(),

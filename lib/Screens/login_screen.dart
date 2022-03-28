@@ -158,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: <Widget>[
                           Spacer(),
                           Image.asset(
-                            "assets/images/app_logo.png",
+                            "assets/images/logo_app.png",
                             width: size.width * 0.35,
                           ),
                           Spacer(),

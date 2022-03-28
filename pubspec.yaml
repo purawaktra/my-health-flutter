@@ -39,6 +39,7 @@ dependencies:
   double_back_to_close: ^2.0.0
   flutter_launcher_icons: ^0.9.2
   firebase_database: ^9.0.6
+  smooth_page_indicator: ^1.0.0+2
 
 dev_dependencies:
   flutter_test:
@@ -89,7 +90,7 @@ flutter_launcher_name:
   name: "myHealth"
 
 flutter_icons:
-  image_path: "assets/images/app_icon.png" 
+  image_path: "assets/images/icon_app.png" 
   android: true
   ios: true
   remove_alpha_ios: true
