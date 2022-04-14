@@ -1,4 +1,3 @@
-import 'package:double_back_to_close/double_back_to_close.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myhealth/components/sign_method.dart';
@@ -16,7 +15,21 @@ class EmailSignUpScreen extends StatefulWidget {
 class _EmailSignUpScreenState extends State<EmailSignUpScreen> {
   final _auth = FirebaseAuth.instance;
   final TextEditingController emailController = new TextEditingController();
+  final TextEditingController passwordController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _obscured = true;
+
+  final textFieldFocusNode = FocusNode();
+
+  void _toggleObscured() {
+    setState(() {
+      _obscured = !_obscured;
+      if (textFieldFocusNode.hasPrimaryFocus)
+        return; // If focus is on text field, dont unfocus
+      textFieldFocusNode.canRequestFocus =
+          false; // Prevents focus if tap on eye
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +56,7 @@ class _EmailSignUpScreenState extends State<EmailSignUpScreen> {
       decoration: InputDecoration(
         prefixIcon: Icon(
           Icons.person,
-          color: kBlack,
+          color: Colors.black54,
         ),
         hintText: "Email",
         hintStyle: TextStyle(color: Colors.black54),
@@ -51,82 +64,143 @@ class _EmailSignUpScreenState extends State<EmailSignUpScreen> {
       ),
     );
 
+    final passwordField = TextFormField(
+        autofocus: false,
+        controller: passwordController,
+        obscureText: _obscured,
+        validator: (value) {
+          RegExp regex = new RegExp(r'^.{6,}$');
+          if (value!.isEmpty) {
+            return ("Kolom Password Masih Kosong");
+          }
+          if (!regex.hasMatch(value)) {
+            return ('Password Terlalu Pendek');
+          }
+        },
+        onSaved: (value) {
+          passwordController.text = value!;
+        },
+        textInputAction: TextInputAction.done,
+        decoration: InputDecoration(
+          prefixIcon: Icon(
+            Icons.lock,
+            color: Colors.black54,
+          ),
+          suffixIcon: GestureDetector(
+            onTap: _toggleObscured,
+            child: Icon(
+              _obscured
+                  ? Icons.visibility_rounded
+                  : Icons.visibility_off_rounded,
+              color: Colors.black54,
+            ),
+          ),
+          hintText: "Password",
+          border: InputBorder.none,
+        ));
+
     final loginButton = ElevatedButton(
         style: ElevatedButton.styleFrom(
           primary: kLightBlue1,
           onPrimary: Colors.white,
           minimumSize: Size(double.infinity, 50),
         ),
-        child: Text('Verifikasi Email', style: TextStyle(color: Colors.white)),
-        onPressed: () {
+        child: Text('Daftar', style: TextStyle(color: Colors.white)),
+        onPressed: () async {
+          final snackBar = SnackBar(
+            content: const Text("Sedang memuat...",
+                style: TextStyle(color: Colors.black)),
+            backgroundColor: kYellow,
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
           if (_formKey.currentState!.validate()) {
             final providerEmailSignUp =
                 Provider.of<SignProvider>(context, listen: false);
-            providerEmailSignUp.emailSignUp(emailController.text);
+            String emailstate = await providerEmailSignUp.emailSignUp(
+                emailController.text, passwordController.text);
+            print(emailstate);
 
-            _auth.sendPasswordResetEmail(email: emailController.text);
-            Fluttertoast.showToast(
-                msg: "Silahkan cek kotak masuk Email "
-                    "anda untuk melanjutkan.");
+            if (emailstate == "true") {
+              final snackBar = SnackBar(
+                content: const Text("Silahkan cek Email anda.",
+                    style: TextStyle(color: Colors.black)),
+                backgroundColor: kYellow,
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            } else if (emailstate == "weak-password") {
+              final snackBar = SnackBar(
+                content: const Text("Password yang digunakan terlalu lemah.",
+                    style: TextStyle(color: Colors.black)),
+                backgroundColor: kYellow,
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            } else if (emailstate.toString() == "email-already-in-use") {
+              final snackBar = SnackBar(
+                content: const Text("Email telah digunakan.",
+                    style: TextStyle(color: Colors.black)),
+                backgroundColor: kYellow,
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            }
           }
         });
 
     Size size = MediaQuery.of(context).size;
-    return DoubleBack(
-      onFirstBackPress: (context) {
-        final snackBar = SnackBar(
-          content: Text('Press back again to exit',
-              style: TextStyle(color: Colors.black)),
-          backgroundColor: Color(0xFFF8B501),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      },
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.white,
-        body: Padding(
-          padding: EdgeInsets.all(32),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Spacer(),
-                Image.asset(
-                  "assets/images/logo_app.png",
-                  width: size.width * 0.35,
-                ),
-                Spacer(),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Ayo Gunakan Aplikasi \nmyHealth!",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: kBlack,
-                    ),
+        body: LayoutBuilder(builder:
+            (BuildContext context, BoxConstraints viewportConstraints) {
+          return SingleChildScrollView(
+            child: SizedBox(
+              height: size.height,
+              child: Padding(
+                padding: EdgeInsets.all(32),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Spacer(),
+                      Image.asset(
+                        "assets/images/logo_app.png",
+                        width: size.width * 0.35,
+                      ),
+                      Spacer(),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Registrasi Akun",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: kBlack,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Pastikan email dan password telah benar. \nKami akan mengirimkan tautan verifikasi ke email anda.",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: kBlack,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      emailField,
+                      passwordField,
+                      SizedBox(height: 20),
+                      loginButton,
+                      SizedBox(height: 2),
+                    ],
                   ),
                 ),
-                SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Masukkan email anda.",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: kBlack,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20),
-                emailField,
-                SizedBox(height: 20),
-                loginButton,
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
+        }));
   }
 }

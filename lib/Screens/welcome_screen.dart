@@ -1,18 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:myhealth/Screens/home_screen.dart';
-import 'package:flutter/gestures.dart';
-import 'package:myhealth/Screens/login_screen.dart';
-import 'package:myhealth/Screens/email_signup_screen.dart';
+import 'package:myhealth/Screens/dashboard_screen.dart';
 import 'package:myhealth/Screens/onboarding_screen.dart';
-import 'package:myhealth/components/sign_method.dart';
-import 'package:myhealth/constants.dart';
-import 'package:provider/provider.dart';
 
 class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
         body: StreamBuilder(
       stream: FirebaseAuth.instance.authStateChanges(),
@@ -23,7 +16,7 @@ class WelcomeScreen extends StatelessWidget {
           );
         } else if (snapshot.hasData) {
           if (FirebaseAuth.instance.currentUser != null) {
-            return HomeScreen();
+            return DashboardScreen();
           }
           return Center(
             child: Text('Fail to fetch data, cek koneksi anda!'),

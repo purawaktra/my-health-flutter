@@ -11,3 +11,4 @@ const kDarkBlue = Color(0xFF001B66);
 const kBlue = Color(0xFF0044FF);
 const kLightBlue = Color(0xFF99B4FF);
 const kLightBlue1 = Color(0xFF0091CC);
+const kWarning = Color(0xFFCC6633);

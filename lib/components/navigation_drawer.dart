@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myhealth/Screens/blank_screen.dart';
-import 'package:myhealth/Screens/home_screen.dart';
+import 'package:myhealth/Screens/dashboard_screen.dart';
 import 'package:myhealth/Screens/profile_screen.dart';
 import 'package:myhealth/components/sign_method.dart';
 import 'package:myhealth/constants.dart';
@@ -44,39 +44,40 @@ class NavigationDrawerWidget extends StatelessWidget {
             ListTile(
               leading: Icon(
                 Icons.home_rounded,
-                color: kYellow,
+                color: kLightBlue1,
               ),
               title: Text("Halaman Utama"),
               onTap: () => selectedItem(context, 0),
             ),
             ListTile(
-              leading: Icon(Icons.person_outline, color: kYellow),
+              leading: Icon(Icons.person_outline, color: kLightBlue1),
               title: Text("Profil"),
               onTap: () => selectedItem(context, 1),
             ),
             ListTile(
-              leading: Icon(Icons.health_and_safety_outlined, color: kYellow),
+              leading:
+                  Icon(Icons.health_and_safety_outlined, color: kLightBlue1),
               title: Text("Rekam Medis"),
               onTap: () => selectedItem(context, 2),
             ),
             ListTile(
-              leading: Icon(Icons.workspaces_outline, color: kYellow),
+              leading: Icon(Icons.workspaces_outline, color: kLightBlue1),
               title: Text("Izin Akses"),
               onTap: () => selectedItem(context, 3),
             ),
             ListTile(
-              leading: Icon(Icons.update, color: kYellow),
+              leading: Icon(Icons.update, color: kLightBlue1),
               title: Text("Sinkronisasi Data"),
               onTap: () => selectedItem(context, 4),
             ),
-            Divider(color: kYellow),
+            Divider(color: kLightBlue1),
             ListTile(
-              leading: Icon(Icons.settings, color: kYellow),
+              leading: Icon(Icons.settings, color: kLightBlue1),
               title: Text("Pengaturan"),
               onTap: () => selectedItem(context, 5),
             ),
             ListTile(
-              leading: Icon(Icons.logout, color: kYellow),
+              leading: Icon(Icons.logout, color: kLightBlue1),
               title: Text("Keluar"),
               onTap: () => selectedItem(context, 6),
             ),
@@ -151,7 +152,7 @@ class NavigationDrawerWidget extends StatelessWidget {
     switch (index) {
       case 0:
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => HomeScreen()));
+            MaterialPageRoute(builder: (context) => DashboardScreen()));
         break;
 
       case 1:
