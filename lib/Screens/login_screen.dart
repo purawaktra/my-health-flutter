@@ -131,8 +131,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
             if (loginstate == "true") {
               if (FirebaseAuth.instance.currentUser != null) {
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => DashboardScreen()));
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => DashboardScreen()),
+                    (Route<dynamic> route) => false);
               } else {
                 final snackBar = SnackBar(
                   content: const Text("'Fail to fetch data, cek koneksi anda!'",

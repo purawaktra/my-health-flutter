@@ -22,9 +22,9 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
                 colorScheme: ColorScheme(
                     primary: kBlack,
-                    secondary: kYellow,
-                    surface: kYellow,
-                    background: kYellow,
+                    secondary: kDarkBlue,
+                    surface: kDarkBlue,
+                    background: kDarkBlue,
                     error: kRed,
                     onPrimary: Colors.white,
                     onSecondary: kBlack,

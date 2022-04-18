@@ -62,6 +62,7 @@ class _OnboardingScreen extends State<OnboardingScreen> {
 
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: DoubleBack(
         onFirstBackPress: (context) {
           final snackBar = SnackBar(

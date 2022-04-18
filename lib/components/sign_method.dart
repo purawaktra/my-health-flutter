@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class SignProvider extends ChangeNotifier {
@@ -84,7 +83,8 @@ class SignProvider extends ChangeNotifier {
 
     try {
       final user = FirebaseAuth.instance.currentUser!;
-      await user.updateDisplayName(user.email.toString());
+      await user.updateDisplayName(
+          RegExp(r"^([^@]+)").stringMatch(user.email.toString()).toString());
       await user.sendEmailVerification();
       await user.updatePhotoURL(
           "https://firebasestorage.googleapis.com/v0/b/myhealth-default-storage/o/blank_photo_profile.png?alt=media&token=b7c09a0d-cd6c-4514-9498-647b5df0bd28");
@@ -96,17 +96,23 @@ class SignProvider extends ChangeNotifier {
     return "true";
   }
 
-  Future logout() async {
+  Future<String> logout() async {
+    String logoutcode = "true";
     try {
       await googleSignIn.disconnect();
     } catch (e) {
       print(e.toString());
+      print("logout");
+
+      try {
+        FirebaseAuth.instance.signOut();
+      } catch (e) {
+        print(e.toString());
+        print("logout");
+        logoutcode = "false";
+      }
     }
 
-    try {
-      FirebaseAuth.instance.signOut();
-    } catch (e) {
-      print(e.toString());
-    }
+    return logoutcode;
   }
 }
