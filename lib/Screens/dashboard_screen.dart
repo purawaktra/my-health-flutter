@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myhealth/Screens/onboarding_screen.dart';
 import 'package:myhealth/Screens/profile_screen.dart';
+import 'package:myhealth/constants.dart';
 import 'package:provider/provider.dart';
 
 import '../components/sign_method.dart';
@@ -47,41 +48,51 @@ class DashboardScreen extends StatelessWidget {
               ),
               Scaffold(
                 body: Padding(
-                  padding: const EdgeInsets.all(32.0),
+                  padding: const EdgeInsets.all(18.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       SizedBox(
-                        height: 18,
+                        height: 36,
                       ),
                       Container(
-                        height: 64,
+                        height: 48,
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             CircleAvatar(
-                              radius: 32,
+                              radius: 24,
                               backgroundImage: NetworkImage(urlImage),
                             ),
                             SizedBox(
-                              width: 8,
+                              width: 12,
                             ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  "Haii, " + name,
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 18),
-                                ),
-                                Text(
-                                  email,
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 12),
-                                ),
-                              ],
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    "Haii, " + name,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(
+                                    email,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
                             )
                           ],
                         ),
@@ -89,19 +100,53 @@ class DashboardScreen extends StatelessWidget {
                       SizedBox(
                         height: 24,
                       ),
-                      Text(
-                        "Dashboard",
-                        style: TextStyle(color: Colors.white, fontSize: 24),
+                      SizedBox(
+                          height: 120,
+                          width: size.width,
+                          child: Card(
+                            elevation: 4,
+                            child: InkWell(
+                              onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => ProfileScreen())),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Image.asset(
+                                    "assets/images/dashboard_0.png",
+                                    width: 60,
+                                    height: 60,
+                                  ),
+                                  SizedBox(
+                                    width: 12,
+                                  ),
+                                  Text(
+                                    "Rekam \nMedis",
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          )),
+                      SizedBox(
+                        height: 24,
                       ),
                       Expanded(
                         child: GridView.count(
                           padding: EdgeInsets.only(top: 4),
+                          childAspectRatio: 0.8,
                           crossAxisCount: 2,
                           mainAxisSpacing: 10,
                           crossAxisSpacing: 10,
                           primary: false,
                           children: <Widget>[
                             Card(
+                              color: kLightBlue2,
+                              elevation: 4,
                               child: InkWell(
                                 onTap: () => Navigator.of(context).push(
                                     MaterialPageRoute(
@@ -111,83 +156,126 @@ class DashboardScreen extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
                                     Image.asset(
-                                      "assets/images/logo_app.png",
+                                      "assets/images/dashboard_1.png",
                                       width: 80,
                                       height: 80,
                                     ),
                                     SizedBox(
                                       height: 8,
                                     ),
-                                    Text("Data Pribadi")
+                                    Text(
+                                      "Informasi \nPribadi",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    )
                                   ],
                                 ),
                               ),
                             ),
                             Card(
+                              elevation: 4,
+                              color: kLightBlue2,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   Image.asset(
-                                    "assets/images/logo_app.png",
+                                    "assets/images/dashboard_2.png",
                                     width: 80,
                                     height: 80,
                                   ),
                                   SizedBox(
                                     height: 8,
                                   ),
-                                  Text("Rekam Medis")
+                                  Text(
+                                    "Informasi \nAkun",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
                             Card(
+                              color: kLightBlue2,
+                              elevation: 4,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   Image.asset(
-                                    "assets/images/logo_app.png",
+                                    "assets/images/dashboard_3.png",
                                     width: 80,
                                     height: 80,
                                   ),
                                   SizedBox(
                                     height: 8,
                                   ),
-                                  Text("Izin Akses")
+                                  Text(
+                                    "Izin Akses \nRekam Medis",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
                             Card(
+                              color: kLightBlue2,
+                              elevation: 4,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   Image.asset(
-                                    "assets/images/logo_app.png",
+                                    "assets/images/dashboard_4.png",
                                     width: 80,
                                     height: 80,
                                   ),
                                   SizedBox(
                                     height: 8,
                                   ),
-                                  Text("Sinkronisasi Data")
+                                  Text(
+                                    "Rekam Medis\n yang Dibagikan",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
                             Card(
+                              elevation: 4,
+                              color: kLightBlue2,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   Image.asset(
-                                    "assets/images/logo_app.png",
+                                    "assets/images/dashboard_5.png",
                                     width: 80,
                                     height: 80,
                                   ),
                                   SizedBox(
                                     height: 8,
                                   ),
-                                  Text("Pengaturan")
+                                  Text(
+                                    "Informasi dan\nPengaturan",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
@@ -225,19 +313,28 @@ class DashboardScreen extends StatelessWidget {
                                 }
                               },
                               child: Card(
+                                color: kLightBlue2,
+                                elevation: 4,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
                                     Image.asset(
-                                      "assets/images/logo_app.png",
+                                      "assets/images/dashboard_6.png",
                                       width: 80,
                                       height: 80,
                                     ),
                                     SizedBox(
                                       height: 8,
                                     ),
-                                    Text("Logout")
+                                    Text(
+                                      "Keluar dan\nLogout",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    )
                                   ],
                                 ),
                               ),

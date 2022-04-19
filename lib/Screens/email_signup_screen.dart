@@ -142,6 +142,14 @@ class _EmailSignUpScreenState extends State<EmailSignUpScreen> {
                 backgroundColor: kYellow,
               );
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            } else {
+              final snackBar = SnackBar(
+                content: const Text(
+                    "Setup akun gagal, silahkan login untuk melakukan inisiasi.",
+                    style: TextStyle(color: Colors.black)),
+                backgroundColor: kYellow,
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
             }
           }
         });

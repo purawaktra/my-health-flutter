@@ -420,7 +420,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     Text(
                       user.displayName!,
-                      style: TextStyle(color: Colors.black, fontSize: 24),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 24,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     SizedBox(
                       height: 2,

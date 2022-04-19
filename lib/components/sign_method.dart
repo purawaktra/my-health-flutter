@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class SignProvider extends ChangeNotifier {
   final googleSignIn = GoogleSignIn();
@@ -34,6 +35,11 @@ class SignProvider extends ChangeNotifier {
     try {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
+      final user = FirebaseAuth.instance.currentUser!;
+      if (user.photoURL == null) {
+        await user.updatePhotoURL(
+            "https://firebasestorage.googleapis.com/v0/b/myhealth-default-storage/o/blank_photo_profile.png?alt=media&token=b7c09a0d-cd6c-4514-9498-647b5df0bd28");
+      }
     } on FirebaseAuthException catch (e) {
       print(e.toString());
       return e.code;
@@ -88,9 +94,29 @@ class SignProvider extends ChangeNotifier {
       await user.sendEmailVerification();
       await user.updatePhotoURL(
           "https://firebasestorage.googleapis.com/v0/b/myhealth-default-storage/o/blank_photo_profile.png?alt=media&token=b7c09a0d-cd6c-4514-9498-647b5df0bd28");
+      final database = FirebaseDatabase.instance.ref();
+      try {
+        await database.update({
+          "nik/" + user.uid: "Kosong",
+          "fullname/" + user.uid: "Kosong",
+          "birthplace/" + user.uid: "Kosong",
+          "birthdate/" + user.uid: "Kosong",
+          "gender/" + user.uid: "Kosong",
+          "address/" + user.uid: "Kosong",
+          "city/" + user.uid: "Kosong",
+          "zipcode/" + user.uid: "Kosong",
+          "phonenumber/" + user.uid: "Kosong",
+          "job/" + user.uid: "Kosong"
+        });
+      } catch (e) {
+        print(e.toString());
+        return e.toString();
+      }
+
       await logout();
     } catch (e) {
       print(e.toString());
+      return e.toString();
     }
 
     return "true";

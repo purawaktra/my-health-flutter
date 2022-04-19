@@ -144,7 +144,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
         return null;
       }
-      UploadTask uploadTask;
       final metadata = SettableMetadata(
         contentType: 'image/jpeg',
         customMetadata: {'picked-file-path': file.path},
@@ -155,15 +154,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           .child('/' + user.uid + '.jpg');
 
       try {
-        uploadTask = ref.putData(await file.readAsBytes(), metadata);
+        await ref.putData(await file.readAsBytes(), metadata);
       } catch (e) {
         print(e);
         try {
-          uploadTask = ref.putFile(File(file.path), metadata);
+          await ref.putFile(File(file.path), metadata);
         } catch (e) {
           print(e);
         }
       }
+
       final link = await ref.getDownloadURL();
       return link;
     }
