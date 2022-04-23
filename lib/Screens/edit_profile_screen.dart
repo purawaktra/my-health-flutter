@@ -134,7 +134,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    uploadFile(XFile? file) async {
+    uploadPhotoProfile(XFile? file) async {
       if (file == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -677,7 +677,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       onPressed: () async {
                         final XFile? file = await ImagePicker()
                             .pickImage(source: ImageSource.gallery);
-                        String? photoURL = await uploadFile(file);
+                        String? photoURL = await uploadPhotoProfile(file);
                         await user.updatePhotoURL(photoURL);
 
                         final snackBar = SnackBar(

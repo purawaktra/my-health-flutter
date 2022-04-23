@@ -1,8 +1,13 @@
 import 'package:double_back_to_close/double_back_to_close.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:myhealth/Screens/account_information_screen.dart';
+import 'package:myhealth/Screens/health_record_access_screen.dart';
+import 'package:myhealth/Screens/health_record_screen.dart';
 import 'package:myhealth/Screens/onboarding_screen.dart';
 import 'package:myhealth/Screens/profile_screen.dart';
+import 'package:myhealth/Screens/setting_screen.dart';
+import 'package:myhealth/Screens/shared_health_record.dart';
 import 'package:myhealth/constants.dart';
 import 'package:provider/provider.dart';
 
@@ -108,7 +113,8 @@ class DashboardScreen extends StatelessWidget {
                             child: InkWell(
                               onTap: () => Navigator.of(context).push(
                                   MaterialPageRoute(
-                                      builder: (context) => ProfileScreen())),
+                                      builder: (context) =>
+                                          HealthRecordScreen())),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -122,7 +128,7 @@ class DashboardScreen extends StatelessWidget {
                                     width: 12,
                                   ),
                                   Text(
-                                    "Rekam \nMedis",
+                                    "Rekam \nMedisku",
                                     style: TextStyle(
                                       fontSize: 24,
                                       overflow: TextOverflow.ellipsis,
@@ -178,143 +184,167 @@ class DashboardScreen extends StatelessWidget {
                             Card(
                               elevation: 4,
                               color: kLightBlue2,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/images/dashboard_2.png",
-                                    width: 80,
-                                    height: 80,
-                                  ),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                  Text(
-                                    "Informasi \nAkun",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      overflow: TextOverflow.ellipsis,
+                              child: InkWell(
+                                onTap: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            AccountInformationScreen())),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Image.asset(
+                                      "assets/images/dashboard_2.png",
+                                      width: 80,
+                                      height: 80,
                                     ),
-                                  )
-                                ],
+                                    SizedBox(
+                                      height: 8,
+                                    ),
+                                    Text(
+                                      "Informasi \nAkun",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                             Card(
                               color: kLightBlue2,
                               elevation: 4,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/images/dashboard_3.png",
-                                    width: 80,
-                                    height: 80,
-                                  ),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                  Text(
-                                    "Izin Akses \nRekam Medis",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      overflow: TextOverflow.ellipsis,
+                              child: InkWell(
+                                onTap: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            HealthRecordAccessScreen())),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Image.asset(
+                                      "assets/images/dashboard_3.png",
+                                      width: 80,
+                                      height: 80,
                                     ),
-                                  )
-                                ],
+                                    SizedBox(
+                                      height: 8,
+                                    ),
+                                    Text(
+                                      "Bagikan\nRekam Medis",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                             Card(
                               color: kLightBlue2,
                               elevation: 4,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/images/dashboard_4.png",
-                                    width: 80,
-                                    height: 80,
-                                  ),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                  Text(
-                                    "Rekam Medis\n yang Dibagikan",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      overflow: TextOverflow.ellipsis,
+                              child: InkWell(
+                                onTap: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            SharedHealthRecordScreen())),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Image.asset(
+                                      "assets/images/dashboard_4.png",
+                                      width: 80,
+                                      height: 80,
                                     ),
-                                  )
-                                ],
+                                    SizedBox(
+                                      height: 8,
+                                    ),
+                                    Text(
+                                      "Dibagikan\nKepada Saya",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                             Card(
                               elevation: 4,
                               color: kLightBlue2,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Image.asset(
-                                    "assets/images/dashboard_5.png",
-                                    width: 80,
-                                    height: 80,
-                                  ),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                  Text(
-                                    "Informasi dan\nPengaturan",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      overflow: TextOverflow.ellipsis,
+                              child: InkWell(
+                                onTap: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) => SettingScreen())),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Image.asset(
+                                      "assets/images/dashboard_5.png",
+                                      width: 80,
+                                      height: 80,
                                     ),
-                                  )
-                                ],
+                                    SizedBox(
+                                      height: 8,
+                                    ),
+                                    Text(
+                                      "Informasi dan\nPengaturan",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
-                            GestureDetector(
-                              onTap: () async {
-                                final snackBar = SnackBar(
-                                  content: const Text("Sedang memuat...",
-                                      style: TextStyle(color: Colors.black)),
-                                  backgroundColor: Color(0xFFF8B501),
-                                );
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(snackBar);
-
-                                final provider = Provider.of<SignProvider>(
-                                    context,
-                                    listen: false);
-                                String logoutstate = await provider.logout();
-                                if (logoutstate == "true") {
-                                  if (FirebaseAuth.instance.currentUser !=
-                                      null) {
-                                    Navigator.of(context).pushReplacement(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                OnboardingScreen()));
-                                  }
-                                } else if (logoutstate == "false") {
+                            Card(
+                              color: kLightBlue2,
+                              elevation: 4,
+                              child: InkWell(
+                                onTap: () async {
                                   final snackBar = SnackBar(
-                                    content: const Text(
-                                        "Gagal untuk logout, silahkan coba kembali.",
+                                    content: const Text("Sedang memuat...",
                                         style: TextStyle(color: Colors.black)),
                                     backgroundColor: Color(0xFFF8B501),
                                   );
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(snackBar);
-                                }
-                              },
-                              child: Card(
-                                color: kLightBlue2,
-                                elevation: 4,
+
+                                  final provider = Provider.of<SignProvider>(
+                                      context,
+                                      listen: false);
+                                  String logoutstate = await provider.logout();
+                                  if (logoutstate == "true") {
+                                    if (FirebaseAuth.instance.currentUser !=
+                                        null) {
+                                      Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  OnboardingScreen()));
+                                    }
+                                  } else if (logoutstate == "false") {
+                                    final snackBar = SnackBar(
+                                      content: const Text(
+                                          "Gagal untuk logout, silahkan coba kembali.",
+                                          style:
+                                              TextStyle(color: Colors.black)),
+                                      backgroundColor: Color(0xFFF8B501),
+                                    );
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
+                                  }
+                                },
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -328,7 +358,7 @@ class DashboardScreen extends StatelessWidget {
                                       height: 8,
                                     ),
                                     Text(
-                                      "Keluar dan\nLogout",
+                                      "Informasi \nPribadi",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 16,

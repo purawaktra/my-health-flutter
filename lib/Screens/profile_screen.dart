@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -398,7 +397,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
 
     return Background(
-      title: "Data Pribadi",
+      title: "Informasi Pribadi",
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
