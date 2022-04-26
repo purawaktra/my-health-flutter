@@ -10,13 +10,43 @@ import 'package:myhealth/Screens/setting_screen.dart';
 import 'package:myhealth/Screens/shared_health_record.dart';
 import 'package:myhealth/constants.dart';
 import 'package:provider/provider.dart';
-
+import 'package:permission_handler/permission_handler.dart';
 import '../components/sign_method.dart';
 
-class DashboardScreen extends StatelessWidget {
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({Key? key}) : super(key: key);
+  @override
+  _DashboardScreenState createState() => _DashboardScreenState();
+}
 
-  get kYellow => null;
+class _DashboardScreenState extends State<DashboardScreen> {
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  PermissionStatus _permissionStatus = PermissionStatus.denied;
+
+  Future<void> requestPermission() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.location,
+      Permission.storage,
+    ].request();
+
+    if (statuses[Permission.location] == PermissionStatus.granted) {
+      if (statuses[Permission.storage] == PermissionStatus.granted) {
+        setState(() {
+          print(statuses);
+          _permissionStatus = PermissionStatus.granted;
+          print(_permissionStatus);
+        });
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    // ignore: todo
+    // TODO: implement initState
+    super.initState();
+    requestPermission();
+  }
 
   @override
   Widget build(BuildContext context) {

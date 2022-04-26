@@ -1,6 +1,8 @@
 import 'package:double_back_to_close/double_back_to_close.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:myhealth/Screens/dashboard_screen.dart';
 import 'package:myhealth/Screens/email_signup_screen.dart';
 import 'package:myhealth/components/sign_method.dart';
 import 'package:myhealth/constants.dart';
@@ -89,10 +91,49 @@ class RegistrationScreen extends StatelessWidget {
                           color: kBlack,
                         ),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         final provider =
                             Provider.of<SignProvider>(context, listen: false);
-                        provider.googleLogin();
+                        String loginstate = await provider.googleLogin();
+                        if (loginstate == "true") {
+                          if (FirebaseAuth.instance.currentUser != null) {
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (context) => DashboardScreen()),
+                                (Route<dynamic> route) => false);
+                          } else {
+                            final snackBar = SnackBar(
+                              content: const Text(
+                                  "Fail to fetch data, cek koneksi anda!",
+                                  style: TextStyle(color: Colors.black)),
+                              backgroundColor: kYellow,
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          }
+                        } else if (loginstate == "email-not-verified") {
+                          final snackBar = SnackBar(
+                            content: const Text(
+                                "Link verifikasi email telah dikirim.",
+                                style: TextStyle(color: Colors.black)),
+                            backgroundColor: kYellow,
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        } else if (loginstate == "failed-to-sign") {
+                          final snackBar = SnackBar(
+                            content: const Text("Akun google tidak terpilih.",
+                                style: TextStyle(color: Colors.black)),
+                            backgroundColor: kYellow,
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        } else if (loginstate == "false") {
+                          final snackBar = SnackBar(
+                            content: const Text("Terjadi eror, ulangi kembali.",
+                                style: TextStyle(color: Colors.black)),
+                            backgroundColor: kYellow,
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        }
                       }),
                   SizedBox(height: 20),
                   RichText(

@@ -44,6 +44,9 @@ dependencies:
   smooth_page_indicator: ^1.0.0+2
   image_picker: ^0.8.5
   firebase_storage: ^10.2.12
+  path_provider: ^2.0.9
+  permission_handler: ^9.2.0
+  file_picker: ^4.5.1
 
 dev_dependencies:
   flutter_test:

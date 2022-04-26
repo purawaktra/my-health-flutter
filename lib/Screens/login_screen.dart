@@ -136,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     (Route<dynamic> route) => false);
               } else {
                 final snackBar = SnackBar(
-                  content: const Text("'Fail to fetch data, cek koneksi anda!'",
+                  content: const Text("Fail to fetch data, cek koneksi anda!",
                       style: TextStyle(color: Colors.black)),
                   backgroundColor: kYellow,
                 );
@@ -254,11 +254,59 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: kBlack,
                                 decoration: TextDecoration.underline),
                             recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                final providerGoogleLogin =
-                                    Provider.of<SignProvider>(context,
-                                        listen: false);
-                                providerGoogleLogin.googleLogin();
+                              ..onTap = () async {
+                                final provider = Provider.of<SignProvider>(
+                                    context,
+                                    listen: false);
+                                String loginstate =
+                                    await provider.googleLogin();
+                                if (loginstate == "true") {
+                                  if (FirebaseAuth.instance.currentUser !=
+                                      null) {
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                DashboardScreen()),
+                                        (Route<dynamic> route) => false);
+                                  } else {
+                                    final snackBar = SnackBar(
+                                      content: const Text(
+                                          "Fail to fetch data, cek koneksi anda!",
+                                          style:
+                                              TextStyle(color: Colors.black)),
+                                      backgroundColor: kYellow,
+                                    );
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
+                                  }
+                                } else if (loginstate == "email-not-verified") {
+                                  final snackBar = SnackBar(
+                                    content: const Text(
+                                        "Link verifikasi email telah dikirim.",
+                                        style: TextStyle(color: Colors.black)),
+                                    backgroundColor: kYellow,
+                                  );
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
+                                } else if (loginstate == "failed-to-sign") {
+                                  final snackBar = SnackBar(
+                                    content: const Text(
+                                        "Akun google tidak terpilih.",
+                                        style: TextStyle(color: Colors.black)),
+                                    backgroundColor: kYellow,
+                                  );
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
+                                } else if (loginstate == "false") {
+                                  final snackBar = SnackBar(
+                                    content: const Text(
+                                        "Terjadi eror, ulangi kembali.",
+                                        style: TextStyle(color: Colors.black)),
+                                    backgroundColor: kYellow,
+                                  );
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
+                                }
                               },
                           ),
                         ],

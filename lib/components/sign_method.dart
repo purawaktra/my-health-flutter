@@ -10,10 +10,10 @@ class SignProvider extends ChangeNotifier {
 
   GoogleSignInAccount get user => _user!;
 
-  Future googleLogin() async {
+  Future<String> googleLogin() async {
     try {
       final googleUser = await googleSignIn.signIn();
-      if (googleUser == null) return;
+      if (googleUser == null) return "failed-to-sign";
       _user = googleUser;
 
       final googleAuth = await googleUser.authentication;
@@ -24,11 +24,24 @@ class SignProvider extends ChangeNotifier {
       );
 
       await FirebaseAuth.instance.signInWithCredential(credential);
+      try {
+        final user = FirebaseAuth.instance.currentUser!;
+        if (!user.emailVerified) {
+          user.sendEmailVerification();
+          await logout();
+          return "email-not-verified";
+        } else {
+          notifyListeners();
+          return "true";
+        }
+      } catch (e) {
+        print(e.toString());
+        return "false";
+      }
     } catch (e) {
       print(e.toString());
+      return "false";
     }
-
-    notifyListeners();
   }
 
   Future<String> emailLogin(String email, String password) async {

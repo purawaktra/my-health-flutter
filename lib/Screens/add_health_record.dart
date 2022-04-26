@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -18,17 +19,27 @@ class _AddHealthRecordScreenState extends State<AddHealthRecordScreen> {
   final user = FirebaseAuth.instance.currentUser!;
   final database = FirebaseDatabase.instance.ref();
 
-  Future<XFile?> pickFile() async {
-    XFile? pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.camera,
-      maxWidth: 1800,
-      maxHeight: 1800,
-    );
-    return pickedFile;
+  File? filePicked;
+  String extension = ".dat";
+  Future<bool> pickFile() async {
+    bool status = false;
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles();
+      final fileTemporary = File(result!.files.single.path.toString());
+      setState(() {
+        this.filePicked = fileTemporary;
+        this.extension = "." + result.files.single.extension.toString();
+        print(this.extension);
+      });
+      status = true;
+    } catch (e) {
+      print(e);
+    }
+    return status;
   }
 
-  File? image;
-  Future pickImage(ImageSource source) async {
+  Future<bool> pickImage(ImageSource source) async {
+    bool status = false;
     try {
       final image = await ImagePicker().pickImage(
         source: source,
@@ -37,11 +48,14 @@ class _AddHealthRecordScreenState extends State<AddHealthRecordScreen> {
       );
       final imageTemporary = File(image!.path);
       setState(() {
-        this.image = imageTemporary;
+        this.filePicked = imageTemporary;
+        this.extension = ".jpg";
       });
-    } on Exception catch (e) {
+      status = true;
+    } catch (e) {
       print(e);
     }
+    return status;
   }
 
   @override
@@ -50,7 +64,7 @@ class _AddHealthRecordScreenState extends State<AddHealthRecordScreen> {
     final nameField = TextFormField(
       autofocus: false,
       controller: nameController,
-      keyboardType: TextInputType.number,
+      keyboardType: TextInputType.text,
       style: TextStyle(color: kBlack),
       validator: (value) {
         if (value!.isEmpty) {
@@ -194,11 +208,11 @@ class _AddHealthRecordScreenState extends State<AddHealthRecordScreen> {
             .child('/' + uniquePushID + '.jpg');
 
         try {
-          await healthRecordref.putData(await image!.readAsBytes());
+          await healthRecordref.putData(await filePicked!.readAsBytes());
         } catch (e) {
           print(e);
           try {
-            await healthRecordref.putFile(File(image!.path));
+            await healthRecordref.putFile(File(filePicked!.path));
           } catch (e) {
             print(e);
             return false;
@@ -230,13 +244,32 @@ class _AddHealthRecordScreenState extends State<AddHealthRecordScreen> {
         title: "Rekam Medis Baru",
         child: SingleChildScrollView(
             child: Padding(
-                padding: const EdgeInsets.all(24.0),
+                padding: const EdgeInsets.all(12.0),
                 child: Container(
                     alignment: Alignment.center,
                     child: Column(
                       children: [
                         InkWell(
-                          onTap: () => pickImage(ImageSource.camera),
+                          onTap: () async {
+                            bool status = await pickImage(ImageSource.camera);
+                            if (status) {
+                              final snackBar = SnackBar(
+                                content: const Text("Photo terpilih.",
+                                    style: TextStyle(color: Colors.black)),
+                                backgroundColor: kYellow,
+                              );
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
+                            } else {
+                              final snackBar = SnackBar(
+                                content: const Text("Dibatalkan.",
+                                    style: TextStyle(color: Colors.black)),
+                                backgroundColor: kYellow,
+                              );
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
+                            }
+                          },
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -289,7 +322,98 @@ class _AddHealthRecordScreenState extends State<AddHealthRecordScreen> {
                           ),
                         ),
                         InkWell(
-                          onTap: () => pickImage(ImageSource.gallery),
+                          onTap: () async {
+                            bool status = await pickImage(ImageSource.gallery);
+                            if (status) {
+                              final snackBar = SnackBar(
+                                content: const Text("Photo terpilih.",
+                                    style: TextStyle(color: Colors.black)),
+                                backgroundColor: kYellow,
+                              );
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
+                            } else {
+                              final snackBar = SnackBar(
+                                content: const Text("Dibatalkan.",
+                                    style: TextStyle(color: Colors.black)),
+                                backgroundColor: kYellow,
+                              );
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
+                            }
+                          },
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 80,
+                                width: 80,
+                                child: Card(
+                                  color: kLightBlue2,
+                                  elevation: 4,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.photo_album_outlined,
+                                        color: kBlack,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Pilih Photo',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Ambil photo dari galeri android.",
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () async {
+                            bool status = await pickFile();
+                            if (status) {
+                              final snackBar = SnackBar(
+                                content: const Text("File terpilih.",
+                                    style: TextStyle(color: Colors.black)),
+                                backgroundColor: kYellow,
+                              );
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
+                            } else {
+                              final snackBar = SnackBar(
+                                content: const Text("Dibatalkan.",
+                                    style: TextStyle(color: Colors.black)),
+                                backgroundColor: kYellow,
+                              );
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
+                            }
+                          },
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -322,7 +446,7 @@ class _AddHealthRecordScreenState extends State<AddHealthRecordScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Pilih Dokumen',
+                                      'Pilih File',
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 18,
@@ -330,7 +454,7 @@ class _AddHealthRecordScreenState extends State<AddHealthRecordScreen> {
                                       ),
                                     ),
                                     Text(
-                                      "Ambil dokumen dari penyimpanan android.",
+                                      "Ambil file dari penyimpanan android.",
                                       style: TextStyle(
                                         color: Colors.black54,
                                       ),
@@ -350,33 +474,38 @@ class _AddHealthRecordScreenState extends State<AddHealthRecordScreen> {
                         SizedBox(
                           height: 10,
                         ),
-                        image != null
-                            ? Container(
-                                child: Column(
-                                  children: [
-                                    // Text(
-                                    //   'File dan/atau Gambar Terpilih.',
-                                    //   style: TextStyle(
-                                    //     color: Colors.black54,
-                                    //     overflow: TextOverflow.ellipsis,
-                                    //   ),
-                                    // ),
-                                    Image.file(
-                                      image!,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : Align(
+                        if (filePicked != null)
+                          if (extension == ".jpg")
+                            Container(
+                              child: Column(
+                                children: [
+                                  Image.file(
+                                    filePicked!,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ],
+                              ),
+                            )
+                          else
+                            Align(
                                 alignment: Alignment.topLeft,
                                 child: Text(
-                                  'Tidak ada file dan/atau gambar terpilih.',
+                                  'File dengan extensi $extension terpilih.',
                                   style: TextStyle(
                                     color: Colors.black54,
                                   ),
-                                ),
+                                ))
+                        else
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              'Tidak ada file dan/atau gambar terpilih.',
+                              style: TextStyle(
+                                color: Colors.black54,
                               ),
+                            ),
+                          ),
+
                         // FutureBuilder<XFile?>(
                         //   future:
                         //       pickFile(), // a previously-obtained Future<String> or null
@@ -433,6 +562,7 @@ class _AddHealthRecordScreenState extends State<AddHealthRecordScreen> {
                               );
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(snackBar);
+                              Navigator.of(context).pop();
                             } else {
                               final snackBar = SnackBar(
                                 content: const Text(
