@@ -4,18 +4,22 @@ import 'navigation_drawer.dart';
 
 class Background extends StatelessWidget {
   final Widget child;
+  final Widget description;
   final String title;
   const Background({
     Key? key,
     required this.child,
     required this.title,
+    required this.description,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      drawer: NavigationDrawerWidget(),
+      drawer: NavigationDrawerWidget(
+        child: description,
+      ),
       appBar: AppBar(
         backgroundColor: kLightBlue1,
         title: Text(title),

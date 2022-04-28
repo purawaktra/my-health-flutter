@@ -6,9 +6,12 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:myhealth/Screens/add_health_record.dart';
+import 'package:myhealth/Screens/edit_health_record.dart';
 import 'package:myhealth/components/background.dart';
 import 'package:myhealth/constants.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:tap_debouncer/tap_debouncer.dart';
+import 'package:share_plus/share_plus.dart';
 
 class HealthRecordScreen extends StatefulWidget {
   const HealthRecordScreen({Key? key}) : super(key: key);
@@ -21,48 +24,19 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
   final database = FirebaseDatabase.instance.ref();
   final storage = FirebaseStorage.instance.ref();
   Directory? _externalDocumentsDirectory;
-  String aa = "aa";
-
-  late StreamSubscription userFullnameStream;
-  String displayTextUserFullname = "Belum diatur";
 
   Future<Iterable<DataSnapshot>> getdata() async {
     DataSnapshot healthRecordRef = await database
         .child("health-record")
         .child(user.uid)
-        .limitToFirst(2)
+        .limitToFirst(20)
         .get();
     Iterable<DataSnapshot> a = healthRecordRef.children;
-    // for (DataSnapshot imageSnapshot in a) {
-    //   print(imageSnapshot.key.toString());
-    // }
     return a;
   }
 
-  bool _allowWriteFile = false;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   requestWritePermission();
-  // }
-
-// Platform messages are asynchronous, so we initialize in an async method.
-//   requestWritePermission() async {
-//     PermissionStatus permissionStatus =
-//         await SimplePermissions.requestPermission(
-//             Permission.WriteExternalStorage);
-
-//     if (permissionStatus == PermissionStatus.authorized) {
-//       setState(() {
-//         _allowWriteFile = true;
-//       });
-//     }
-//   }
-
-  Future<bool> downloadFile(String uniquePushID, String name) async {
-    //First you get the documents folder location on the device...
-    bool result = false;
+  Future<String> downloadFile(String uniquePushID, String filename) async {
+    String result = "false";
     try {
       _externalDocumentsDirectory = await getExternalStorageDirectory();
       print(_externalDocumentsDirectory!.path);
@@ -70,19 +44,16 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
       print(e);
       return result;
     }
-    //Here you'll specify the file it should be saved as
     File downloadToFile =
-        File('${_externalDocumentsDirectory!.path}/$name.jpg');
-    //Here you'll specify the file it should download from Cloud Storage
-
-    //Now you can try to download the specified file, and write it to the downloadToFile.
+        File('${_externalDocumentsDirectory!.path}/$filename');
     try {
       await storage
           .child('health-record')
           .child(uniquePushID)
-          .child('/' + name + ".jpg")
+          .child('/' + uniquePushID)
           .writeToFile(downloadToFile);
-      result = true;
+
+      result = '${_externalDocumentsDirectory!.path}/$filename';
     } on FirebaseException catch (e) {
       // e.g, e.code == 'canceled'
       print('Download error: $e');
@@ -90,10 +61,17 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
     return result;
   }
 
+  String displayTextID = "go";
   @override
   Widget build(BuildContext context) {
+    Future<Iterable<DataSnapshot>> streamData = getdata();
+    setState(() {
+      displayTextID = "Letsgo";
+    });
+
     return Background(
         title: "Rekam Medisku",
+        description: Text("Deskripsi kosong."),
         child: SingleChildScrollView(
           child: Column(children: <Widget>[
             Padding(
@@ -101,8 +79,14 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
               child: Column(
                 children: [
                   InkWell(
-                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => AddHealthRecordScreen())),
+                    onTap: () => Navigator.of(context)
+                        .push(MaterialPageRoute(
+                            builder: (context) => AddHealthRecordScreen()))
+                        .whenComplete(() {
+                      setState(() {
+                        streamData = getdata();
+                      });
+                    }),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -118,7 +102,7 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
                                 Icon(
-                                  Icons.edit,
+                                  Icons.add_box_outlined,
                                   color: kBlack,
                                 )
                               ],
@@ -154,9 +138,11 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                     ),
                   ),
                   InkWell(
-                    onTap: () => Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                            builder: (context) => HealthRecordScreen())),
+                    onTap: () {
+                      setState(() {
+                        streamData = getdata();
+                      });
+                    },
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -217,7 +203,7 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
               ),
             ),
             FutureBuilder<Iterable<DataSnapshot>>(
-                future: getdata(),
+                future: streamData,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
@@ -231,72 +217,26 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                         for (DataSnapshot healthRecordSnapshot
                             in healthRecordData)
                           ExpansionTile(
-                            title: StreamBuilder<DatabaseEvent>(
-                                stream: database
-                                    .child('health-record')
-                                    .child(user.uid)
-                                    .child(healthRecordSnapshot.key!)
-                                    .child("name")
-                                    .onValue,
-                                builder: (context, snapshot) {
-                                  Widget child;
-                                  if (snapshot.hasError) {
-                                    child = Text(
-                                      healthRecordSnapshot.children.toString(),
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    );
-                                  } else {
-                                    switch (snapshot.connectionState) {
-                                      case ConnectionState.none:
-                                        child = Text(
-                                          "Sedang memuat...",
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                        break;
-                                      case ConnectionState.waiting:
-                                        child = Text(
-                                          "Sedang memuat...",
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                        break;
-                                      case ConnectionState.active:
-                                        child = Text(
-                                          snapshot.data!.snapshot.value
-                                              .toString(),
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                        break;
-                                      case ConnectionState.done:
-                                        child = Text(
-                                          snapshot.data!.snapshot.value
-                                              .toString(),
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                        break;
-                                    }
-                                  }
-                                  return child;
-                                }),
+                            title: Builder(builder: (BuildContext context) {
+                              Widget child = Text("Memuat...",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                    overflow: TextOverflow.ellipsis,
+                                  ));
+                              for (DataSnapshot itemSnapshot
+                                  in healthRecordSnapshot.children)
+                                if (itemSnapshot.key.toString() == "name")
+                                  child = Text(
+                                    itemSnapshot.value.toString(),
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  );
+                              return child;
+                            }),
                             subtitle: Text(
                               healthRecordSnapshot.key!,
                               style: TextStyle(
@@ -305,6 +245,225 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                               ),
                             ),
                             children: <Widget>[
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 12, right: 12),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      height: 60,
+                                      width: 60,
+                                      child: Card(
+                                        color: kLightBlue2,
+                                        elevation: 4,
+                                        child: TapDebouncer(
+                                          onTap: () async {
+                                            final snackBar = SnackBar(
+                                              content: const Text(
+                                                  "Sedang memuat...",
+                                                  style: TextStyle(
+                                                      color: Colors.black)),
+                                              backgroundColor: kYellow,
+                                            );
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(snackBar);
+
+                                            for (DataSnapshot itemSnapshot2
+                                                in healthRecordSnapshot
+                                                    .children)
+                                              if (itemSnapshot2.key
+                                                      .toString() ==
+                                                  "filename") {
+                                                String result =
+                                                    await downloadFile(
+                                                        healthRecordSnapshot
+                                                            .key!,
+                                                        itemSnapshot2.value
+                                                            .toString());
+                                                print(result);
+                                                if (result != "false") {
+                                                  Share.shareFiles([result]);
+                                                  final snackBar = SnackBar(
+                                                    content: const Text(
+                                                        "Download berhasil.",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.black)),
+                                                    backgroundColor: kYellow,
+                                                  );
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(snackBar);
+                                                } else {
+                                                  final snackBar = SnackBar(
+                                                    content: const Text(
+                                                        "Download gagal, silahkan cek koneksi anda.",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.black)),
+                                                    backgroundColor: kYellow,
+                                                  );
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(snackBar);
+                                                }
+                                              }
+                                          },
+                                          builder: (BuildContext context,
+                                              TapDebouncerFunc? onTap) {
+                                            return InkWell(
+                                              onTap: onTap,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Icon(
+                                                    Icons.save_alt_outlined,
+                                                    color: kBlack,
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 60,
+                                      width: 60,
+                                      child: Card(
+                                        color: kLightBlue2,
+                                        elevation: 4,
+                                        child: InkWell(
+                                          onTap: () {
+                                            Navigator.of(context)
+                                                .push(MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        EditHealthRecordScreen(
+                                                          healthRecord:
+                                                              healthRecordSnapshot,
+                                                        )))
+                                                .whenComplete(() {
+                                              setState(() {
+                                                streamData = getdata();
+                                              });
+                                            });
+                                          },
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Icon(
+                                                Icons.edit,
+                                                color: kBlack,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 60,
+                                      width: 60,
+                                      child: Card(
+                                        color: kRed,
+                                        elevation: 4,
+                                        child: InkWell(
+                                          onTap: () {
+                                            final snackBar = SnackBar(
+                                              content: const Text(
+                                                  "Double klik untuk menghapus.",
+                                                  style: TextStyle(
+                                                      color: Colors.black)),
+                                              backgroundColor: kYellow,
+                                            );
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(snackBar);
+                                          },
+                                          onDoubleTap: () async {
+                                            try {
+                                              await storage
+                                                  .child('health-record')
+                                                  .child(
+                                                      healthRecordSnapshot.key!)
+                                                  .child(
+                                                      healthRecordSnapshot.key!)
+                                                  .delete();
+                                              await database
+                                                  .child("health-record")
+                                                  .child(user.uid)
+                                                  .child(
+                                                      healthRecordSnapshot.key!)
+                                                  .remove();
+                                              final snackBar = SnackBar(
+                                                content: const Text(
+                                                    "Hapus berhasil.",
+                                                    style: TextStyle(
+                                                        color: Colors.black)),
+                                                backgroundColor: kYellow,
+                                              );
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(snackBar);
+                                              setState(() {
+                                                streamData = getdata();
+                                              });
+                                            } catch (e) {
+                                              print(e.toString());
+                                              final snackBar = SnackBar(
+                                                content: const Text(
+                                                    "Hapus gagal, cek koneksi anda.",
+                                                    style: TextStyle(
+                                                        color: Colors.black)),
+                                                backgroundColor: kYellow,
+                                              );
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(snackBar);
+                                            }
+                                          },
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Icon(
+                                                Icons.delete,
+                                                color: kWhite,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Unduh, edit, dan hapus rekam medis.",
+                                            style: TextStyle(
+                                              color: Colors.black54,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
                               for (DataSnapshot itemSnapshot
                                   in healthRecordSnapshot.children)
                                 if (itemSnapshot.key.toString() != "name")
@@ -317,65 +476,15 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                         Icons.settings,
                                         color: kBlack,
                                       );
+                                      int? maxLines = 1;
                                       String title = "Not defined";
                                       if (itemSnapshot.key.toString() ==
-                                          "url") {
-                                        return Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 24, right: 8),
-                                          child: Align(
-                                            alignment: Alignment.topLeft,
-                                            child: ElevatedButton(
-                                                onPressed: () async {
-                                                  final snackBar = SnackBar(
-                                                    content: const Text(
-                                                        "Sedang memuat...",
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.black)),
-                                                    backgroundColor: kYellow,
-                                                  );
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(snackBar);
-                                                  bool result =
-                                                      await downloadFile(
-                                                          healthRecordSnapshot
-                                                              .key!,
-                                                          healthRecordSnapshot
-                                                              .key!);
-                                                  if (result) {
-                                                    final snackBar = SnackBar(
-                                                      content: const Text(
-                                                          "Download berhasil.",
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .black)),
-                                                      backgroundColor: kYellow,
-                                                    );
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(snackBar);
-                                                  } else {
-                                                    final snackBar = SnackBar(
-                                                      content: const Text(
-                                                          "Download gagal, silahkan cek koneksi anda.",
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .black)),
-                                                      backgroundColor: kYellow,
-                                                    );
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(snackBar);
-                                                  }
-                                                },
-                                                child: Text(
-                                                  "Download Rekam Medis",
-                                                  style:
-                                                      TextStyle(color: kWhite),
-                                                )),
-                                          ),
+                                          "filename") {
+                                        icons = Icon(
+                                          Icons.description_outlined,
+                                          color: kBlack,
                                         );
+                                        title = "Nama File";
                                       } else if (itemSnapshot.key.toString() ==
                                           "creationdate") {
                                         icons = Icon(
@@ -397,6 +506,7 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                           color: kBlack,
                                         );
                                         title = "Deskripsi";
+                                        maxLines = null;
                                       } else if (itemSnapshot.key.toString() ==
                                           "tag") {
                                         icons = Icon(
@@ -408,6 +518,7 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                       return TextFormField(
                                         autofocus: false,
                                         readOnly: true,
+                                        maxLines: maxLines,
                                         controller: TextEditingController(
                                             text:
                                                 itemSnapshot.value.toString()),
@@ -424,37 +535,11 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                         ),
                                       );
                                     }),
-                                  )
+                                  ),
                             ],
                           )
                       ],
                     );
-                    // return Flexible(
-                    //     child: ListView.builder(
-                    //         scrollDirection: Axis.vertical,
-                    //         itemCount: 15,
-                    //         itemBuilder: (BuildContext context, int index) {
-                    //           return ExpansionTile(
-                    //             title: Text(
-                    //               "gg",
-                    //               style: TextStyle(
-                    //                 color: Colors.black,
-                    //                 fontSize: 18,
-                    //                 overflow: TextOverflow.ellipsis,
-                    //               ),
-                    //             ),
-                    //             subtitle: Text(
-                    //               'Trailing expansion arrow icon',
-                    //               style: TextStyle(
-                    //                 color: Colors.black54,
-                    //                 overflow: TextOverflow.ellipsis,
-                    //               ),
-                    //             ),
-                    //             children: <Widget>[
-                    //               ListTile(title: Text('This is tile number 1')),
-                    //             ],
-                    //           );
-                    //         }));
                   }
                 })
           ]),

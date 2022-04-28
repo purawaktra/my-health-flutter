@@ -6,6 +6,7 @@ class HealthRecordAccessScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Background(
         title: "Izin Akses Rekam Medis",
+        description: Text("Deskripsi kosong."),
         child: SingleChildScrollView(
             child: Padding(
                 padding: const EdgeInsets.all(24.0), child: Container())));

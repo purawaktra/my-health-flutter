@@ -575,6 +575,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     return Background(
       title: "Edit Data Pribadi",
+      description: Text("Deskripsi kosong."),
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),

@@ -398,6 +398,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Background(
       title: "Informasi Pribadi",
+      description: Text("Deskripsi kosong."),
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),

@@ -53,6 +53,7 @@ class AccountInformationScreen extends StatelessWidget {
     );
     return Background(
         title: "Informasi Akun",
+        description: Text("Deskripsi kosong."),
         child: SingleChildScrollView(
             child: Padding(
           padding: const EdgeInsets.all(24.0),

@@ -6,6 +6,7 @@ class SharedHealthRecordScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Background(
         title: "Dibagikan dengan saya",
+        description: Text("Deskripsi kosong."),
         child: SingleChildScrollView(
             child: Padding(
                 padding: const EdgeInsets.all(24.0), child: Container())));

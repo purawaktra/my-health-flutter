@@ -70,6 +70,7 @@ class _SettingScreen extends State<SettingScreen> {
 
     return Background(
       title: "Informasi dan Pengaturan",
+      description: Text("Deskripsi kosong."),
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
