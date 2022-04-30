@@ -127,6 +127,18 @@ class _HealthRecordAccessScreenState extends State<HealthRecordAccessScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ));
+                  } else if (!snapshot.hasError) {
+                    return Center(
+                        child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Text(
+                        "Sepertinya datanya ga ada, coba buat entry dulu deh :) \n Error code: ${snapshot.error.toString()}",
+                        style: TextStyle(
+                          color: Colors.black54,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ));
                   } else if (!snapshot.hasData) {
                     return Center(
                         child: Text(

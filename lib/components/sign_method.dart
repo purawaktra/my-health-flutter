@@ -10,6 +10,60 @@ class SignProvider extends ChangeNotifier {
 
   GoogleSignInAccount get user => _user!;
 
+  Future<String> googleSignup() async {
+    try {
+      final googleUser = await googleSignIn.signIn();
+      if (googleUser == null) return "failed-to-sign";
+      _user = googleUser;
+
+      final googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      try {
+        final user = FirebaseAuth.instance.currentUser!;
+        final database = FirebaseDatabase.instance.ref();
+        try {
+          await database.update({
+            "nik/" + user.uid: "",
+            "fullname/" + user.uid: "",
+            "birthplace/" + user.uid: "",
+            "birthdate/" + user.uid: "",
+            "gender/" + user.uid: "",
+            "address/" + user.uid: "",
+            "city/" + user.uid: "",
+            "zipcode/" + user.uid: "",
+            "phonenumber/" + user.uid: "",
+            "job/" + user.uid: ""
+          });
+        } catch (e) {
+          print(e.toString());
+          return e.toString();
+        }
+
+        if (!user.emailVerified) {
+          user.sendEmailVerification();
+          await logout();
+          return "email-not-verified";
+        } else {
+          notifyListeners();
+          return "true";
+        }
+      } catch (e) {
+        print(e.toString());
+        return "false";
+      }
+    } catch (e) {
+      print(e.toString());
+      return "false";
+    }
+  }
+
   Future<String> googleLogin() async {
     try {
       final googleUser = await googleSignIn.signIn();
@@ -27,6 +81,24 @@ class SignProvider extends ChangeNotifier {
       try {
         final user = FirebaseAuth.instance.currentUser!;
         if (!user.emailVerified) {
+          final database = FirebaseDatabase.instance.ref();
+          try {
+            await database.update({
+              "nik/" + user.uid: "",
+              "fullname/" + user.uid: "",
+              "birthplace/" + user.uid: "",
+              "birthdate/" + user.uid: "",
+              "gender/" + user.uid: "",
+              "address/" + user.uid: "",
+              "city/" + user.uid: "",
+              "zipcode/" + user.uid: "",
+              "phonenumber/" + user.uid: "",
+              "job/" + user.uid: ""
+            });
+          } catch (e) {
+            print(e.toString());
+            return e.toString();
+          }
           user.sendEmailVerification();
           await logout();
           return "email-not-verified";
@@ -110,16 +182,16 @@ class SignProvider extends ChangeNotifier {
       final database = FirebaseDatabase.instance.ref();
       try {
         await database.update({
-          "nik/" + user.uid: "Kosong",
-          "fullname/" + user.uid: "Kosong",
-          "birthplace/" + user.uid: "Kosong",
-          "birthdate/" + user.uid: "Kosong",
-          "gender/" + user.uid: "Kosong",
-          "address/" + user.uid: "Kosong",
-          "city/" + user.uid: "Kosong",
-          "zipcode/" + user.uid: "Kosong",
-          "phonenumber/" + user.uid: "Kosong",
-          "job/" + user.uid: "Kosong"
+          "nik/" + user.uid: "",
+          "fullname/" + user.uid: "",
+          "birthplace/" + user.uid: "",
+          "birthdate/" + user.uid: "",
+          "gender/" + user.uid: "",
+          "address/" + user.uid: "",
+          "city/" + user.uid: "",
+          "zipcode/" + user.uid: "",
+          "phonenumber/" + user.uid: "",
+          "job/" + user.uid: ""
         });
       } catch (e) {
         print(e.toString());

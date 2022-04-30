@@ -4,7 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:myhealth/Screens/profile_screen.dart';
 import 'package:myhealth/constants.dart';
+import 'package:myhealth/screens/change_password_screen.dart';
+import 'package:myhealth/screens/delete_data_screen.dart';
+import 'package:tap_debouncer/tap_debouncer.dart';
 
 enum WhyFarther { harder, smarter, selfStarter, tradingCharter }
 
@@ -17,6 +21,7 @@ class AccountScreen extends StatefulWidget {
 
 class _AccountScreenState extends State<AccountScreen> {
   final user = FirebaseAuth.instance.currentUser!;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +59,31 @@ class _AccountScreenState extends State<AccountScreen> {
       return link;
     }
 
+    Future<String> _changePassword(
+        String currentPassword, String newPassword) async {
+      String result = "true";
+      final user = FirebaseAuth.instance.currentUser;
+      final cred = EmailAuthProvider.credential(
+          email: user!.email.toString(), password: currentPassword);
+
+      user.reauthenticateWithCredential(cred).then((value) {
+        try {
+          user.updatePassword(newPassword);
+        } on FirebaseAuthException catch (e) {
+          result = e.code;
+        }
+      }).catchError((err) {
+        result = "false";
+      });
+
+      return result;
+    }
+
     var displayPhotoUrl = user.photoURL;
+    var displayNameText = user.displayName;
     late WhyFarther _selection;
+    final TextEditingController displayNameController =
+        new TextEditingController(text: user.displayName);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: kLightBlue1,
@@ -108,15 +136,12 @@ class _AccountScreenState extends State<AccountScreen> {
                       height: 8,
                     ),
                     Text(
-                      user.displayName!,
+                      displayNameText!,
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 24,
                         overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    SizedBox(
-                      height: 2,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -142,7 +167,7 @@ class _AccountScreenState extends State<AccountScreen> {
                             icon: Icon(
                               Icons.copy_outlined,
                               color: Colors.black45,
-                              size: 20,
+                              size: 16,
                             )),
                       ],
                     ),
@@ -173,7 +198,10 @@ class _AccountScreenState extends State<AccountScreen> {
               ),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => ProfileScreen()));
+              },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -182,7 +210,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     width: 10,
                   ),
                   SizedBox(
-                    height: 80,
+                    height: 60,
                     width: 60,
                     child: Icon(
                       Icons.data_array_outlined,
@@ -215,7 +243,85 @@ class _AccountScreenState extends State<AccountScreen> {
               ),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext alertContext) {
+                      return AlertDialog(
+                        content: Stack(
+                          children: <Widget>[
+                            Form(
+                              key: _formKey,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: TextFormField(
+                                      autofocus: false,
+                                      controller: displayNameController,
+                                      style: TextStyle(color: kBlack),
+                                      decoration: InputDecoration(
+                                        prefixIcon: Icon(
+                                          Icons.credit_card,
+                                          color: kBlack,
+                                        ),
+                                        hintText: "Nama tampilan",
+                                        hintStyle:
+                                            TextStyle(color: Colors.black54),
+                                        border: InputBorder.none,
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.never,
+                                      ),
+                                    ),
+                                  ),
+                                  TapDebouncer(
+                                    onTap: () async {
+                                      if (_formKey.currentState!.validate()) {
+                                        _formKey.currentState!.save();
+                                      }
+
+                                      await user
+                                          .updateDisplayName(
+                                              displayNameController.text)
+                                          .whenComplete(() => setState(() {
+                                                displayNameText =
+                                                    displayNameController.text;
+                                              }));
+                                      Navigator.of(alertContext).pop();
+                                      final snackBar = SnackBar(
+                                        content: const Text(
+                                            "Muat ulang untuk melihat perubahan.",
+                                            style:
+                                                TextStyle(color: Colors.black)),
+                                        backgroundColor: kYellow,
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBar);
+                                    },
+                                    builder: (BuildContext context,
+                                        TapDebouncerFunc? onTap) {
+                                      return ElevatedButton(
+                                        onPressed: onTap,
+                                        child: Text(
+                                          "Update Data Pribadi",
+                                          style: TextStyle(color: kWhite),
+                                        ),
+                                        style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all<
+                                                    Color>(kLightBlue1)),
+                                      );
+                                    },
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    });
+              },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -242,7 +348,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 ],
               ),
             ),
-            InkWell(
+            TapDebouncer(
               onTap: () async {
                 final XFile? file =
                     await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -255,18 +361,176 @@ class _AccountScreenState extends State<AccountScreen> {
                   );
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 } else {
-                  final snackBar = SnackBar(
-                    content: const Text("Sedang memuat...",
-                        style: TextStyle(color: Colors.black)),
-                    backgroundColor: kYellow,
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   String? photoURL = await uploadPhotoProfile(file);
                   await user.updatePhotoURL(photoURL);
                   setState(() {
                     displayPhotoUrl = photoURL;
                   });
+                  final snackBar = SnackBar(
+                    content: const Text("Muat ulang untuk melihat perubahan.",
+                        style: TextStyle(color: Colors.black)),
+                    backgroundColor: kYellow,
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 }
+              },
+              builder: (BuildContext context, TapDebouncerFunc? onTap) {
+                return InkWell(
+                  onTap: onTap,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 10,
+                      ),
+                      SizedBox(
+                        height: 60,
+                        width: 60,
+                        child: Icon(
+                          Icons.photo_outlined,
+                          color: kBlack,
+                        ),
+                      ),
+                      Text(
+                        'Ganti foto profil',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 12, right: 12),
+              child: Column(
+                children: [
+                  Divider(
+                    color: Colors.black54,
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 24, top: 10, bottom: 5),
+              child: Text(
+                'Sosial Media',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: kLightBlue1,
+                  fontSize: 18,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {},
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  SizedBox(
+                    height: 60,
+                    width: 60,
+                    child: Icon(
+                      Icons.g_mobiledata,
+                      color: kBlack,
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Google',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Text(
+                          "Tambahkan Google dalam koneksi akun.",
+                          style: TextStyle(
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            InkWell(
+              onTap: () {},
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  SizedBox(
+                    height: 60,
+                    width: 60,
+                    child: Icon(
+                      Icons.email_outlined,
+                      color: kBlack,
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Email',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 12, right: 12),
+              child: Column(
+                children: [
+                  Divider(
+                    color: Colors.black54,
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 24, top: 10, bottom: 5),
+              child: Text(
+                'Keamanan',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: kLightBlue1,
+                  fontSize: 18,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ChangePasswordScreen()));
               },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -279,16 +543,214 @@ class _AccountScreenState extends State<AccountScreen> {
                     height: 60,
                     width: 60,
                     child: Icon(
-                      Icons.photo_outlined,
+                      Icons.password,
                       color: kBlack,
                     ),
                   ),
-                  Text(
-                    'Ganti foto profil',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      overflow: TextOverflow.ellipsis,
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Ubah kata sandi',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => DeleteDataScreen()));
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  SizedBox(
+                    height: 60,
+                    width: 60,
+                    child: Icon(
+                      Icons.delete_outline,
+                      color: kBlack,
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Hapus Data',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Text(
+                          "Menghapus data, dan akun.",
+                          style: TextStyle(
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 12, right: 12),
+              child: Column(
+                children: [
+                  Divider(
+                    color: Colors.black54,
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 24, top: 10, bottom: 5),
+              child: Text(
+                'Bantuan',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: kLightBlue1,
+                  fontSize: 18,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => DeleteDataScreen()));
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  SizedBox(
+                    height: 60,
+                    width: 60,
+                    child: Icon(
+                      Icons.contact_mail_outlined,
+                      color: kBlack,
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Kontak Kami',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Text(
+                          "Pertanyaan? Bantuan?",
+                          style: TextStyle(
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => DeleteDataScreen()));
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  SizedBox(
+                    height: 60,
+                    width: 60,
+                    child: Icon(
+                      Icons.share,
+                      color: kBlack,
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Bagikan Aplikasi',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => DeleteDataScreen()));
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  SizedBox(
+                    height: 60,
+                    width: 60,
+                    child: Icon(
+                      Icons.info_outline,
+                      color: kBlack,
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Info Pengembang',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],

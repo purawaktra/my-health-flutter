@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:myhealth/Screens/edit_profile_screen.dart';
 import 'package:myhealth/components/background.dart';
 import 'package:myhealth/constants.dart';
 
@@ -129,14 +128,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  bool editProfile = true;
+  bool enabledForm = false;
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController nikController =
         new TextEditingController(text: displayTextUserNIK);
     final nikField = TextFormField(
-      enabled: (displayTextUserNIK == "") ? false : true,
+      enabled: enabledForm,
       autofocus: false,
-      readOnly: true,
+      readOnly: editProfile,
       controller: nikController,
       style: TextStyle(color: kBlack),
       decoration: InputDecoration(
@@ -155,9 +157,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final TextEditingController fullnameController =
         new TextEditingController(text: displayTextUserFullname);
     final fullnameField = TextFormField(
-      enabled: (displayTextUserFullname == "") ? false : true,
+      enabled: enabledForm,
       autofocus: false,
-      readOnly: true,
+      readOnly: editProfile,
       controller: fullnameController,
       style: TextStyle(color: kBlack),
       decoration: InputDecoration(
@@ -176,9 +178,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final TextEditingController birthPlaceController =
         new TextEditingController(text: displayTextUserBirthPlace);
     final birthPlaceField = TextFormField(
-      enabled: (displayTextUserBirthPlace == "") ? false : true,
+      enabled: enabledForm,
       autofocus: false,
-      readOnly: true,
+      readOnly: editProfile,
       controller: birthPlaceController,
       style: TextStyle(color: kBlack),
       decoration: InputDecoration(
@@ -198,11 +200,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         text:
             displayTextUserBirthDate); //"${selectedDate.toLocal()}".split(' ')[0]
     final dateField = TextFormField(
-      enabled: (displayTextUserBirthDate == "") ? false : true,
+      enabled: enabledForm,
       autofocus: false,
       controller: dateController,
       showCursor: true,
-      readOnly: true,
+      readOnly: editProfile,
       style: TextStyle(color: kBlack),
       decoration: InputDecoration(
         prefixIcon: Icon(
@@ -220,9 +222,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final TextEditingController genderController =
         new TextEditingController(text: displayTextUserGender);
     final genderField = TextFormField(
-      enabled: (displayTextUserGender == "") ? false : true,
+      enabled: enabledForm,
       autofocus: false,
-      readOnly: true,
+      readOnly: editProfile,
       controller: genderController,
       style: TextStyle(color: kBlack),
       textInputAction: TextInputAction.next,
@@ -242,9 +244,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final TextEditingController addressController =
         new TextEditingController(text: displayTextUserAddress);
     final addressField = TextFormField(
-      enabled: (displayTextUserAddress == "") ? false : true,
+      enabled: enabledForm,
       autofocus: false,
-      readOnly: true,
+      readOnly: editProfile,
       controller: addressController,
       style: TextStyle(color: kBlack),
       textInputAction: TextInputAction.next,
@@ -264,9 +266,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final TextEditingController cityAddressController =
         new TextEditingController(text: displayTextUserCity);
     final cityAddressField = TextFormField(
-      enabled: (displayTextUserCity == "") ? false : true,
+      enabled: enabledForm,
       autofocus: false,
-      readOnly: true,
+      readOnly: editProfile,
       controller: cityAddressController,
       keyboardType: TextInputType.text,
       style: TextStyle(color: kBlack),
@@ -286,9 +288,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final TextEditingController zipCodeController =
         new TextEditingController(text: displayTextUserZipcode);
     final zipCodeField = TextFormField(
-      enabled: (displayTextUserZipcode == "") ? false : true,
+      enabled: enabledForm,
       autofocus: false,
-      readOnly: true,
+      readOnly: editProfile,
       controller: zipCodeController,
       style: TextStyle(color: kBlack),
       decoration: InputDecoration(
@@ -307,9 +309,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final TextEditingController mobilePhoneController =
         new TextEditingController(text: displayTextUserPhoneNumber);
     final mobilePhoneField = TextFormField(
-      enabled: (displayTextUserPhoneNumber == "") ? false : true,
+      enabled: enabledForm,
       autofocus: false,
-      readOnly: true,
+      readOnly: editProfile,
       controller: mobilePhoneController,
       style: TextStyle(color: kBlack),
       decoration: InputDecoration(
@@ -328,9 +330,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final TextEditingController jobStatusController =
         new TextEditingController(text: displayTextUserJob);
     final jobStatusField = TextFormField(
-      enabled: (displayTextUserJob == "") ? false : true,
+      enabled: enabledForm,
       autofocus: false,
-      readOnly: true,
+      readOnly: editProfile,
       controller: jobStatusController,
       style: TextStyle(color: kBlack),
       decoration: InputDecoration(
@@ -349,7 +351,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final TextEditingController userIDController =
         new TextEditingController(text: user.uid);
     final userIDField = TextFormField(
-      enabled: true,
       autofocus: false,
       controller: userIDController,
       readOnly: true,
@@ -370,7 +371,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final TextEditingController displayNameController =
         new TextEditingController(text: user.displayName!);
     final displayNameField = TextFormField(
-      enabled: true,
       autofocus: false,
       readOnly: true,
       controller: displayNameController,
@@ -414,11 +414,95 @@ class _ProfileScreenState extends State<ProfileScreen> {
       description: Text("Deskripsi kosong."),
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.only(left: 24, right: 24, top: 12),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              userIDField,
+              displayNameField,
+              emailField,
+              Divider(
+                color: Colors.black54,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 10, bottom: 5),
+                child: Row(
+                  children: [
+                    Text(
+                      'Akun',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: kLightBlue1,
+                        fontSize: 18,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 24,
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        setState(() {
+                          editProfile = !editProfile;
+                          enabledForm = !enabledForm;
+                        });
+                        if (enabledForm) {
+                          final snackBar = SnackBar(
+                            content: const Text("Edit akun.",
+                                style: TextStyle(color: Colors.black)),
+                            backgroundColor: kYellow,
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        } else {
+                          try {
+                            await database.update({
+                              "nik/" + user.uid: nikController.text,
+                              "fullname/" + user.uid: fullnameController.text,
+                              "birthplace/" + user.uid:
+                                  birthPlaceController.text,
+                              "birthdate/" + user.uid: dateController.text,
+                              "gender/" + user.uid: displayTextUserGender,
+                              "address/" + user.uid: addressController.text,
+                              "city/" + user.uid: cityAddressController.text,
+                              "zipcode/" + user.uid: zipCodeController.text,
+                              "phonenumber/" + user.uid:
+                                  mobilePhoneController.text,
+                              "job/" + user.uid: jobStatusController.text
+                            });
+
+                            final snackBar = SnackBar(
+                              content: const Text("Tersimpan.",
+                                  style: TextStyle(color: Colors.black)),
+                              backgroundColor: kYellow,
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          } catch (e) {
+                            print(e);
+                            final snackBar = SnackBar(
+                              content: const Text(
+                                  "Update gagal, cek koneksi internet.",
+                                  style: TextStyle(color: Colors.black)),
+                              backgroundColor: kYellow,
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          }
+                        }
+                      },
+                      child: Text(
+                        enabledForm ? 'Simpan' : 'Edit',
+                        style: TextStyle(color: kWhite),
+                      ),
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kLightBlue1),
+                          visualDensity: VisualDensity.compact),
+                    )
+                  ],
+                ),
+              ),
               nikField,
               fullnameField,
               birthPlaceField,
@@ -429,12 +513,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               zipCodeField,
               mobilePhoneField,
               jobStatusField,
-              Divider(
-                color: kDarkBlue,
-              ),
-              userIDField,
-              displayNameField,
-              emailField,
             ],
           ),
         ),

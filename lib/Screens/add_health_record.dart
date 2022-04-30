@@ -107,7 +107,7 @@ class _AddHealthRecordScreenState extends State<AddHealthRecordScreen> {
                                         CrossAxisAlignment.center,
                                     children: <Widget>[
                                       Icon(
-                                        Icons.short_text_outlined,
+                                        Icons.note_alt_outlined,
                                         color: kBlack,
                                       )
                                     ],
@@ -123,7 +123,7 @@ class _AddHealthRecordScreenState extends State<AddHealthRecordScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Basic Entry',
+                                      'Basic',
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 18,

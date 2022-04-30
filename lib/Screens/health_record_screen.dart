@@ -136,6 +136,18 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ));
+              } else if (!snapshot.hasError) {
+                return Center(
+                    child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Text(
+                    "Kayanya kamu belum bikin rekam medis sama sekali :) \n Error code: ${snapshot.error.toString()}",
+                    style: TextStyle(
+                      color: Colors.black54,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ));
               } else if (!snapshot.hasData) {
                 return Center(
                     child: Text(
@@ -150,16 +162,6 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                 return Container(
                   child: ListView(
                     children: [
-                      if (healthRecordData.isEmpty)
-                        Center(
-                          child: Text(
-                            "Kayanya kamu belum bikin rekam medis sama sekali :'",
-                            style: TextStyle(
-                              color: Colors.black54,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
                       for (DataSnapshot healthRecordSnapshot
                           in healthRecordData)
                         ExpansionTile(
