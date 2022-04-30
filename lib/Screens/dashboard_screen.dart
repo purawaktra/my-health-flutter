@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:double_back_to_close/double_back_to_close.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -5,10 +7,10 @@ import 'package:myhealth/Screens/account_information_screen.dart';
 import 'package:myhealth/Screens/health_record_access_screen.dart';
 import 'package:myhealth/Screens/health_record_screen.dart';
 import 'package:myhealth/Screens/onboarding_screen.dart';
-import 'package:myhealth/Screens/profile_screen.dart';
 import 'package:myhealth/Screens/setting_screen.dart';
 import 'package:myhealth/Screens/shared_health_record.dart';
 import 'package:myhealth/constants.dart';
+import 'package:myhealth/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../components/sign_method.dart';
@@ -20,7 +22,8 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final user = FirebaseAuth.instance.currentUser!;
+
   PermissionStatus _permissionStatus = PermissionStatus.denied;
 
   Future<void> requestPermission() async {
@@ -50,10 +53,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser!;
-    final name = user.displayName!;
-    final email = user.email!;
-    final urlImage = user.photoURL!;
+    String name = user.displayName!;
+    String email = user.email!;
+    String urlImage = user.photoURL!;
+
     Size size = MediaQuery.of(context).size;
 
     return MaterialApp(
@@ -342,7 +345,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               color: kLightBlue2,
                               elevation: 4,
                               child: InkWell(
-                                onTap: () async {
+                                onDoubleTap: () async {
                                   final snackBar = SnackBar(
                                     content: const Text("Sedang memuat...",
                                         style: TextStyle(color: Colors.black)),
@@ -375,6 +378,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                         .showSnackBar(snackBar);
                                   }
                                 },
+                                onTap: () {
+                                  final snackBar = SnackBar(
+                                    content: const Text(
+                                        "Double klik untuk logout.",
+                                        style: TextStyle(color: Colors.black)),
+                                    backgroundColor: Color(0xFFF8B501),
+                                  );
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
+                                },
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -388,7 +401,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       height: 8,
                                     ),
                                     Text(
-                                      "Informasi \nPribadi",
+                                      "Logout Akun",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 16,

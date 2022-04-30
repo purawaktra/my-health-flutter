@@ -26,16 +26,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late StreamSubscription userZipcodeStream;
   late StreamSubscription userPhoneNumberStream;
   late StreamSubscription userJobStream;
-  String displayTextUserNIK = "Belum diatur";
-  String displayTextUserFullname = "Belum diatur";
-  String displayTextUserBirthPlace = "Belum diatur";
-  String displayTextUserBirthDate = "Belum diatur";
-  String displayTextUserGender = "Belum diatur";
-  String displayTextUserAddress = "Belum diatur";
-  String displayTextUserCity = "Belum diatur";
-  String displayTextUserZipcode = "Belum diatur";
-  String displayTextUserPhoneNumber = "Belum diatur";
-  String displayTextUserJob = "Belum diatur";
+  String displayTextUserNIK = "Memuat...";
+  String displayTextUserFullname = "Memuat...";
+  String displayTextUserBirthPlace = "Memuat...";
+  String displayTextUserBirthDate = "Memuat...";
+  String displayTextUserGender = "Memuat...";
+  String displayTextUserAddress = "Memuat...";
+  String displayTextUserCity = "Memuat...";
+  String displayTextUserZipcode = "Memuat...";
+  String displayTextUserPhoneNumber = "Memuat...";
+  String displayTextUserJob = "Memuat...";
 
   @override
   void initState() {
@@ -47,6 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _activateListener() {
     // ignore: cancel_subscriptions
+
     userNIKStream =
         database.child('nik').child(user.uid).onValue.listen((event) {
       final Object? userData = event.snapshot.value;
@@ -133,6 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final TextEditingController nikController =
         new TextEditingController(text: displayTextUserNIK);
     final nikField = TextFormField(
+      enabled: (displayTextUserNIK == "") ? false : true,
       autofocus: false,
       readOnly: true,
       controller: nikController,
@@ -146,13 +148,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "NIK",
-        floatingLabelBehavior: FloatingLabelBehavior.always,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
 
     final TextEditingController fullnameController =
         new TextEditingController(text: displayTextUserFullname);
     final fullnameField = TextFormField(
+      enabled: (displayTextUserFullname == "") ? false : true,
       autofocus: false,
       readOnly: true,
       controller: fullnameController,
@@ -166,13 +169,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "Nama Lengkap",
-        floatingLabelBehavior: FloatingLabelBehavior.always,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
 
     final TextEditingController birthPlaceController =
         new TextEditingController(text: displayTextUserBirthPlace);
     final birthPlaceField = TextFormField(
+      enabled: (displayTextUserBirthPlace == "") ? false : true,
       autofocus: false,
       readOnly: true,
       controller: birthPlaceController,
@@ -186,7 +190,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "Tempat Lahir",
-        floatingLabelBehavior: FloatingLabelBehavior.always,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
 
@@ -194,6 +198,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         text:
             displayTextUserBirthDate); //"${selectedDate.toLocal()}".split(' ')[0]
     final dateField = TextFormField(
+      enabled: (displayTextUserBirthDate == "") ? false : true,
       autofocus: false,
       controller: dateController,
       showCursor: true,
@@ -208,13 +213,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "Tanggal Lahir",
-        floatingLabelBehavior: FloatingLabelBehavior.always,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
 
     final TextEditingController genderController =
         new TextEditingController(text: displayTextUserGender);
     final genderField = TextFormField(
+      enabled: (displayTextUserGender == "") ? false : true,
       autofocus: false,
       readOnly: true,
       controller: genderController,
@@ -229,13 +235,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "Jenis Kelamin",
-        floatingLabelBehavior: FloatingLabelBehavior.always,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
 
     final TextEditingController addressController =
         new TextEditingController(text: displayTextUserAddress);
     final addressField = TextFormField(
+      enabled: (displayTextUserAddress == "") ? false : true,
       autofocus: false,
       readOnly: true,
       controller: addressController,
@@ -250,13 +257,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "Alamat",
-        floatingLabelBehavior: FloatingLabelBehavior.always,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
 
     final TextEditingController cityAddressController =
         new TextEditingController(text: displayTextUserCity);
     final cityAddressField = TextFormField(
+      enabled: (displayTextUserCity == "") ? false : true,
       autofocus: false,
       readOnly: true,
       controller: cityAddressController,
@@ -271,13 +279,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "Kota Alamat",
-        floatingLabelBehavior: FloatingLabelBehavior.always,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
 
     final TextEditingController zipCodeController =
         new TextEditingController(text: displayTextUserZipcode);
     final zipCodeField = TextFormField(
+      enabled: (displayTextUserZipcode == "") ? false : true,
       autofocus: false,
       readOnly: true,
       controller: zipCodeController,
@@ -291,13 +300,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "Kode Pos",
-        floatingLabelBehavior: FloatingLabelBehavior.always,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
 
     final TextEditingController mobilePhoneController =
         new TextEditingController(text: displayTextUserPhoneNumber);
     final mobilePhoneField = TextFormField(
+      enabled: (displayTextUserPhoneNumber == "") ? false : true,
       autofocus: false,
       readOnly: true,
       controller: mobilePhoneController,
@@ -311,13 +321,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "No HP",
-        floatingLabelBehavior: FloatingLabelBehavior.always,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
 
     final TextEditingController jobStatusController =
         new TextEditingController(text: displayTextUserJob);
     final jobStatusField = TextFormField(
+      enabled: (displayTextUserJob == "") ? false : true,
       autofocus: false,
       readOnly: true,
       controller: jobStatusController,
@@ -331,13 +342,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "Pekerjaan",
-        floatingLabelBehavior: FloatingLabelBehavior.always,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
 
     final TextEditingController userIDController =
         new TextEditingController(text: user.uid);
     final userIDField = TextFormField(
+      enabled: true,
       autofocus: false,
       controller: userIDController,
       readOnly: true,
@@ -351,13 +363,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "ID Pengguna",
-        floatingLabelBehavior: FloatingLabelBehavior.always,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
 
     final TextEditingController displayNameController =
         new TextEditingController(text: user.displayName!);
     final displayNameField = TextFormField(
+      enabled: true,
       autofocus: false,
       readOnly: true,
       controller: displayNameController,
@@ -372,7 +385,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "Nama Pengguna",
-        floatingLabelBehavior: FloatingLabelBehavior.always,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
 
@@ -392,12 +405,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "Email Terverifikasi",
-        floatingLabelBehavior: FloatingLabelBehavior.always,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
 
     return Background(
-      title: "Informasi Pribadi",
+      title: "Akun",
       description: Text("Deskripsi kosong."),
       child: SingleChildScrollView(
         child: Padding(
@@ -406,54 +419,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    CircleAvatar(
-                      radius: 64,
-                      backgroundImage: NetworkImage(user.photoURL!),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Text(
-                      user.displayName!,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 24,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 2,
-                    ),
-                    Text(
-                      user.uid,
-                      style: TextStyle(color: Colors.black45, fontSize: 14),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => EditProfileScreen()));
-                      },
-                      child: Text(
-                        "Ubah Data Pribadi dan Akun",
-                        style: TextStyle(color: kWhite),
-                      ),
-                      style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(kLightBlue1)),
-                    )
-                  ],
-                ),
-              ),
-              Divider(
-                color: kDarkBlue,
-              ),
               nikField,
               fullnameField,
               birthPlaceField,

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myhealth/Screens/dashboard_screen.dart';
 import 'package:myhealth/Screens/onboarding_screen.dart';
+import 'package:myhealth/screens/home_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   @override
@@ -16,7 +17,7 @@ class WelcomeScreen extends StatelessWidget {
           );
         } else if (snapshot.hasData) {
           if (FirebaseAuth.instance.currentUser != null) {
-            return DashboardScreen();
+            return HomeScreen();
           }
           return Center(
             child: Text('Fail to fetch data, cek koneksi anda!'),

@@ -36,3 +36,7 @@ lib/generated_plugin_registrant.dart
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 pubspec.lock
+android/key.properties
+export_build/keystore_eprototype.jks
+export_build/pepk.jar
+export_build/output.zip

@@ -50,6 +50,7 @@ dependencies:
   tap_debouncer: ^2.0.2
   url_launcher: ^6.1.0
   share_plus: ^4.0.4
+  open_file: ^3.2.1
 
 dev_dependencies:
   flutter_test:

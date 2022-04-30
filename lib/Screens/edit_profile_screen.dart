@@ -29,16 +29,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late StreamSubscription userZipcodeStream;
   late StreamSubscription userPhoneNumberStream;
   late StreamSubscription userJobStream;
-  String displayTextUserNIK = "Belum diatur";
-  String displayTextUserFullname = "Belum diatur";
-  String displayTextUserBirthPlace = "Belum diatur";
-  String displayTextUserBirthDate = "Belum diatur";
-  String displayTextUserGender = "Belum diatur";
-  String displayTextUserAddress = "Belum diatur";
-  String displayTextUserCity = "Belum diatur";
-  String displayTextUserZipcode = "Belum diatur";
-  String displayTextUserPhoneNumber = "Belum diatur";
-  String displayTextUserJob = "Belum diatur";
+  String displayTextUserNIK = "Kosong";
+  String displayTextUserFullname = "Kosong";
+  String displayTextUserBirthPlace = "Kosong";
+  String displayTextUserBirthDate = "Kosong";
+  String displayTextUserGender = "Kosong";
+  String displayTextUserAddress = "Kosong";
+  String displayTextUserCity = "Kosong";
+  String displayTextUserZipcode = "Kosong";
+  String displayTextUserPhoneNumber = "Kosong";
+  String displayTextUserJob = "Kosong";
 
   @override
   void initState() {
@@ -135,18 +135,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     uploadPhotoProfile(XFile? file) async {
-      if (file == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No file was selected'),
-          ),
-        );
-
-        return null;
-      }
       final metadata = SettableMetadata(
         contentType: 'image/jpeg',
-        customMetadata: {'picked-file-path': file.path},
+        customMetadata: {'picked-file-path': file!.path},
       );
       Reference ref = FirebaseStorage.instance
           .ref()
@@ -168,8 +159,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       return link;
     }
 
-    final TextEditingController nikController =
-        new TextEditingController(text: displayTextUserNIK);
+    final TextEditingController nikController = new TextEditingController(
+        text: (displayTextUserNIK == "Kosong") ? null : displayTextUserNIK);
     final nikField = TextFormField(
       autofocus: false,
       controller: nikController,
@@ -202,8 +193,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
     );
 
-    final TextEditingController fullnameController =
-        new TextEditingController(text: displayTextUserFullname);
+    final TextEditingController fullnameController = new TextEditingController(
+        text: (displayTextUserFullname == "Kosong")
+            ? null
+            : displayTextUserFullname);
     final fullnameField = TextFormField(
       autofocus: false,
       controller: fullnameController,
@@ -234,7 +227,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
 
     final TextEditingController birthPlaceController =
-        new TextEditingController(text: displayTextUserBirthPlace);
+        new TextEditingController(
+            text: (displayTextUserBirthPlace == "Kosong")
+                ? null
+                : displayTextUserBirthPlace);
     final birthPlaceField = TextFormField(
       autofocus: false,
       controller: birthPlaceController,
@@ -266,8 +262,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     DateTime selectedDate = DateTime.now();
     final TextEditingController dateController = new TextEditingController(
-        text:
-            displayTextUserBirthDate); //"${selectedDate.toLocal()}".split(' ')[0]
+        text: (displayTextUserBirthDate == "Kosong")
+            ? null
+            : displayTextUserBirthDate); //"${selectedDate.toLocal()}".split(' ')[0]
     Future<void> _selectDate(BuildContext context) async {
       final DateTime? picked = await showDatePicker(
           context: context,
@@ -311,31 +308,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
     );
 
-    final TextEditingController genderController =
-        new TextEditingController(text: displayTextUserGender);
-    final genderField = TextFormField(
-      autofocus: false,
-      controller: genderController,
-      keyboardType: TextInputType.text,
-      style: TextStyle(color: kBlack),
-      validator: (value) {
-        if (value!.isEmpty) {
-          return ("Mohon Masukkan Jenis Kelamin Anda");
-        }
-
-        if (!RegExp("^(\bLaki Laki\b)|(\bPerempuan\b)").hasMatch(value)) {
-          return ("Mohon Masukkan Gender: Laki Laki atau Perempuan");
-        }
-
-        return null;
-      },
-      onSaved: (value) {
-        genderController.text = value!;
-      },
-      textInputAction: TextInputAction.next,
+    final genderField = DropdownButtonFormField(
+      value: (displayTextUserGender == "Kosong") ? null : displayTextUserGender,
+      hint: Text("Kosong"),
       decoration: InputDecoration(
         prefixIcon: Icon(
-          Icons.people_alt_outlined,
+          Icons.list_alt_outlined,
           color: kBlack,
         ),
         hintText: "Jenis Kelamin",
@@ -344,10 +322,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         labelText: "Jenis Kelamin",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
+      autofocus: false,
+      icon: const Icon(Icons.keyboard_arrow_down),
+      style: const TextStyle(color: Colors.black),
+      onChanged: (String? newValue) {
+        setState(() {
+          displayTextUserGender = newValue!;
+        });
+      },
+      items: <String>['Laki Laki', 'Perempuan']
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
     );
 
-    final TextEditingController addressController =
-        new TextEditingController(text: displayTextUserAddress);
+    final TextEditingController addressController = new TextEditingController(
+        text: (displayTextUserAddress == "Kosong")
+            ? null
+            : displayTextUserAddress);
     final addressField = TextFormField(
       autofocus: false,
       controller: addressController,
@@ -378,7 +373,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
 
     final TextEditingController cityAddressController =
-        new TextEditingController(text: displayTextUserCity);
+        new TextEditingController(
+            text:
+                (displayTextUserCity == "Kosong") ? null : displayTextUserCity);
     final cityAddressField = TextFormField(
       autofocus: false,
       controller: cityAddressController,
@@ -408,8 +405,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
     );
 
-    final TextEditingController zipCodeController =
-        new TextEditingController(text: displayTextUserZipcode);
+    final TextEditingController zipCodeController = new TextEditingController(
+        text: (displayTextUserZipcode == "Kosong")
+            ? null
+            : displayTextUserZipcode);
     final zipCodeField = TextFormField(
       autofocus: false,
       controller: zipCodeController,
@@ -440,7 +439,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
 
     final TextEditingController mobilePhoneController =
-        new TextEditingController(text: displayTextUserPhoneNumber);
+        new TextEditingController(
+            text: (displayTextUserPhoneNumber == "Kosong")
+                ? null
+                : displayTextUserPhoneNumber);
     final mobilePhoneField = TextFormField(
       autofocus: false,
       controller: mobilePhoneController,
@@ -470,8 +472,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
     );
 
-    final TextEditingController jobStatusController =
-        new TextEditingController(text: displayTextUserJob);
+    final TextEditingController jobStatusController = new TextEditingController(
+        text: (displayTextUserJob == "Kosong") ? null : displayTextUserJob);
     final jobStatusField = TextFormField(
       autofocus: false,
       controller: jobStatusController,
@@ -617,7 +619,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         "fullname/" + user.uid: fullnameController.text,
                         "birthplace/" + user.uid: birthPlaceController.text,
                         "birthdate/" + user.uid: dateController.text,
-                        "gender/" + user.uid: genderController.text,
+                        "gender/" + user.uid: displayTextUserGender,
                         "address/" + user.uid: addressController.text,
                         "city/" + user.uid: cityAddressController.text,
                         "zipcode/" + user.uid: zipCodeController.text,

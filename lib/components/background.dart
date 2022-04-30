@@ -17,12 +17,19 @@ class Background extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      drawer: NavigationDrawerWidget(
-        child: description,
-      ),
       appBar: AppBar(
         backgroundColor: kLightBlue1,
         title: Text(title),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.more_vert),
+            tooltip: 'Show Snackbar',
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('This is a snackbar')));
+            },
+          ),
+        ],
       ),
       body: Stack(
         children: <Widget>[

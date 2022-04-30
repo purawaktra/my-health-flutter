@@ -14,6 +14,7 @@ class RegistrationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
         home: DoubleBack(
       onFirstBackPress: (context) {
         final snackBar = SnackBar(
