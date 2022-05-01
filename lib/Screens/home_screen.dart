@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:myhealth/Screens/dashboard_screen.dart';
 import 'package:myhealth/constants.dart';
 import 'package:myhealth/screens/account_screen.dart';
-import 'package:myhealth/screens/add_entry_access.dart';
-import 'package:myhealth/screens/add_health_record.dart';
-import 'package:myhealth/screens/health_record_access_screen.dart';
+import 'package:myhealth/screens/add_entry_access_screen.dart';
+import 'package:myhealth/screens/add_health_record_screen.dart';
+import 'package:myhealth/screens/entry_access_screen.dart';
 import 'package:myhealth/screens/health_record_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,14 +18,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final user = FirebaseAuth.instance.currentUser!;
   final database = FirebaseDatabase.instance.ref();
+  int _selectedIndex = 1;
 
-  int _selectedIndex = 3;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
     DashboardScreen(),
     HealthRecordScreen(),
-    HealthRecordAccessScreen(),
+    EntryAccessScreen(),
     AccountScreen(),
   ];
 

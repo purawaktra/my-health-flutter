@@ -1,12 +1,9 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:myhealth/components/background.dart';
 import 'package:myhealth/constants.dart';
-import 'package:myhealth/screens/add_entry_access.dart';
 import 'package:path_provider/path_provider.dart';
 
 enum WhyFarther { harder, smarter, selfStarter, tradingCharter }
@@ -22,14 +19,13 @@ class EntryHealthRecord {
       this.accesstype, this.userid, this.enabled, this.date, this.hash);
 }
 
-class HealthRecordAccessScreen extends StatefulWidget {
-  const HealthRecordAccessScreen({Key? key}) : super(key: key);
+class EntryAccessScreen extends StatefulWidget {
+  const EntryAccessScreen({Key? key}) : super(key: key);
   @override
-  _HealthRecordAccessScreenState createState() =>
-      _HealthRecordAccessScreenState();
+  _EntryAccessScreenState createState() => _EntryAccessScreenState();
 }
 
-class _HealthRecordAccessScreenState extends State<HealthRecordAccessScreen> {
+class _EntryAccessScreenState extends State<EntryAccessScreen> {
   Directory? _externalDocumentsDirectory;
   late WhyFarther _selection;
   late Future<String> streamData;
@@ -121,22 +117,10 @@ class _HealthRecordAccessScreenState extends State<HealthRecordAccessScreen> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(
                         child: Text(
-                      "Memuat...",
+                      "Menunggu Server...",
                       style: TextStyle(
                         color: Colors.black54,
                         overflow: TextOverflow.ellipsis,
-                      ),
-                    ));
-                  } else if (!snapshot.hasError) {
-                    return Center(
-                        child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Text(
-                        "Sepertinya datanya ga ada, coba buat entry dulu deh :) \n Error code: ${snapshot.error.toString()}",
-                        style: TextStyle(
-                          color: Colors.black54,
-                        ),
-                        textAlign: TextAlign.center,
                       ),
                     ));
                   } else if (!snapshot.hasData) {
@@ -153,11 +137,12 @@ class _HealthRecordAccessScreenState extends State<HealthRecordAccessScreen> {
                     if (healthRecordData == "object-not-found") {
                       return Center(
                           child: Text(
-                        "Sepertinya datanya ga ada, coba buat entry dulu deh :)",
+                        "Sepertinya datanya ga ada, coba buat entry dulu deh :) \n Error code: ${snapshot.error.toString()}",
                         style: TextStyle(
                           color: Colors.black54,
                           overflow: TextOverflow.ellipsis,
                         ),
+                        textAlign: TextAlign.center,
                       ));
                     } else {
                       return Center(

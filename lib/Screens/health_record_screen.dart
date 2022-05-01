@@ -5,9 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:myhealth/Screens/add_health_record.dart';
-import 'package:myhealth/Screens/edit_health_record.dart';
 import 'package:myhealth/constants.dart';
+import 'package:myhealth/screens/edit_health_record_screen.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -66,13 +65,10 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
   late WhyFarther _selection;
   late Future<Iterable<DataSnapshot>> streamData;
 
-  String displayTextID = "go";
+  bool basicEntry = true;
   @override
   Widget build(BuildContext context) {
     Future<Iterable<DataSnapshot>> streamData = getdata();
-    setState(() {
-      displayTextID = "Letsgo";
-    });
 
     Size size = MediaQuery.of(context).size;
     return Scaffold(
@@ -130,13 +126,13 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
                     child: Text(
-                  "Memuat...",
+                  "Menunggu Server...",
                   style: TextStyle(
                     color: Colors.black54,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ));
-              } else if (!snapshot.hasError) {
+              } else if (snapshot.data!.isEmpty) {
                 return Center(
                     child: Padding(
                   padding: const EdgeInsets.all(24.0),
@@ -159,6 +155,7 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                 ));
               } else {
                 Iterable<DataSnapshot>? healthRecordData = snapshot.data!;
+
                 return Container(
                   child: ListView(
                     children: [
@@ -173,8 +170,8 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                   overflow: TextOverflow.ellipsis,
                                 ));
                             for (DataSnapshot itemSnapshot
-                                in healthRecordSnapshot.children)
-                              if (itemSnapshot.key.toString() == "name")
+                                in healthRecordSnapshot.children) {
+                              if (itemSnapshot.key.toString() == "name") {
                                 child = Text(
                                   itemSnapshot.value.toString(),
                                   style: TextStyle(
@@ -183,6 +180,9 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 );
+                              }
+                            }
+
                             return child;
                           }),
                           subtitle: Text(
@@ -200,70 +200,81 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  SizedBox(
-                                    height: 60,
-                                    width: 60,
-                                    child: Card(
-                                      color: kLightBlue2,
-                                      elevation: 4,
-                                      child: TapDebouncer(
-                                        onTap: () async {
-                                          final snackBar = SnackBar(
-                                            content: const Text(
-                                                "Sedang memuat...",
-                                                style: TextStyle(
-                                                    color: Colors.black)),
-                                            backgroundColor: kYellow,
-                                          );
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(snackBar);
-
-                                          for (DataSnapshot itemSnapshot2
-                                              in healthRecordSnapshot.children)
-                                            if (itemSnapshot2.key.toString() ==
-                                                "filename") {
-                                              String result =
-                                                  await downloadFile(
-                                                      healthRecordSnapshot.key!,
-                                                      itemSnapshot2.value
-                                                          .toString());
-                                              print(result);
-                                              if (result != "false") {
-                                                OpenFile.open(result);
-                                              } else {
+                                  basicEntry
+                                      ? Container()
+                                      : SizedBox(
+                                          height: 60,
+                                          width: 60,
+                                          child: Card(
+                                            color: kLightBlue2,
+                                            elevation: 4,
+                                            child: TapDebouncer(
+                                              onTap: () async {
                                                 final snackBar = SnackBar(
                                                   content: const Text(
-                                                      "Download gagal, silahkan cek koneksi anda.",
+                                                      "Sedang memuat...",
                                                       style: TextStyle(
                                                           color: Colors.black)),
                                                   backgroundColor: kYellow,
                                                 );
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(snackBar);
-                                              }
-                                            }
-                                        },
-                                        builder: (BuildContext context,
-                                            TapDebouncerFunc? onTap) {
-                                          return InkWell(
-                                            onTap: onTap,
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Icon(
-                                                  Icons.save_alt_outlined,
-                                                  color: kBlack,
-                                                )
-                                              ],
+
+                                                for (DataSnapshot itemSnapshot2
+                                                    in healthRecordSnapshot
+                                                        .children)
+                                                  if (itemSnapshot2.key
+                                                          .toString() ==
+                                                      "filename") {
+                                                    String result =
+                                                        await downloadFile(
+                                                            healthRecordSnapshot
+                                                                .key!,
+                                                            itemSnapshot2.value
+                                                                .toString());
+                                                    print(result);
+                                                    if (result != "false") {
+                                                      OpenFile.open(result);
+                                                    } else {
+                                                      final snackBar = SnackBar(
+                                                        content: const Text(
+                                                            "Download gagal, silahkan cek koneksi anda.",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black)),
+                                                        backgroundColor:
+                                                            kYellow,
+                                                      );
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                              snackBar);
+                                                    }
+                                                  }
+                                              },
+                                              builder: (BuildContext context,
+                                                  TapDebouncerFunc? onTap) {
+                                                return InkWell(
+                                                  onTap: onTap,
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: <Widget>[
+                                                      Icon(
+                                                        Icons.save_alt_outlined,
+                                                        color: kBlack,
+                                                      )
+                                                    ],
+                                                  ),
+                                                );
+                                              },
                                             ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
+                                          ),
+                                        ),
                                   SizedBox(
                                     height: 60,
                                     width: 60,
@@ -542,12 +553,5 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
             }),
       ),
     );
-  }
-
-  Future<void> _pullRefresh() async {
-    Future<Iterable<DataSnapshot>> streamData2 = getdata();
-    setState(() {
-      streamData = Future.value(streamData2);
-    });
   }
 }

@@ -2,12 +2,12 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:myhealth/components/background.dart';
 import 'package:myhealth/constants.dart';
-import 'package:myhealth/screens/add_health_record_entry.dart';
+import 'package:myhealth/screens/add_health_record_basic_entry_screen.dart';
+import 'package:myhealth/screens/add_health_record_entry_screen.dart';
 import 'package:path/path.dart' as p;
 import 'package:tap_debouncer/tap_debouncer.dart';
 
@@ -75,21 +75,12 @@ class _AddHealthRecordScreenState extends State<AddHealthRecordScreen> {
                       children: [
                         InkWell(
                           onTap: () async {
-                            bool status = await pickImage(ImageSource.camera);
-                            if (status) {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => HealthRecordEntryScreen(
-                                        data: filePicked!,
-                                      )));
-                            } else {
-                              final snackBar = SnackBar(
-                                content: const Text("Dibatalkan.",
-                                    style: TextStyle(color: Colors.black)),
-                                backgroundColor: kYellow,
-                              );
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar);
-                            }
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        AddHealthRecordBasicEntryScreen()))
+                                .whenComplete(
+                                    () => Navigator.of(context).pop());
                           },
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -146,10 +137,14 @@ class _AddHealthRecordScreenState extends State<AddHealthRecordScreen> {
                           onTap: () async {
                             bool status = await pickImage(ImageSource.camera);
                             if (status) {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => HealthRecordEntryScreen(
-                                        data: filePicked!,
-                                      )));
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          HealthRecordEntryScreen(
+                                            data: filePicked!,
+                                          )))
+                                  .whenComplete(
+                                      () => Navigator.of(context).pop());
                             } else {
                               final snackBar = SnackBar(
                                 content: const Text("Dibatalkan.",
@@ -215,10 +210,14 @@ class _AddHealthRecordScreenState extends State<AddHealthRecordScreen> {
                           onTap: () async {
                             bool status = await pickImage(ImageSource.gallery);
                             if (status) {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => HealthRecordEntryScreen(
-                                        data: filePicked!,
-                                      )));
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          HealthRecordEntryScreen(
+                                            data: filePicked!,
+                                          )))
+                                  .whenComplete(
+                                      () => Navigator.of(context).pop());
                             } else {
                               final snackBar = SnackBar(
                                 content: const Text("Dibatalkan.",
@@ -283,10 +282,14 @@ class _AddHealthRecordScreenState extends State<AddHealthRecordScreen> {
                         TapDebouncer(onTap: () async {
                           bool status = await pickFile();
                           if (status) {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => HealthRecordEntryScreen(
-                                      data: filePicked!,
-                                    )));
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        HealthRecordEntryScreen(
+                                          data: filePicked!,
+                                        )))
+                                .whenComplete(
+                                    () => Navigator.of(context).pop());
                           } else {
                             final snackBar = SnackBar(
                               content: const Text("Dibatalkan.",

@@ -56,7 +56,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         textInputAction: TextInputAction.done,
         decoration: InputDecoration(
           prefixIcon: Icon(
-            Icons.lock,
+            Icons.lock_reset,
             color: Colors.black54,
           ),
           suffixIcon: GestureDetector(
@@ -217,26 +217,46 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     padding: const EdgeInsets.only(left: 12),
                     child: TapDebouncer(
                       onTap: () async {
+                        final snackBar = SnackBar(
+                          content: Text("Memuat...",
+                              style: TextStyle(color: Colors.black)),
+                          backgroundColor: kYellow,
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         if (_formKey.currentState!.validate()) {
                           await FirebaseAuth.instance
                               .signInWithEmailAndPassword(
                                   email: user.email.toString(),
-                                  password: new2PasswordController.text)
+                                  password: oldPasswordController.text)
                               .then((value) {
                             if (value.user != null) {
-                              final snackBar = SnackBar(
-                                content: const Text("Verifikasi berhasil.",
-                                    style: TextStyle(color: Colors.black)),
-                                backgroundColor: kYellow,
-                              );
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar);
+                              try {
+                                value.user!
+                                    .updatePassword(new2PasswordController.text)
+                                    .whenComplete(() {
+                                  final snackBar = SnackBar(
+                                    content: Text("Ubah kata sandi berhasil.",
+                                        style: TextStyle(color: Colors.black)),
+                                    backgroundColor: kYellow,
+                                  );
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
+                                  Navigator.of(context).pop();
+                                });
+                              } on FirebaseAuthException catch (e) {
+                                final snackBar = SnackBar(
+                                  content: Text("Gagal, error code: ${e.code}",
+                                      style: TextStyle(color: Colors.black)),
+                                  backgroundColor: kYellow,
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              }
                             }
                           }).catchError((e) {
                             print(e);
                             final snackBar = SnackBar(
-                              content: const Text(
-                                  "Gagal, password tidak sesuai.",
+                              content: Text("Gagal, kata sandi tidak sesuai.",
                                   style: TextStyle(color: Colors.black)),
                               backgroundColor: kYellow,
                             );

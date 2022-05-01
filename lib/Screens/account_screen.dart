@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:myhealth/Screens/profile_screen.dart';
 import 'package:myhealth/constants.dart';
+import 'package:myhealth/screens/add_email_provider_screen.dart';
 import 'package:myhealth/screens/change_password_screen.dart';
 import 'package:myhealth/screens/delete_data_screen.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
@@ -428,7 +430,51 @@ class _AccountScreenState extends State<AccountScreen> {
               ),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () async {
+                final googleUser = await GoogleSignIn().signIn();
+                if (googleUser == null) {
+                  final snackBar = SnackBar(
+                    content: Text("Dibatalkan.",
+                        style: TextStyle(color: Colors.black)),
+                    backgroundColor: kYellow,
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                } else {
+                  final googleAuth = await googleUser.authentication;
+
+                  final credential = GoogleAuthProvider.credential(
+                    accessToken: googleAuth.accessToken,
+                    idToken: googleAuth.idToken,
+                  );
+
+                  try {
+                    await user.linkWithCredential(credential);
+                    final snackBar = SnackBar(
+                      content: Text("Google berhasil ditautkan.",
+                          style: TextStyle(color: Colors.black)),
+                      backgroundColor: kYellow,
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  } on FirebaseAuthException catch (e) {
+                    if (e.code == "provider-already-linked" ||
+                        e.code == "credential-already-in-use") {
+                      final snackBar = SnackBar(
+                        content: Text("Akun sudah tertaut.",
+                            style: TextStyle(color: Colors.black)),
+                        backgroundColor: kYellow,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    } else {
+                      final snackBar = SnackBar(
+                        content: Text("Gagal, error code: ${e.code}.",
+                            style: TextStyle(color: Colors.black)),
+                        backgroundColor: kYellow,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    }
+                  }
+                }
+              },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -457,12 +503,25 @@ class _AccountScreenState extends State<AccountScreen> {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        Text(
-                          "Tambahkan Google dalam koneksi akun.",
-                          style: TextStyle(
-                            color: Colors.black54,
-                          ),
-                        ),
+                        Builder(builder: ((googleProviderContext) {
+                          List<UserInfo> listProvider = user.providerData;
+                          for (UserInfo provider in listProvider) {
+                            if (provider.providerId == "google.com") {
+                              return Text(
+                                "Akun sudah tertaut dengan akun google.",
+                                style: TextStyle(
+                                  color: Colors.black54,
+                                ),
+                              );
+                            }
+                          }
+                          return Text(
+                            "Tambahkan Google dalam koneksi akun.",
+                            style: TextStyle(
+                              color: Colors.black54,
+                            ),
+                          );
+                        }))
                       ],
                     ),
                   ),
@@ -470,7 +529,27 @@ class _AccountScreenState extends State<AccountScreen> {
               ),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () async {
+                bool state = true;
+                List<UserInfo> listProvider = user.providerData;
+                for (UserInfo provider in listProvider) {
+                  if (provider.providerId == "password") {
+                    state = false;
+                  }
+                }
+                if (state) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => AddEmailProviderScreen()));
+                  await user.reload();
+                } else {
+                  final snackBar = SnackBar(
+                    content: Text("Akun sudah tertaut.",
+                        style: TextStyle(color: Colors.black)),
+                    backgroundColor: kYellow,
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                }
+              },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -499,6 +578,20 @@ class _AccountScreenState extends State<AccountScreen> {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
+                        Builder(builder: ((googleProviderContext) {
+                          List<UserInfo> listProvider = user.providerData;
+                          for (UserInfo provider in listProvider) {
+                            if (provider.providerId == "google.com") {
+                              return Text(
+                                "Akun sudah tertaut dengan akun email.",
+                                style: TextStyle(
+                                  color: Colors.black54,
+                                ),
+                              );
+                            }
+                          }
+                          return Container();
+                        }))
                       ],
                     ),
                   ),
@@ -529,8 +622,25 @@ class _AccountScreenState extends State<AccountScreen> {
             ),
             InkWell(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => ChangePasswordScreen()));
+                bool state = false;
+                List<UserInfo> listProvider = user.providerData;
+                for (UserInfo provider in listProvider) {
+                  print(provider.providerId);
+                  if (provider.providerId == "password") {
+                    state = true;
+                  }
+                }
+                if (state) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => ChangePasswordScreen()));
+                } else {
+                  final snackBar = SnackBar(
+                    content: Text("Akun tidak tertaut dengan password.",
+                        style: TextStyle(color: Colors.black)),
+                    backgroundColor: kYellow,
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                }
               },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -634,10 +744,7 @@ class _AccountScreenState extends State<AccountScreen> {
               ),
             ),
             InkWell(
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => DeleteDataScreen()));
-              },
+              onTap: () {},
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -679,10 +786,7 @@ class _AccountScreenState extends State<AccountScreen> {
               ),
             ),
             InkWell(
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => DeleteDataScreen()));
-              },
+              onTap: () {},
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -718,10 +822,7 @@ class _AccountScreenState extends State<AccountScreen> {
               ),
             ),
             InkWell(
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => DeleteDataScreen()));
-              },
+              onTap: () {},
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,

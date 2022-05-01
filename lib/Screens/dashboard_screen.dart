@@ -4,11 +4,11 @@ import 'package:double_back_to_close/double_back_to_close.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myhealth/Screens/account_information_screen.dart';
-import 'package:myhealth/Screens/health_record_access_screen.dart';
 import 'package:myhealth/Screens/health_record_screen.dart';
 import 'package:myhealth/Screens/onboarding_screen.dart';
 import 'package:myhealth/Screens/shared_health_record.dart';
 import 'package:myhealth/constants.dart';
+import 'package:myhealth/screens/entry_access_screen.dart';
 import 'package:myhealth/screens/profile_screen.dart';
 import 'package:myhealth/screens/delete_data_screen.dart';
 import 'package:provider/provider.dart';
@@ -253,7 +253,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 onTap: () => Navigator.of(context).push(
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            HealthRecordAccessScreen())),
+                                            EntryAccessScreen())),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
