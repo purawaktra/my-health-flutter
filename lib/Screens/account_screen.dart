@@ -6,13 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:myhealth/Screens/profile_screen.dart';
+import 'package:myhealth/components/sign_method.dart';
 import 'package:myhealth/constants.dart';
 import 'package:myhealth/screens/add_email_provider_screen.dart';
 import 'package:myhealth/screens/change_password_screen.dart';
-import 'package:myhealth/screens/delete_data_screen.dart';
+import 'package:myhealth/screens/delete_account_screen.dart';
+import 'package:myhealth/screens/developer_info_screen.dart';
+import 'package:myhealth/screens/onboarding_screen.dart';
+import 'package:provider/provider.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
 
-enum WhyFarther { harder, smarter, selfStarter, tradingCharter }
+enum WhyFarther { setting, darkmode, notification, datausage }
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({Key? key}) : super(key: key);
@@ -44,7 +48,7 @@ class _AccountScreenState extends State<AccountScreen> {
       Reference ref = FirebaseStorage.instance
           .ref()
           .child('photo-profile')
-          .child('/' + user.uid + '.jpg');
+          .child('/' + user.uid);
 
       try {
         await ref.putData(await file.readAsBytes(), metadata);
@@ -59,26 +63,6 @@ class _AccountScreenState extends State<AccountScreen> {
 
       final link = await ref.getDownloadURL();
       return link;
-    }
-
-    Future<String> _changePassword(
-        String currentPassword, String newPassword) async {
-      String result = "true";
-      final user = FirebaseAuth.instance.currentUser;
-      final cred = EmailAuthProvider.credential(
-          email: user!.email.toString(), password: currentPassword);
-
-      user.reauthenticateWithCredential(cred).then((value) {
-        try {
-          user.updatePassword(newPassword);
-        } on FirebaseAuthException catch (e) {
-          result = e.code;
-        }
-      }).catchError((err) {
-        result = "false";
-      });
-
-      return result;
     }
 
     var displayPhotoUrl = user.photoURL;
@@ -99,20 +83,20 @@ class _AccountScreenState extends State<AccountScreen> {
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<WhyFarther>>[
               const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.harder,
-                child: Text('Working a lot harder'),
+                value: WhyFarther.notification,
+                child: Text('Notifikasi - BLOM'),
               ),
               const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.smarter,
-                child: Text('Being a lot smarter'),
+                value: WhyFarther.datausage,
+                child: Text('Penggunaan Data - BLOM'),
               ),
               const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.selfStarter,
-                child: Text('Being a self-starter'),
+                value: WhyFarther.darkmode,
+                child: Text('Mode Malam - BLOM'),
               ),
               const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.tradingCharter,
-                child: Text('Placed in charge of trading charter'),
+                value: WhyFarther.setting,
+                child: Text('Pengaturan - BLOM'),
               ),
             ],
           ),
@@ -679,7 +663,7 @@ class _AccountScreenState extends State<AccountScreen> {
             InkWell(
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => DeleteDataScreen()));
+                    builder: (context) => DeleteAccountScreen()));
               },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -713,6 +697,66 @@ class _AccountScreenState extends State<AccountScreen> {
                           "Menghapus data, dan akun.",
                           style: TextStyle(
                             color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            InkWell(
+              onTap: () async {
+                final snackBar = SnackBar(
+                  content: const Text("Memuat...",
+                      style: TextStyle(color: Colors.black)),
+                  backgroundColor: Color(0xFFF8B501),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                final provider =
+                    Provider.of<SignProvider>(context, listen: false);
+                String logoutstate = await provider.logout();
+                if (logoutstate == "true") {
+                  if (FirebaseAuth.instance.currentUser != null) {
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => OnboardingScreen()));
+                  }
+                } else if (logoutstate == "false") {
+                  final snackBar = SnackBar(
+                    content: const Text(
+                        "Gagal untuk logout, silahkan coba kembali.",
+                        style: TextStyle(color: Colors.black)),
+                    backgroundColor: Color(0xFFF8B501),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                }
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  SizedBox(
+                    height: 60,
+                    width: 60,
+                    child: Icon(
+                      Icons.logout_outlined,
+                      color: kBlack,
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Logout Akun',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
@@ -822,7 +866,10 @@ class _AccountScreenState extends State<AccountScreen> {
               ),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => DeveloperInfoScreen()));
+              },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,

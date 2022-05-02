@@ -2,8 +2,9 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:myhealth/components/background.dart';
 import 'package:myhealth/constants.dart';
+
+enum WhyFarther { helpdesk, reload }
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -35,6 +36,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String displayTextUserZipcode = "Memuat...";
   String displayTextUserPhoneNumber = "Memuat...";
   String displayTextUserJob = "Memuat...";
+  String dropdownValue = 'Laki Laki';
+  late WhyFarther _selection;
 
   @override
   void initState() {
@@ -45,8 +48,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _activateListener() {
-    // ignore: cancel_subscriptions
-
     userNIKStream =
         database.child('nik').child(user.uid).onValue.listen((event) {
       final Object? userData = event.snapshot.value;
@@ -240,6 +241,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
+    final genderField2 = DropdownButtonFormField(
+      decoration: InputDecoration(
+        prefixIcon: Icon(
+          Icons.people_alt_outlined,
+          color: kBlack,
+        ),
+        hintStyle: TextStyle(color: Colors.black54),
+        border: InputBorder.none,
+        labelText: "Jenis Kelamin",
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+      ),
+      autofocus: false,
+      value: dropdownValue,
+      style: const TextStyle(color: Colors.black),
+      onChanged: (String? newValue) {
+        setState(() {
+          dropdownValue = newValue!;
+          displayTextUserGender = newValue;
+        });
+      },
+      items: <String>['Laki Laki', 'Perempuan']
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );
 
     final TextEditingController addressController =
         new TextEditingController(text: displayTextUserAddress);
@@ -409,10 +438,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
 
-    return Background(
-      title: "Akun",
-      description: Text("Deskripsi kosong."),
-      child: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: kLightBlue1,
+        title: Text("Informasi Pribadi"),
+        actions: <Widget>[
+          PopupMenuButton<WhyFarther>(
+            onSelected: (WhyFarther result) {
+              setState(() {
+                _selection = result;
+              });
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<WhyFarther>>[
+              const PopupMenuItem<WhyFarther>(
+                value: WhyFarther.reload,
+                child: Text('Muat Ulang - BLOM'),
+              ),
+              const PopupMenuItem<WhyFarther>(
+                value: WhyFarther.helpdesk,
+                child: Text('Bantuan - BLOM'),
+              ),
+            ],
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(left: 24, right: 24, top: 12),
           child: Column(
@@ -507,7 +557,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               fullnameField,
               birthPlaceField,
               dateField,
-              genderField,
+              editProfile ? genderField : genderField2,
               addressField,
               cityAddressField,
               zipCodeField,

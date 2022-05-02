@@ -10,7 +10,7 @@ import 'package:myhealth/Screens/shared_health_record.dart';
 import 'package:myhealth/constants.dart';
 import 'package:myhealth/screens/entry_access_screen.dart';
 import 'package:myhealth/screens/profile_screen.dart';
-import 'package:myhealth/screens/delete_data_screen.dart';
+import 'package:myhealth/screens/delete_account_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../components/sign_method.dart';
@@ -317,7 +317,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 onTap: () => Navigator.of(context).push(
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            DeleteDataScreen())),
+                                            DeleteAccountScreen())),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,

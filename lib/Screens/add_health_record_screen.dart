@@ -140,7 +140,7 @@ class _AddHealthRecordScreenState extends State<AddHealthRecordScreen> {
                               Navigator.of(context)
                                   .push(MaterialPageRoute(
                                       builder: (context) =>
-                                          HealthRecordEntryScreen(
+                                          AddHealthRecordEntryScreen(
                                             data: filePicked!,
                                           )))
                                   .whenComplete(
@@ -213,7 +213,7 @@ class _AddHealthRecordScreenState extends State<AddHealthRecordScreen> {
                               Navigator.of(context)
                                   .push(MaterialPageRoute(
                                       builder: (context) =>
-                                          HealthRecordEntryScreen(
+                                          AddHealthRecordEntryScreen(
                                             data: filePicked!,
                                           )))
                                   .whenComplete(
@@ -285,7 +285,7 @@ class _AddHealthRecordScreenState extends State<AddHealthRecordScreen> {
                             Navigator.of(context)
                                 .push(MaterialPageRoute(
                                     builder: (context) =>
-                                        HealthRecordEntryScreen(
+                                        AddHealthRecordEntryScreen(
                                           data: filePicked!,
                                         )))
                                 .whenComplete(

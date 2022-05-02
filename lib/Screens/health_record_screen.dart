@@ -6,13 +6,13 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:myhealth/constants.dart';
-import 'package:myhealth/screens/edit_health_record_screen.dart';
-import 'package:open_file/open_file.dart';
+import 'package:myhealth/screens/add_health_record_screen.dart';
+import 'package:myhealth/screens/health_record_entry_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
 
-enum WhyFarther { harder, smarter, selfStarter, tradingCharter }
+enum OptionMenu { import, find, filter, delete }
 
 class HealthRecordScreen extends StatefulWidget {
   const HealthRecordScreen({Key? key}) : super(key: key);
@@ -62,7 +62,7 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
     return result;
   }
 
-  late WhyFarther _selection;
+  late OptionMenu _selection;
   late Future<Iterable<DataSnapshot>> streamData;
 
   bool basicEntry = true;
@@ -72,6 +72,20 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
 
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: kLightBlue1,
+        onPressed: () => Navigator.of(context)
+            .push(MaterialPageRoute(
+                builder: (context) => AddHealthRecordScreen()))
+            .whenComplete(() => setState(() {
+                  streamData = getdata();
+                })),
+        tooltip: 'Rekam Medis Baru',
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: kLightBlue1,
         title: Text("Rekam Medisku"),
@@ -85,28 +99,24 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
               });
             },
           ),
-          PopupMenuButton<WhyFarther>(
-            onSelected: (WhyFarther result) {
+          PopupMenuButton<OptionMenu>(
+            onSelected: (OptionMenu result) {
               setState(() {
                 _selection = result;
               });
             },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<WhyFarther>>[
-              const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.harder,
-                child: Text('Working a lot harder'),
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<OptionMenu>>[
+              const PopupMenuItem<OptionMenu>(
+                value: OptionMenu.import,
+                child: Text('Import - BELOM'),
               ),
-              const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.smarter,
-                child: Text('Being a lot smarter'),
+              const PopupMenuItem<OptionMenu>(
+                value: OptionMenu.find,
+                child: Text('Cari - BELOM'),
               ),
-              const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.selfStarter,
-                child: Text('Being a self-starter'),
-              ),
-              const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.tradingCharter,
-                child: Text('Placed in charge of trading charter'),
+              const PopupMenuItem<OptionMenu>(
+                value: OptionMenu.filter,
+                child: Text('Filter - BELOM'),
               ),
             ],
           ),
@@ -185,12 +195,30 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
 
                             return child;
                           }),
-                          subtitle: Text(
-                            healthRecordSnapshot.key!,
-                            style: TextStyle(
-                              color: Colors.black54,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                          subtitle: Row(
+                            children: [
+                              Text(
+                                healthRecordSnapshot.key!,
+                                style: TextStyle(
+                                  color: Colors.black54,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 12,
+                              ),
+                              for (DataSnapshot itemSnapshot
+                                  in healthRecordSnapshot.children)
+                                if (itemSnapshot.key.toString() ==
+                                    "creationdate")
+                                  Text(
+                                    itemSnapshot.value.toString(),
+                                    style: TextStyle(
+                                      color: Colors.black54,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  )
+                            ],
                           ),
                           children: <Widget>[
                             Padding(
@@ -200,81 +228,42 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  basicEntry
-                                      ? Container()
-                                      : SizedBox(
-                                          height: 60,
-                                          width: 60,
-                                          child: Card(
-                                            color: kLightBlue2,
-                                            elevation: 4,
-                                            child: TapDebouncer(
-                                              onTap: () async {
-                                                final snackBar = SnackBar(
-                                                  content: const Text(
-                                                      "Sedang memuat...",
-                                                      style: TextStyle(
-                                                          color: Colors.black)),
-                                                  backgroundColor: kYellow,
-                                                );
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(snackBar);
-
-                                                for (DataSnapshot itemSnapshot2
-                                                    in healthRecordSnapshot
-                                                        .children)
-                                                  if (itemSnapshot2.key
-                                                          .toString() ==
-                                                      "filename") {
-                                                    String result =
-                                                        await downloadFile(
-                                                            healthRecordSnapshot
-                                                                .key!,
-                                                            itemSnapshot2.value
-                                                                .toString());
-                                                    print(result);
-                                                    if (result != "false") {
-                                                      OpenFile.open(result);
-                                                    } else {
-                                                      final snackBar = SnackBar(
-                                                        content: const Text(
-                                                            "Download gagal, silahkan cek koneksi anda.",
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .black)),
-                                                        backgroundColor:
-                                                            kYellow,
-                                                      );
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                              snackBar);
-                                                    }
-                                                  }
-                                              },
-                                              builder: (BuildContext context,
-                                                  TapDebouncerFunc? onTap) {
-                                                return InkWell(
-                                                  onTap: onTap,
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: <Widget>[
-                                                      Icon(
-                                                        Icons.save_alt_outlined,
-                                                        color: kBlack,
-                                                      )
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
+                                  SizedBox(
+                                    height: 60,
+                                    width: 60,
+                                    child: Card(
+                                      color: kLightBlue2,
+                                      elevation: 4,
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      HealthRecordEntryScreen(
+                                                        healthRecord:
+                                                            healthRecordSnapshot,
+                                                      )))
+                                              .whenComplete(() {
+                                            setState(() {
+                                              streamData = getdata();
+                                            });
+                                          });
+                                        },
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.open_in_new,
+                                              color: kBlack,
+                                            )
+                                          ],
                                         ),
+                                      ),
+                                    ),
+                                  ),
                                   SizedBox(
                                     height: 60,
                                     width: 60,
@@ -343,42 +332,6 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                     height: 60,
                                     width: 60,
                                     child: Card(
-                                      color: kLightBlue2,
-                                      elevation: 4,
-                                      child: InkWell(
-                                        onTap: () {
-                                          Navigator.of(context)
-                                              .push(MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      EditHealthRecordScreen(
-                                                        healthRecord:
-                                                            healthRecordSnapshot,
-                                                      )))
-                                              .whenComplete(() {
-                                            setState(() {
-                                              streamData = getdata();
-                                            });
-                                          });
-                                        },
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Icon(
-                                              Icons.edit,
-                                              color: kBlack,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 60,
-                                    width: 60,
-                                    child: Card(
                                       color: kRed,
                                       elevation: 4,
                                       child: InkWell(
@@ -395,13 +348,18 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                         },
                                         onDoubleTap: () async {
                                           try {
-                                            await storage
-                                                .child('health-record')
-                                                .child(
-                                                    healthRecordSnapshot.key!)
-                                                .child(
-                                                    healthRecordSnapshot.key!)
-                                                .delete();
+                                            try {
+                                              await storage
+                                                  .child('health-record')
+                                                  .child(
+                                                      healthRecordSnapshot.key!)
+                                                  .child(
+                                                      healthRecordSnapshot.key!)
+                                                  .delete();
+                                            } catch (e) {
+                                              print(e);
+                                            }
+
                                             await database
                                                 .child("health-record")
                                                 .child(user.uid)
@@ -459,7 +417,7 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "Unduh, berbagi, edit, dan hapus.",
+                                          "Buka, berbagi, dan hapus.",
                                           style: TextStyle(
                                             color: Colors.black54,
                                           ),
@@ -488,26 +446,31 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                     int? maxLines = 1;
                                     String title = "Not defined";
                                     if (itemSnapshot.key.toString() ==
-                                        "filename") {
-                                      icons = Icon(
-                                        Icons.description_outlined,
-                                        color: kBlack,
-                                      );
-                                      title = "Nama File";
-                                    } else if (itemSnapshot.key.toString() ==
-                                        "creationdate") {
-                                      icons = Icon(
-                                        Icons.date_range_outlined,
-                                        color: kBlack,
-                                      );
-                                      title = "Tanggal";
-                                    } else if (itemSnapshot.key.toString() ==
                                         "location") {
                                       icons = Icon(
                                         Icons.location_on_outlined,
                                         color: kBlack,
                                       );
                                       title = "Lokasi";
+                                      return TextFormField(
+                                        autofocus: false,
+                                        readOnly: true,
+                                        maxLines: maxLines,
+                                        controller: TextEditingController(
+                                            text:
+                                                itemSnapshot.value.toString()),
+                                        style: TextStyle(color: kBlack),
+                                        decoration: InputDecoration(
+                                          prefixIcon: icons,
+                                          hintText: title,
+                                          hintStyle:
+                                              TextStyle(color: Colors.black54),
+                                          border: InputBorder.none,
+                                          labelText: title,
+                                          floatingLabelBehavior:
+                                              FloatingLabelBehavior.always,
+                                        ),
+                                      );
                                     } else if (itemSnapshot.key.toString() ==
                                         "description") {
                                       icons = Icon(
@@ -516,6 +479,25 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                       );
                                       title = "Deskripsi";
                                       maxLines = null;
+                                      return TextFormField(
+                                        autofocus: false,
+                                        readOnly: true,
+                                        maxLines: maxLines,
+                                        controller: TextEditingController(
+                                            text:
+                                                itemSnapshot.value.toString()),
+                                        style: TextStyle(color: kBlack),
+                                        decoration: InputDecoration(
+                                          prefixIcon: icons,
+                                          hintText: title,
+                                          hintStyle:
+                                              TextStyle(color: Colors.black54),
+                                          border: InputBorder.none,
+                                          labelText: title,
+                                          floatingLabelBehavior:
+                                              FloatingLabelBehavior.always,
+                                        ),
+                                      );
                                     } else if (itemSnapshot.key.toString() ==
                                         "tag") {
                                       icons = Icon(
@@ -523,25 +505,27 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                         color: kBlack,
                                       );
                                       title = "Tag";
+                                      return TextFormField(
+                                        autofocus: false,
+                                        readOnly: true,
+                                        maxLines: maxLines,
+                                        controller: TextEditingController(
+                                            text:
+                                                itemSnapshot.value.toString()),
+                                        style: TextStyle(color: kBlack),
+                                        decoration: InputDecoration(
+                                          prefixIcon: icons,
+                                          hintText: title,
+                                          hintStyle:
+                                              TextStyle(color: Colors.black54),
+                                          border: InputBorder.none,
+                                          labelText: title,
+                                          floatingLabelBehavior:
+                                              FloatingLabelBehavior.always,
+                                        ),
+                                      );
                                     }
-                                    return TextFormField(
-                                      autofocus: false,
-                                      readOnly: true,
-                                      maxLines: maxLines,
-                                      controller: TextEditingController(
-                                          text: itemSnapshot.value.toString()),
-                                      style: TextStyle(color: kBlack),
-                                      decoration: InputDecoration(
-                                        prefixIcon: icons,
-                                        hintText: title,
-                                        hintStyle:
-                                            TextStyle(color: Colors.black54),
-                                        border: InputBorder.none,
-                                        labelText: title,
-                                        floatingLabelBehavior:
-                                            FloatingLabelBehavior.always,
-                                      ),
-                                    );
+                                    return Container();
                                   }),
                                 ),
                           ],

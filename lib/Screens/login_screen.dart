@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:myhealth/Screens/forgot_password_screen.dart';
 import 'package:myhealth/Screens/dashboard_screen.dart';
 import 'package:myhealth/components/sign_method.dart';
+import 'package:myhealth/screens/home_screen.dart';
 import 'package:provider/provider.dart';
 import '../constants.dart';
 
@@ -132,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
             if (loginstate == "true") {
               if (FirebaseAuth.instance.currentUser != null) {
                 Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => DashboardScreen()),
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
                     (Route<dynamic> route) => false);
               } else {
                 final snackBar = SnackBar(
@@ -265,8 +266,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       null) {
                                     Navigator.of(context).pushAndRemoveUntil(
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                DashboardScreen()),
+                                            builder: (context) => HomeScreen()),
                                         (Route<dynamic> route) => false);
                                   } else {
                                     final snackBar = SnackBar(

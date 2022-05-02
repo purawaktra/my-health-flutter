@@ -35,23 +35,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _onItemFloatingButton() {
     Widget child;
-    if (_selectedIndex == 1) {
-      child = FloatingActionButton(
-        backgroundColor: kLightBlue1,
-        onPressed: () => Navigator.of(context)
-            .push(MaterialPageRoute(
-                builder: (context) => AddHealthRecordScreen()))
-            .whenComplete(() => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => super.widget))),
-        tooltip: 'Rekam Medis Baru',
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      );
-    } else if (_selectedIndex == 2) {
+    // if (_selectedIndex == 1) {
+    //   child = FloatingActionButton(
+    //     backgroundColor: kLightBlue1,
+    //     onPressed: () => Navigator.of(context)
+    //         .push(MaterialPageRoute(
+    //             builder: (context) => AddHealthRecordScreen()))
+    //         .whenComplete(() => Navigator.pushReplacement(
+    //             context,
+    //             MaterialPageRoute(
+    //                 builder: (BuildContext context) => super.widget))),
+    //     tooltip: 'Rekam Medis Baru',
+    //     child: const Icon(
+    //       Icons.add,
+    //       color: Colors.white,
+    //     ),
+    //   );
+    // } else
+    if (_selectedIndex == 2) {
       child = FloatingActionButton(
         backgroundColor: kLightBlue1,
         onPressed: () => Navigator.of(context)
@@ -85,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(
               Icons.home,
             ),
-            label: 'Feed',
+            label: 'BLOM JADI :(',
           ),
           BottomNavigationBarItem(
             icon: Icon(
@@ -97,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(
               Icons.people_alt_outlined,
             ),
-            label: 'Partner',
+            label: 'BLOM JADI :\'',
           ),
           BottomNavigationBarItem(
             icon: Icon(

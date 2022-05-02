@@ -4,21 +4,23 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:myhealth/components/background.dart';
 import 'package:myhealth/constants.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
 import 'package:path/path.dart' as p;
 
-class HealthRecordEntryScreen extends StatefulWidget {
+enum WhyFarther { harder, smarter, selfStarter, tradingCharter }
+
+class AddHealthRecordEntryScreen extends StatefulWidget {
   final File data;
-  const HealthRecordEntryScreen({Key? key, required this.data})
+  const AddHealthRecordEntryScreen({Key? key, required this.data})
       : super(key: key);
   @override
-  _HealthRecordEntryScreenState createState() =>
-      _HealthRecordEntryScreenState();
+  _AddHealthRecordEntryScreenState createState() =>
+      _AddHealthRecordEntryScreenState();
 }
 
-class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
+class _AddHealthRecordEntryScreenState
+    extends State<AddHealthRecordEntryScreen> {
   final user = FirebaseAuth.instance.currentUser!;
   final database = FirebaseDatabase.instance.ref();
   List<TextEditingController> keyControllers =
@@ -28,6 +30,7 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
 
   bool customField = false;
   int numberCustomField = 0;
+  late WhyFarther _selection;
 
   @override
   Widget build(BuildContext context) {
@@ -216,10 +219,39 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
       }
     }
 
-    return Background(
-      title: "Rekam Medis Baru",
-      description: Text("Deskripsi kosong."),
-      child: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: kLightBlue1,
+        title: Text("Rekam Medis Baru"),
+        actions: <Widget>[
+          PopupMenuButton<WhyFarther>(
+            onSelected: (WhyFarther result) {
+              setState(() {
+                _selection = result;
+              });
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<WhyFarther>>[
+              const PopupMenuItem<WhyFarther>(
+                value: WhyFarther.harder,
+                child: Text('Working a lot harder'),
+              ),
+              const PopupMenuItem<WhyFarther>(
+                value: WhyFarther.smarter,
+                child: Text('Being a lot smarter'),
+              ),
+              const PopupMenuItem<WhyFarther>(
+                value: WhyFarther.selfStarter,
+                child: Text('Being a self-starter'),
+              ),
+              const PopupMenuItem<WhyFarther>(
+                value: WhyFarther.tradingCharter,
+                child: Text('Placed in charge of trading charter'),
+              ),
+            ],
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Container(
@@ -318,6 +350,25 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                               ),
                             ),
                           ),
+                          IconButton(
+                              padding: EdgeInsets.zero,
+                              visualDensity:
+                                  VisualDensity(horizontal: -4, vertical: -4),
+                              onPressed: () {
+                                setState(() {
+                                  keyControllers.removeAt(i);
+                                  valueControllers.removeAt(i);
+                                  numberCustomField -= 1;
+                                  if (numberCustomField == 0) {
+                                    customField = false;
+                                  }
+                                });
+                              },
+                              icon: Icon(
+                                Icons.remove,
+                                color: Colors.black45,
+                                size: 16,
+                              )),
                         ],
                       ),
                     ),

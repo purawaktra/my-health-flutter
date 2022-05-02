@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:myhealth/constants.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
 
-enum WhyFarther { harder, smarter, selfStarter, tradingCharter }
-
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({Key? key}) : super(key: key);
 
@@ -14,7 +12,6 @@ class ChangePasswordScreen extends StatefulWidget {
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   User user = FirebaseAuth.instance.currentUser!;
-  late WhyFarther _selection;
   bool _obscured = true;
   final _formKey = GlobalKey<FormState>();
   final textFieldFocusNode = FocusNode();
@@ -158,33 +155,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       appBar: AppBar(
         backgroundColor: kLightBlue1,
         title: Text("Ubah Kata Sandi"),
-        actions: <Widget>[
-          PopupMenuButton<WhyFarther>(
-            onSelected: (WhyFarther result) {
-              setState(() {
-                _selection = result;
-              });
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<WhyFarther>>[
-              const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.harder,
-                child: Text('Working a lot harder'),
-              ),
-              const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.smarter,
-                child: Text('Being a lot smarter'),
-              ),
-              const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.selfStarter,
-                child: Text('Being a self-starter'),
-              ),
-              const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.tradingCharter,
-                child: Text('Placed in charge of trading charter'),
-              ),
-            ],
-          ),
-        ],
       ),
       body: SingleChildScrollView(
           child: Column(

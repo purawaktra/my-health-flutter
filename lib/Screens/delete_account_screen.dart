@@ -4,19 +4,18 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:myhealth/Screens/welcome_screen.dart';
-import 'package:myhealth/components/sign_method.dart';
 import 'package:myhealth/constants.dart';
-import 'package:provider/provider.dart';
+import 'package:myhealth/screens/delete_data_screen.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
 
-class DeleteDataScreen extends StatefulWidget {
-  const DeleteDataScreen({Key? key}) : super(key: key);
+class DeleteAccountScreen extends StatefulWidget {
+  const DeleteAccountScreen({Key? key}) : super(key: key);
 
   @override
-  _DeleteDataScreenState createState() => _DeleteDataScreenState();
+  _DeleteAccountScreenState createState() => _DeleteAccountScreenState();
 }
 
-class _DeleteDataScreenState extends State<DeleteDataScreen> {
+class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _obscured = true;
   final textFieldFocusNode = FocusNode();
@@ -83,7 +82,7 @@ class _DeleteDataScreenState extends State<DeleteDataScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: kLightBlue1,
-        title: Text("Hapus Data"),
+        title: Text("Hapus Akun"),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -130,7 +129,7 @@ class _DeleteDataScreenState extends State<DeleteDataScreen> {
                             height: 8,
                           ),
                           Text(
-                            "\u2022 Akses rekam medis partner",
+                            "\u2022 Entry tersimpan.",
                             style:
                                 TextStyle(color: Colors.black54, fontSize: 16),
                           ),
@@ -138,7 +137,7 @@ class _DeleteDataScreenState extends State<DeleteDataScreen> {
                             height: 8,
                           ),
                           Text(
-                            "\u2022 Akses partner ke rekam medis anda.",
+                            "\u2022 Akses rekam medis partner.",
                             style:
                                 TextStyle(color: Colors.black54, fontSize: 16),
                           ),
@@ -146,7 +145,15 @@ class _DeleteDataScreenState extends State<DeleteDataScreen> {
                             height: 8,
                           ),
                           Text(
-                            "\u2022 Logout akun anda.",
+                            "\u2022 Akses anda ke partner.",
+                            style:
+                                TextStyle(color: Colors.black54, fontSize: 16),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Text(
+                            "\u2022 Akun dan informasi anda.",
                             style:
                                 TextStyle(color: Colors.black54, fontSize: 16),
                           ),
@@ -157,6 +164,47 @@ class _DeleteDataScreenState extends State<DeleteDataScreen> {
                 ),
                 SizedBox(
                   height: 32,
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.document_scanner,
+                      color: kLightBlue1,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "Tidak ingin menghapus akun?",
+                      style: TextStyle(color: Colors.black, fontSize: 18),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 32,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => DeleteDataScreen()));
+                      },
+                      child: Text(
+                        "Hapus rekam medis dan entry",
+                        style: TextStyle(color: kWhite),
+                      ),
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(kLightBlue1)),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 24,
                 ),
                 Builder(builder: (BuildContext context) {
                   String providerSelect = providerdata.providerId;
@@ -312,7 +360,27 @@ class _DeleteDataScreenState extends State<DeleteDataScreen> {
                   onTap: () async {
                     try {
                       String uid = user.uid;
+                      Reference ref = FirebaseStorage.instance
+                          .ref()
+                          .child('photo-profile')
+                          .child('/' + uid);
+
+                      try {
+                        await ref.delete();
+                      } catch (e) {
+                        print(e.toString());
+                      }
                       final database = FirebaseDatabase.instance.ref();
+                      await database.child("nik/" + uid).remove();
+                      await database.child("fullname/" + uid).remove();
+                      await database.child("birthplace/" + uid).remove();
+                      await database.child("birthdate/" + uid).remove();
+                      await database.child("gender/" + uid).remove();
+                      await database.child("address/" + uid).remove();
+                      await database.child("city/" + uid).remove();
+                      await database.child("zipcode/" + uid).remove();
+                      await database.child("phonenumber/" + uid).remove();
+                      await database.child("job/" + uid).remove();
                       DataSnapshot healthRecordRef =
                           await database.child("health-record/" + uid).get();
                       for (DataSnapshot healthRecordItem
@@ -332,12 +400,10 @@ class _DeleteDataScreenState extends State<DeleteDataScreen> {
                         }
                       }
                       await database.child("health-record/" + uid).remove();
-                      final provider =
-                          Provider.of<SignProvider>(context, listen: false);
-                      await provider.logout();
+                      await user.delete();
 
                       final snackBar = SnackBar(
-                        content: const Text("Hapus data berhasil.",
+                        content: const Text("Hapus akun berhasil.",
                             style: TextStyle(color: Colors.black)),
                         backgroundColor: kYellow,
                       );
@@ -350,7 +416,7 @@ class _DeleteDataScreenState extends State<DeleteDataScreen> {
                       print(e.toString());
                       final snackBar = SnackBar(
                         content: const Text(
-                            "Hapus data gagal, muat ulang aplikasi.",
+                            "Hapus akun gagal, muat ulang aplikasi.",
                             style: TextStyle(color: Colors.black)),
                         backgroundColor: kYellow,
                       );

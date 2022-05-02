@@ -18,6 +18,13 @@ class _AddHealthRecordBasicEntryScreenState
     extends State<AddHealthRecordBasicEntryScreen> {
   final user = FirebaseAuth.instance.currentUser!;
   final database = FirebaseDatabase.instance.ref();
+  List<TextEditingController> keyControllers =
+      List.generate(0, (i) => TextEditingController());
+  List<TextEditingController> valueControllers =
+      List.generate(0, (i) => TextEditingController());
+
+  bool customField = false;
+  int numberCustomField = 0;
   late WhyFarther _selection;
   @override
   Widget build(BuildContext context) {
@@ -170,6 +177,10 @@ class _AddHealthRecordBasicEntryScreenState
             "name": nameController.text,
             "tag": tagController.text,
           });
+          for (int i = 0; i < numberCustomField; i++) {
+            await pushIDref
+                .update({keyControllers[i].text: valueControllers[i].text});
+          }
         } catch (e) {
           print(e);
           return false;
@@ -186,11 +197,6 @@ class _AddHealthRecordBasicEntryScreenState
           backgroundColor: kLightBlue1,
           title: Text("Partner"),
           actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.refresh_outlined),
-              tooltip: 'Refresh Halaman',
-              onPressed: () {},
-            ),
             PopupMenuButton<WhyFarther>(
               onSelected: (WhyFarther result) {
                 setState(() {
@@ -229,6 +235,83 @@ class _AddHealthRecordBasicEntryScreenState
             locationField,
             descriptionField,
             tagField,
+            Divider(
+              color: Colors.black54,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 24, top: 10, bottom: 5),
+              child: Text(
+                'Kolom Kustom',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: kLightBlue1,
+                  fontSize: 18,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+            if (customField)
+              for (int i = 0; i < numberCustomField; i++)
+                Padding(
+                  padding: const EdgeInsets.only(left: 12),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 100,
+                        child: TextFormField(
+                          autofocus: false,
+                          controller: keyControllers[i],
+                          keyboardType: TextInputType.text,
+                          style: TextStyle(color: kBlack),
+                          decoration: InputDecoration(
+                            hintStyle: TextStyle(color: Colors.black54),
+                            border: InputBorder.none,
+                            labelText: "Key" + (i + 1).toString(),
+                            floatingLabelBehavior: FloatingLabelBehavior.auto,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 12,
+                      ),
+                      Expanded(
+                        child: TextFormField(
+                          maxLines: null,
+                          autofocus: false,
+                          controller: valueControllers[i],
+                          keyboardType: TextInputType.text,
+                          style: TextStyle(color: kBlack),
+                          decoration: InputDecoration(
+                            hintStyle: TextStyle(color: Colors.black54),
+                            border: InputBorder.none,
+                            labelText: "Value" + (i + 1).toString(),
+                            floatingLabelBehavior: FloatingLabelBehavior.auto,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  keyControllers.add(TextEditingController());
+                  valueControllers.add(TextEditingController());
+                  customField = true;
+                  numberCustomField += 1;
+                });
+              },
+              child: Text(
+                "Tambahkan kolom kustom",
+                style: TextStyle(color: kWhite),
+              ),
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(kLightBlue1)),
+            ),
+            Divider(
+              color: Colors.black54,
+            ),
             TapDebouncer(
               onTap: () async {
                 final snackBar = SnackBar(
