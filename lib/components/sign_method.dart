@@ -56,11 +56,11 @@ class SignProvider extends ChangeNotifier {
         }
       } catch (e) {
         print(e.toString());
-        return "false";
+        return e.toString();
       }
     } catch (e) {
       print(e.toString());
-      return "false";
+      return e.toString();
     }
   }
 
@@ -108,11 +108,11 @@ class SignProvider extends ChangeNotifier {
         }
       } catch (e) {
         print(e.toString());
-        return "false";
+        return e.toString();
       }
     } catch (e) {
       print(e.toString());
-      return "false";
+      return e.toString();
     }
   }
 

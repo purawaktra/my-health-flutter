@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:myhealth/Screens/forgot_password_screen.dart';
-import 'package:myhealth/Screens/dashboard_screen.dart';
 import 'package:myhealth/components/sign_method.dart';
 import 'package:myhealth/screens/home_screen.dart';
 import 'package:provider/provider.dart';
@@ -271,7 +270,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   } else {
                                     final snackBar = SnackBar(
                                       content: const Text(
-                                          "Fail to fetch data, cek koneksi anda!",
+                                          "Gagal, cek koneksi anda!",
                                           style:
                                               TextStyle(color: Colors.black)),
                                       backgroundColor: kYellow,
@@ -297,10 +296,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   );
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(snackBar);
-                                } else if (loginstate == "false") {
+                                } else {
                                   final snackBar = SnackBar(
-                                    content: const Text(
-                                        "Terjadi eror, ulangi kembali.",
+                                    content: Text("Error, code: " + loginstate,
                                         style: TextStyle(color: Colors.black)),
                                     backgroundColor: kYellow,
                                   );

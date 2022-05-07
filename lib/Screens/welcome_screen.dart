@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:myhealth/Screens/dashboard_screen.dart';
 import 'package:myhealth/Screens/onboarding_screen.dart';
 import 'package:myhealth/screens/home_screen.dart';
 

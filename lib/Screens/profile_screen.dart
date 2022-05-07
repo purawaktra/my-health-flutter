@@ -200,6 +200,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final TextEditingController dateController = new TextEditingController(
         text:
             displayTextUserBirthDate); //"${selectedDate.toLocal()}".split(' ')[0]
+    DateTime selectedDate = DateTime.now();
+    Future<void> _selectDate(BuildContext context) async {
+      final DateTime? picked = await showDatePicker(
+          context: context,
+          initialDate: selectedDate,
+          firstDate: DateTime(1900, 1),
+          lastDate: DateTime.now());
+      if (picked != null && picked != selectedDate) {
+        selectedDate = picked;
+      }
+      dateController.text = "${selectedDate.toLocal()}".split(' ')[0];
+    }
+
     final dateField = TextFormField(
       enabled: enabledForm,
       autofocus: false,
@@ -207,6 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       showCursor: true,
       readOnly: editProfile,
       style: TextStyle(color: kBlack),
+      onTap: () => _selectDate(context),
       decoration: InputDecoration(
         prefixIcon: Icon(
           Icons.date_range_outlined,

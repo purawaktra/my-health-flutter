@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:myhealth/Screens/dashboard_screen.dart';
 import 'package:myhealth/constants.dart';
 import 'package:myhealth/screens/account_screen.dart';
-import 'package:myhealth/screens/add_entry_access_screen.dart';
-import 'package:myhealth/screens/add_health_record_screen.dart';
-import 'package:myhealth/screens/entry_access_screen.dart';
+import 'package:myhealth/screens/add_partner_screen.dart';
+import 'package:myhealth/screens/partner_screen.dart';
 import 'package:myhealth/screens/health_record_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -31,47 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
-  }
-
-  Widget _onItemFloatingButton() {
-    Widget child;
-    // if (_selectedIndex == 1) {
-    //   child = FloatingActionButton(
-    //     backgroundColor: kLightBlue1,
-    //     onPressed: () => Navigator.of(context)
-    //         .push(MaterialPageRoute(
-    //             builder: (context) => AddHealthRecordScreen()))
-    //         .whenComplete(() => Navigator.pushReplacement(
-    //             context,
-    //             MaterialPageRoute(
-    //                 builder: (BuildContext context) => super.widget))),
-    //     tooltip: 'Rekam Medis Baru',
-    //     child: const Icon(
-    //       Icons.add,
-    //       color: Colors.white,
-    //     ),
-    //   );
-    // } else
-    if (_selectedIndex == 2) {
-      child = FloatingActionButton(
-        backgroundColor: kLightBlue1,
-        onPressed: () => Navigator.of(context)
-            .push(MaterialPageRoute(
-                builder: (context) => AddEntryHealthRecordAccessScreen()))
-            .whenComplete(() => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => super.widget))),
-        tooltip: 'Rekam Medis Baru',
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      );
-    } else {
-      child = Container();
-    }
-    return child;
   }
 
   @override
@@ -112,7 +70,6 @@ class _HomeScreenState extends State<HomeScreen> {
         unselectedItemColor: Colors.black87,
         onTap: _onItemTapped,
       ),
-      floatingActionButton: _onItemFloatingButton(),
     );
   }
 }

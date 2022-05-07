@@ -6,11 +6,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:myhealth/constants.dart';
-import 'package:myhealth/screens/add_health_record_screen.dart';
+import 'package:myhealth/screens/add_health_record_entry_screen.dart';
 import 'package:myhealth/screens/health_record_entry_screen.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:tap_debouncer/tap_debouncer.dart';
 
 enum OptionMenu { import, find, filter, delete }
 
@@ -76,7 +74,7 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
         backgroundColor: kLightBlue1,
         onPressed: () => Navigator.of(context)
             .push(MaterialPageRoute(
-                builder: (context) => AddHealthRecordScreen()))
+                builder: (context) => AddHealthRecordEntryScreen()))
             .whenComplete(() => setState(() {
                   streamData = getdata();
                 })),
@@ -268,70 +266,6 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                     height: 60,
                                     width: 60,
                                     child: Card(
-                                      color: kLightBlue2,
-                                      elevation: 4,
-                                      child: TapDebouncer(
-                                        onTap: () async {
-                                          final snackBar = SnackBar(
-                                            content: const Text(
-                                                "Sedang memuat...",
-                                                style: TextStyle(
-                                                    color: Colors.black)),
-                                            backgroundColor: kYellow,
-                                          );
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(snackBar);
-
-                                          for (DataSnapshot itemSnapshot2
-                                              in healthRecordSnapshot.children)
-                                            if (itemSnapshot2.key.toString() ==
-                                                "filename") {
-                                              String result =
-                                                  await downloadFile(
-                                                      healthRecordSnapshot.key!,
-                                                      itemSnapshot2.value
-                                                          .toString());
-                                              print(result);
-                                              if (result != "false") {
-                                                Share.shareFiles([result]);
-                                              } else {
-                                                final snackBar = SnackBar(
-                                                  content: const Text(
-                                                      "Berbagi gagal, silahkan cek koneksi anda.",
-                                                      style: TextStyle(
-                                                          color: Colors.black)),
-                                                  backgroundColor: kYellow,
-                                                );
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(snackBar);
-                                              }
-                                            }
-                                        },
-                                        builder: (BuildContext context,
-                                            TapDebouncerFunc? onTap) {
-                                          return InkWell(
-                                            onTap: onTap,
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Icon(
-                                                  Icons.share,
-                                                  color: kBlack,
-                                                )
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 60,
-                                    width: 60,
-                                    child: Card(
                                       color: kRed,
                                       elevation: 4,
                                       child: InkWell(
@@ -349,13 +283,20 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                         onDoubleTap: () async {
                                           try {
                                             try {
-                                              await storage
-                                                  .child('health-record')
-                                                  .child(
-                                                      healthRecordSnapshot.key!)
-                                                  .child(
-                                                      healthRecordSnapshot.key!)
-                                                  .delete();
+                                              for (DataSnapshot itemSnapshot
+                                                  in healthRecordSnapshot
+                                                      .children) {
+                                                if (itemSnapshot.value
+                                                    .toString()
+                                                    .startsWith("filename")) {
+                                                  await storage
+                                                      .child('health-record')
+                                                      .child(user.uid)
+                                                      .child(itemSnapshot.value
+                                                          .toString())
+                                                      .delete();
+                                                }
+                                              }
                                             } catch (e) {
                                               print(e);
                                             }

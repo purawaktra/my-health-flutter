@@ -106,7 +106,7 @@ class RegistrationScreen extends StatelessWidget {
                               } else {
                                 final snackBar = SnackBar(
                                   content: const Text(
-                                      "Fail to fetch data, cek koneksi anda!",
+                                      "Gagal, cek koneksi anda!",
                                       style: TextStyle(color: Colors.black)),
                                   backgroundColor: kYellow,
                                 );
@@ -131,10 +131,9 @@ class RegistrationScreen extends StatelessWidget {
                               );
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(snackBar);
-                            } else if (loginstate == "false") {
+                            } else {
                               final snackBar = SnackBar(
-                                content: const Text(
-                                    "Terjadi eror, ulangi kembali.",
+                                content: Text("Error, code" + loginstate,
                                     style: TextStyle(color: Colors.black)),
                                 backgroundColor: kYellow,
                               );

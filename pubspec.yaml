@@ -51,12 +51,20 @@ dependencies:
   url_launcher: ^6.1.0
   share_plus: ^4.0.4
   open_file: ^3.2.1
+  json_serializable: ^6.2.0
+  json_annotation: ^4.5.0
+  crypto: ^3.0.2
+  flutter_archive: ^4.2.0
+  qr_flutter: ^4.0.0
+  qr_code_scanner: ^0.7.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  
 
   flutter_app_name: ^0.1.1
+  build_runner: ^2.1.10
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

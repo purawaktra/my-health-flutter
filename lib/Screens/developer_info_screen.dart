@@ -32,10 +32,28 @@ class DeveloperInfoScreen extends StatelessWidget {
                               TextSpan(
                                   text:
                                       "\nMuhammad Akbar Maulana\nDepartemen Teknik Biomedik \nInstitut Teknologi Sepuluh Nopember"),
-                              TextSpan(text: "\nv0.2.5 Alpha\n ")
+                              TextSpan(text: "\nv0.2.6 Alpha\n ")
                             ]),
                       ),
+                      Text("Many thanks to",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "Sam Fatur, Yulyy, Kobas, sama Dekk aslahah, yang ngasih kritik dan saran membangunnya :D.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
                       Text("Changelog",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text("\nv0.2.6 Alpha",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Nambahin lupa password dihalaman ubah password, siapa tahu kalau ada yang lupa passwordnya.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Mbenerin delete accound sama delete data, sekarang sudah bisa delete langsung di appnya, sekaligus hapus entry rekam medis sama entry partner.",
                           style:
                               TextStyle(color: Colors.black54, fontSize: 16)),
                       Text("\nv0.2.5 Alpha",

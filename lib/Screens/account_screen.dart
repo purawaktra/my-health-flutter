@@ -13,8 +13,10 @@ import 'package:myhealth/screens/change_password_screen.dart';
 import 'package:myhealth/screens/delete_account_screen.dart';
 import 'package:myhealth/screens/developer_info_screen.dart';
 import 'package:myhealth/screens/onboarding_screen.dart';
+import 'package:myhealth/screens/qr_code_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
+import 'package:flutter/services.dart';
 
 enum WhyFarther { setting, darkmode, notification, datausage }
 
@@ -142,6 +144,7 @@ class _AccountScreenState extends State<AccountScreen> {
                             visualDensity:
                                 VisualDensity(horizontal: -4, vertical: -4),
                             onPressed: () {
+                              Clipboard.setData(ClipboardData(text: user.uid));
                               final snackBar = SnackBar(
                                 content: const Text("Tersalin ke clipboard.",
                                     style: TextStyle(color: Colors.black)),
@@ -181,6 +184,45 @@ class _AccountScreenState extends State<AccountScreen> {
                   fontSize: 18,
                   overflow: TextOverflow.ellipsis,
                 ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => qrCodeScreen()));
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  SizedBox(
+                    height: 60,
+                    width: 60,
+                    child: Icon(
+                      Icons.qr_code,
+                      color: kBlack,
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Kode QR',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
             InkWell(

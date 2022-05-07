@@ -47,8 +47,8 @@ android {
         applicationId "com.eprototype.myhealth"
         minSdkVersion 28
         targetSdkVersion 31
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+        versionCode 3
+        versionName "0.2.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

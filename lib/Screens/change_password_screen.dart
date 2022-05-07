@@ -167,6 +167,78 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 24, right: 24, top: 12),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.document_scanner,
+                          color: kLightBlue1,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "Lupa password?",
+                          style: TextStyle(color: Colors.black, fontSize: 18),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 32,
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          final _auth = FirebaseAuth.instance;
+                          try {
+                            _auth.sendPasswordResetEmail(
+                                email: user.email.toString());
+                            final snackBar = SnackBar(
+                              content: const Text("Email terkirim.",
+                                  style: TextStyle(color: Colors.black)),
+                              backgroundColor: kYellow,
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          } catch (e) {
+                            print(e);
+                            final snackBar = SnackBar(
+                              content: const Text("Error, silahkan muat ulang.",
+                                  style: TextStyle(color: Colors.black)),
+                              backgroundColor: kYellow,
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          }
+                        },
+                        child: Text(
+                          "Kirim email reset password",
+                          style: TextStyle(color: kWhite),
+                        ),
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all<Color>(kLightBlue1)),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 12, right: 12, top: 12),
+                    child: Column(
+                      children: [
+                        Divider(
+                          color: Colors.black54,
+                        ),
+                      ],
+                    ),
+                  ),
                   oldPasswordField,
                   Padding(
                     padding: const EdgeInsets.only(left: 12, right: 12),
