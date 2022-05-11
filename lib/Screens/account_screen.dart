@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -18,7 +20,7 @@ import 'package:provider/provider.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
 import 'package:flutter/services.dart';
 
-enum WhyFarther { setting, darkmode, notification, datausage }
+enum OptionMenu { setting, darkmode, notification, datausage }
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({Key? key}) : super(key: key);
@@ -30,6 +32,29 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen> {
   final user = FirebaseAuth.instance.currentUser!;
   final _formKey = GlobalKey<FormState>();
+  late StreamSubscription userPhotoProfile;
+  final database = FirebaseDatabase.instance.ref();
+  String displayPhotoUrl = "";
+
+  @override
+  void initState() {
+    // ignore: todo
+    // TODO: implement initState
+    super.initState();
+    userPhotoProfile =
+        database.child('photoprofile').child(user.uid).onValue.listen((event) {
+      final Object? userData = event.snapshot.value;
+      setState(() {
+        displayPhotoUrl = userData.toString();
+      });
+    });
+  }
+
+  @override
+  void deactivate() {
+    userPhotoProfile.cancel();
+    super.deactivate();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,9 +92,8 @@ class _AccountScreenState extends State<AccountScreen> {
       return link;
     }
 
-    var displayPhotoUrl = user.photoURL;
     var displayNameText = user.displayName;
-    late WhyFarther _selection;
+    late OptionMenu _selection;
     final TextEditingController displayNameController =
         new TextEditingController(text: user.displayName);
     return Scaffold(
@@ -77,27 +101,27 @@ class _AccountScreenState extends State<AccountScreen> {
         backgroundColor: kLightBlue1,
         title: Text("Akun"),
         actions: <Widget>[
-          PopupMenuButton<WhyFarther>(
-            onSelected: (WhyFarther result) {
+          PopupMenuButton<OptionMenu>(
+            onSelected: (OptionMenu result) {
               setState(() {
                 _selection = result;
               });
             },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<WhyFarther>>[
-              const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.notification,
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<OptionMenu>>[
+              const PopupMenuItem<OptionMenu>(
+                value: OptionMenu.notification,
                 child: Text('Notifikasi - BLOM'),
               ),
-              const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.datausage,
+              const PopupMenuItem<OptionMenu>(
+                value: OptionMenu.datausage,
                 child: Text('Penggunaan Data - BLOM'),
               ),
-              const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.darkmode,
+              const PopupMenuItem<OptionMenu>(
+                value: OptionMenu.darkmode,
                 child: Text('Mode Malam - BLOM'),
               ),
-              const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.setting,
+              const PopupMenuItem<OptionMenu>(
+                value: OptionMenu.setting,
                 child: Text('Pengaturan - BLOM'),
               ),
             ],
@@ -390,9 +414,9 @@ class _AccountScreenState extends State<AccountScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 } else {
                   String? photoURL = await uploadPhotoProfile(file);
-                  await user.updatePhotoURL(photoURL);
+                  await database.update({"photoprofile/" + user.uid: photoURL});
                   setState(() {
-                    displayPhotoUrl = photoURL;
+                    displayPhotoUrl = photoURL!;
                   });
                   final snackBar = SnackBar(
                     content: const Text("Muat ulang untuk melihat perubahan.",

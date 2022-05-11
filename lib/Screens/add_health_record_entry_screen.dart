@@ -26,6 +26,15 @@ class _AddHealthRecordEntryScreenState
       List.generate(0, (i) => TextEditingController());
   List<TextEditingController> valueControllers =
       List.generate(0, (i) => TextEditingController());
+  final TextEditingController nameController = new TextEditingController();
+
+  final TextEditingController dateController = new TextEditingController(
+      text: "${DateTime.now().toLocal()}"
+          .split(' ')[0]); //"${selectedDate.toLocal()}".split(' ')[0]
+  final TextEditingController locationController = new TextEditingController();
+  final TextEditingController descriptionController =
+      new TextEditingController();
+  final TextEditingController tagController = new TextEditingController();
 
   bool customField = false;
   int numberCustomField = 0;
@@ -70,7 +79,6 @@ class _AddHealthRecordEntryScreenState
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController nameController = new TextEditingController();
     final nameField = TextFormField(
       autofocus: false,
       controller: nameController,
@@ -99,9 +107,6 @@ class _AddHealthRecordEntryScreenState
     );
 
     DateTime selectedDate = DateTime.now();
-    final TextEditingController dateController = new TextEditingController(
-        text: "${selectedDate.toLocal()}"
-            .split(' ')[0]); //"${selectedDate.toLocal()}".split(' ')[0]
     Future<void> _selectDate(BuildContext context) async {
       final DateTime? picked = await showDatePicker(
           context: context,
@@ -143,8 +148,6 @@ class _AddHealthRecordEntryScreenState
       ),
     );
 
-    final TextEditingController locationController =
-        new TextEditingController();
     final locationField = TextFormField(
       autofocus: false,
       controller: locationController,
@@ -160,10 +163,11 @@ class _AddHealthRecordEntryScreenState
         labelText: "Lokasi",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
+      onSaved: (value) {
+        locationController.text = value!;
+      },
     );
 
-    final TextEditingController descriptionController =
-        new TextEditingController();
     final descriptionField = TextFormField(
       maxLines: null,
       autofocus: false,
@@ -180,9 +184,11 @@ class _AddHealthRecordEntryScreenState
         labelText: "Deskripsi",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
+      onSaved: (value) {
+        descriptionController.text = value!;
+      },
     );
 
-    final TextEditingController tagController = new TextEditingController();
     final tagField = TextFormField(
       autofocus: false,
       controller: tagController,
@@ -198,6 +204,9 @@ class _AddHealthRecordEntryScreenState
         labelText: "Tag",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
+      onSaved: (value) {
+        tagController.text = value!;
+      },
     );
 
     Future<bool> uploadHealthRecord() async {
@@ -319,152 +328,158 @@ class _AddHealthRecordEntryScreenState
                               content: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  InkWell(
-                                    onTap: () async {
-                                      bool status =
-                                          await pickImage(ImageSource.camera);
-                                      if (status) {
-                                        final snackBar = SnackBar(
-                                          content: const Text(
-                                              "Lampiran ditambahkan.",
-                                              style: TextStyle(
-                                                  color: Colors.black)),
-                                          backgroundColor: kYellow,
-                                        );
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(snackBar);
-                                        Navigator.of(alertContext).pop();
-                                      } else {
-                                        final snackBar = SnackBar(
-                                          content: const Text("Dibatalkan.",
-                                              style: TextStyle(
-                                                  color: Colors.black)),
-                                          backgroundColor: kYellow,
-                                        );
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(snackBar);
-                                      }
-                                    },
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        SizedBox(
-                                          height: 80,
-                                          width: 80,
-                                          child: Card(
-                                            color: kLightBlue2,
-                                            elevation: 4,
+                                  TapDebouncer(onTap: () async {
+                                    bool status =
+                                        await pickImage(ImageSource.camera);
+                                    if (status) {
+                                      final snackBar = SnackBar(
+                                        content: const Text(
+                                            "Lampiran ditambahkan.",
+                                            style:
+                                                TextStyle(color: Colors.black)),
+                                        backgroundColor: kYellow,
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBar);
+                                      Navigator.of(alertContext).pop();
+                                    } else {
+                                      final snackBar = SnackBar(
+                                        content: const Text("Dibatalkan.",
+                                            style:
+                                                TextStyle(color: Colors.black)),
+                                        backgroundColor: kYellow,
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBar);
+                                    }
+                                  }, builder: (BuildContext context,
+                                      TapDebouncerFunc? onTap) {
+                                    return InkWell(
+                                      onTap: onTap,
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            height: 80,
+                                            width: 80,
+                                            child: Card(
+                                              color: kLightBlue2,
+                                              elevation: 4,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Icon(
+                                                    Icons.camera_alt_outlined,
+                                                    color: kBlack,
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Expanded(
                                             child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Icon(
-                                                  Icons.camera_alt_outlined,
-                                                  color: kBlack,
-                                                )
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "Foto rekam medis secara langsung.",
+                                                  style: TextStyle(
+                                                    color: Colors.black54,
+                                                  ),
+                                                ),
                                               ],
                                             ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                "Foto rekam medis secara langsung.",
-                                                style: TextStyle(
-                                                  color: Colors.black54,
-                                                ),
+                                        ],
+                                      ),
+                                    );
+                                  }),
+                                  TapDebouncer(onTap: () async {
+                                    bool status =
+                                        await pickImage(ImageSource.gallery);
+                                    if (status) {
+                                      final snackBar = SnackBar(
+                                        content: const Text(
+                                            "Lampiran ditambahkan.",
+                                            style:
+                                                TextStyle(color: Colors.black)),
+                                        backgroundColor: kYellow,
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBar);
+                                      Navigator.of(alertContext).pop();
+                                    } else {
+                                      final snackBar = SnackBar(
+                                        content: const Text("Dibatalkan.",
+                                            style:
+                                                TextStyle(color: Colors.black)),
+                                        backgroundColor: kYellow,
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBar);
+                                    }
+                                  }, builder: (BuildContext context,
+                                      TapDebouncerFunc? onTap) {
+                                    return InkWell(
+                                      onTap: onTap,
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            height: 80,
+                                            width: 80,
+                                            child: Card(
+                                              color: kLightBlue2,
+                                              elevation: 4,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Icon(
+                                                    Icons.photo_album_outlined,
+                                                    color: kBlack,
+                                                  )
+                                                ],
                                               ),
-                                            ],
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () async {
-                                      bool status =
-                                          await pickImage(ImageSource.gallery);
-                                      if (status) {
-                                        final snackBar = SnackBar(
-                                          content: const Text(
-                                              "Lampiran ditambahkan.",
-                                              style: TextStyle(
-                                                  color: Colors.black)),
-                                          backgroundColor: kYellow,
-                                        );
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(snackBar);
-                                        Navigator.of(alertContext).pop();
-                                      } else {
-                                        final snackBar = SnackBar(
-                                          content: const Text("Dibatalkan.",
-                                              style: TextStyle(
-                                                  color: Colors.black)),
-                                          backgroundColor: kYellow,
-                                        );
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(snackBar);
-                                      }
-                                    },
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        SizedBox(
-                                          height: 80,
-                                          width: 80,
-                                          child: Card(
-                                            color: kLightBlue2,
-                                            elevation: 4,
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Expanded(
                                             child: Column(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                                  MainAxisAlignment.start,
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Icon(
-                                                  Icons.photo_album_outlined,
-                                                  color: kBlack,
-                                                )
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "Ambil photo dari galeri android.",
+                                                  style: TextStyle(
+                                                    color: Colors.black54,
+                                                  ),
+                                                ),
                                               ],
                                             ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                "Ambil photo dari galeri android.",
-                                                style: TextStyle(
-                                                  color: Colors.black54,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                        ],
+                                      ),
+                                    );
+                                  }),
                                   TapDebouncer(onTap: () async {
                                     bool status = await pickFile();
                                     if (status) {

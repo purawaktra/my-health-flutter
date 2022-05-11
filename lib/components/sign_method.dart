@@ -93,7 +93,9 @@ class SignProvider extends ChangeNotifier {
               "city/" + user.uid: "",
               "zipcode/" + user.uid: "",
               "phonenumber/" + user.uid: "",
-              "job/" + user.uid: ""
+              "job/" + user.uid: "",
+              "photoprofile/" + user.uid:
+                  "https://firebasestorage.googleapis.com/v0/b/myhealth-default-storage/o/blank_photo_profile.png?alt=media&token=b7c09a0d-cd6c-4514-9498-647b5df0bd28"
             });
           } catch (e) {
             print(e.toString());

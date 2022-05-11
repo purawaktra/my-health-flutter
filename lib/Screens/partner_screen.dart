@@ -3,11 +3,13 @@ import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:myhealth/components/health_record.dart';
 import 'package:myhealth/constants.dart';
 import 'package:myhealth/screens/add_partner_screen.dart';
+import 'package:myhealth/screens/partner_entry_screen.dart';
 import 'package:path_provider/path_provider.dart';
 
 enum WhyFarther { harder, smarter, selfStarter, tradingCharter }
@@ -34,11 +36,13 @@ class _EntryAccessScreenState extends State<EntryAccessScreen> {
   late WhyFarther _selection;
   late Future<String> streamData;
   final user = FirebaseAuth.instance.currentUser!;
+  final database = FirebaseDatabase.instance.ref();
   final storage = FirebaseStorage.instance.ref();
 
   Future<String> putAccessFile() async {
     try {
       var accessEntry = AccessEntryBlockChain(user.uid);
+      _externalDocumentsDirectory = await getExternalStorageDirectory();
       Directory('${_externalDocumentsDirectory!.path}/Akses Rekam Medis/')
           .createSync(recursive: true);
 
@@ -145,14 +149,9 @@ class _EntryAccessScreenState extends State<EntryAccessScreen> {
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: kLightBlue1,
-          onPressed: () => Navigator.of(context)
-              .push(MaterialPageRoute(
-                  builder: (context) => AddEntryHealthRecordAccessScreen()))
-              .whenComplete(() => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => super.widget))),
-          tooltip: 'Rekam Medis Baru',
+          onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => AddEntryHealthRecordAccessScreen())),
+          tooltip: 'Partner baru',
           child: const Icon(
             Icons.add,
             color: Colors.white,
@@ -187,60 +186,209 @@ class _EntryAccessScreenState extends State<EntryAccessScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ));
+                  } else if (snapshot.data == "object-not-found" ||
+                      snapshot.data == "unknown") {
+                    putAccessFile();
+                    return Center(
+                        child: Text(
+                      "Sepertinya datanya ga ada, coba buat entry dulu deh :) \n Error code: ${snapshot.error.toString()}",
+                      style: TextStyle(
+                        color: Colors.black54,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      textAlign: TextAlign.center,
+                    ));
                   } else {
                     String healthRecordData = snapshot.data!;
-
-                    if (healthRecordData == "object-not-found") {
-                      putAccessFile();
-                      return Center(
-                          child: Text(
-                        "Sepertinya datanya ga ada, coba buat entry dulu deh :) \n Error code: ${snapshot.error.toString()}",
-                        style: TextStyle(
-                          color: Colors.black54,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        textAlign: TextAlign.center,
-                      ));
-                    } else {
-                      String healthRecordAccessRaw =
-                          File(healthRecordData).readAsStringSync();
-                      print(healthRecordAccessRaw);
-                      AccessEntryBlockChain healthRecordAccess =
-                          AccessEntryBlockChain.fromJson(
-                              jsonDecode(healthRecordAccessRaw));
-                      List<String> accessRequest = [];
-                      List<String> accessPermit = [];
-                      for (AccessEntry healthRecordAccessEntry
-                          in healthRecordAccess.data) {
-                        if (healthRecordAccessEntry.entryType == "request") {
-                          if (healthRecordAccessEntry.enabled) {
-                            accessRequest.add(healthRecordAccessEntry.entryID);
-                          } else {
-                            accessRequest
-                                .remove(healthRecordAccessEntry.entryID);
-                          }
-                        } else if (healthRecordAccessEntry.entryType ==
-                            "permit") {
-                          if (healthRecordAccessEntry.enabled) {
-                            accessPermit.add(healthRecordAccessEntry.entryID);
-                          } else {
-                            accessPermit
-                                .remove(healthRecordAccessEntry.entryID);
-                          }
+                    String healthRecordAccessRaw =
+                        File(healthRecordData).readAsStringSync();
+                    print(healthRecordAccessRaw);
+                    AccessEntryBlockChain healthRecordAccess =
+                        AccessEntryBlockChain.fromJson(
+                            jsonDecode(healthRecordAccessRaw));
+                    List<AccessEntry> accessRequest = [];
+                    List<AccessEntry> accessPermit = [];
+                    for (AccessEntry healthRecordAccessEntry
+                        in healthRecordAccess.data) {
+                      if (healthRecordAccessEntry.entryType == "request") {
+                        if (healthRecordAccessEntry.enabled) {
+                          accessRequest.add(healthRecordAccessEntry);
+                        } else {
+                          accessRequest.remove(healthRecordAccessEntry.entryID);
+                        }
+                      } else if (healthRecordAccessEntry.entryType ==
+                          "permit") {
+                        if (healthRecordAccessEntry.enabled) {
+                          accessPermit.add(healthRecordAccessEntry);
+                        } else {
+                          accessPermit.remove(healthRecordAccessEntry.entryID);
                         }
                       }
-                      return Container(
-                          //     child: Column(
-                          //   children: <Widget>[
-                          //     Container(
-                          //       child: ListView(
-                          //         children: [],
-                          //       ),
-                          //     )
-                          //   ],
-                          // )
-                          );
                     }
+                    return Container(
+                      child: ListView(
+                        children: [
+                          for (AccessEntry item in accessRequest)
+                            ExpansionTile(
+                              title: FutureBuilder<DataSnapshot>(
+                                  future: database
+                                      .child("fullname")
+                                      .child(item.uid)
+                                      .get(),
+                                  builder: (context2, snapshot) {
+                                    Widget child = Text("Memuat...",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 18,
+                                          overflow: TextOverflow.ellipsis,
+                                        ));
+                                    if (snapshot.hasData) if (snapshot
+                                        .data!.value
+                                        .toString()
+                                        .isNotEmpty) {
+                                      child = Text(
+                                        snapshot.data!.value.toString(),
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 18,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      );
+                                    } else {
+                                      child = Text(
+                                        "Nama partner belum diatur.",
+                                        style: TextStyle(
+                                          color: Colors.black54,
+                                          fontStyle: FontStyle.italic,
+                                          fontSize: 18,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      );
+                                    }
+
+                                    return child;
+                                  }),
+                              subtitle: Row(
+                                children: [
+                                  Text(
+                                    item.entryID,
+                                    style: TextStyle(
+                                      color: Colors.black54,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 12,
+                                  ),
+                                  Text(
+                                    item.date.toString(),
+                                    style: TextStyle(
+                                      color: Colors.black54,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  )
+                                ],
+                              ),
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 12, right: 12),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        height: 60,
+                                        width: 60,
+                                        child: Card(
+                                          color: kLightBlue2,
+                                          elevation: 4,
+                                          child: InkWell(
+                                            onTap: () {
+                                              Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PartnerEntryScreen(
+                                                            partnerEntry: item,
+                                                          )));
+                                            },
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                Icon(
+                                                  Icons.open_in_new,
+                                                  color: kBlack,
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 60,
+                                        width: 60,
+                                        child: Card(
+                                          color: kRed,
+                                          elevation: 4,
+                                          child: InkWell(
+                                            onTap: () {
+                                              final snackBar = SnackBar(
+                                                content: const Text(
+                                                    "Double klik untuk menghapus.",
+                                                    style: TextStyle(
+                                                        color: Colors.black)),
+                                                backgroundColor: kYellow,
+                                              );
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(snackBar);
+                                            },
+                                            onDoubleTap: () async {},
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                Icon(
+                                                  Icons.delete,
+                                                  color: kWhite,
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Expanded(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Buka dan hapus.",
+                                              style: TextStyle(
+                                                color: Colors.black54,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
+                    );
                   }
                 })));
   }

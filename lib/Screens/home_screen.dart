@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:myhealth/Screens/dashboard_screen.dart';
 import 'package:myhealth/constants.dart';
 import 'package:myhealth/screens/account_screen.dart';
-import 'package:myhealth/screens/add_partner_screen.dart';
 import 'package:myhealth/screens/partner_screen.dart';
 import 'package:myhealth/screens/health_record_screen.dart';
 

@@ -10,7 +10,16 @@ import 'package:myhealth/components/background.dart';
 import 'package:myhealth/components/health_record.dart';
 import 'package:myhealth/constants.dart';
 import 'package:myhealth/screens/qr_code_scanner_screen.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
+import 'dart:math';
+
+String generateRandomString(int len) {
+  var r = Random();
+  const _chars =
+      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  return List.generate(len, (index) => _chars[r.nextInt(_chars.length)]).join();
+}
 
 class AddEntryHealthRecordAccessScreen extends StatefulWidget {
   const AddEntryHealthRecordAccessScreen({Key? key}) : super(key: key);
@@ -228,6 +237,8 @@ class _AddEntryHealthRecordAccessScreenState
                             backgroundColor: kYellow,
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          _externalDocumentsDirectory =
+                              await getExternalStorageDirectory();
                           File fileToHealthRecordAccess = File(
                               "${_externalDocumentsDirectory!.path}/Akses Rekam Medis/blockchain.txt");
 
@@ -242,7 +253,8 @@ class _AddEntryHealthRecordAccessScreenState
                           AccessEntryBlockChain healthRecordAccess =
                               AccessEntryBlockChain.fromJson(
                                   jsonDecode(healthRecordAccessRaw));
-                          healthRecordAccess.data.add((AccessEntry("text",
+                          healthRecordAccess.data.add((AccessEntry(
+                              generateRandomString(10),
                               entryType: "request",
                               enabled: true,
                               uid: userIDController.text,
@@ -254,6 +266,9 @@ class _AddEntryHealthRecordAccessScreenState
                                   .toString(),
                               date: "${DateTime.now().toLocal()}"
                                   .split(' ')[0])));
+
+                          fileToHealthRecordAccess.writeAsString(
+                              jsonEncode(healthRecordAccess.toJson()));
                           Reference healthRecordAccessref = FirebaseStorage
                               .instance
                               .ref()
