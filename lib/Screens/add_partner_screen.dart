@@ -35,7 +35,7 @@ class _AddEntryHealthRecordAccessScreenState
   final storage = FirebaseStorage.instance.ref();
   Directory? _externalDocumentsDirectory;
   final _formKey = GlobalKey<FormState>();
-  String dropdownValue = 'One';
+  String dropdownValue = '';
   @override
   Widget build(BuildContext context) {
     DateTime selectedDate = DateTime.now();
@@ -190,7 +190,7 @@ class _AddEntryHealthRecordAccessScreenState
                       hintText: "Belum diatur",
                       hintStyle: TextStyle(color: Colors.black54),
                       border: InputBorder.none,
-                      labelText: "Tipe Entry",
+                      labelText: "Tambahkan ke list",
                       floatingLabelBehavior: FloatingLabelBehavior.always,
                     ),
                     autofocus: false,
@@ -198,15 +198,16 @@ class _AddEntryHealthRecordAccessScreenState
                     style: const TextStyle(color: Colors.black),
                     validator: (String? value) {
                       if (value == null) {
-                        return ("Tipe entry masih kosong");
+                        return ("Pilih list");
                       }
                     },
                     onChanged: (String? newValue) {
                       setState(() {
                         dropdownValue = newValue!;
                       });
+                      print(dropdownValue);
                     },
-                    items: <String>['Beri izin akses', 'Dapatkan izin akses']
+                    items: <String>['request', 'permit']
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -253,9 +254,9 @@ class _AddEntryHealthRecordAccessScreenState
                           AccessEntryBlockChain healthRecordAccess =
                               AccessEntryBlockChain.fromJson(
                                   jsonDecode(healthRecordAccessRaw));
-                          healthRecordAccess.data.add((AccessEntry(
+                          healthRecordAccess.data.add(AccessEntry(
                               generateRandomString(10),
-                              entryType: "request",
+                              entryType: dropdownValue,
                               enabled: true,
                               uid: userIDController.text,
                               hash: sha256
@@ -264,8 +265,8 @@ class _AddEntryHealthRecordAccessScreenState
                                       .toJson()
                                       .toString()))
                                   .toString(),
-                              date: "${DateTime.now().toLocal()}"
-                                  .split(' ')[0])));
+                              date:
+                                  "${DateTime.now().toLocal()}".split(' ')[0]));
 
                           fileToHealthRecordAccess.writeAsString(
                               jsonEncode(healthRecordAccess.toJson()));

@@ -47,7 +47,7 @@ class _EntryAccessScreenState extends State<EntryAccessScreen> {
           .createSync(recursive: true);
 
       File fileToHealthRecordAccess = File(
-          "${_externalDocumentsDirectory!.path}/Akses Rekam Medis/blockchain.txt");
+          "${_externalDocumentsDirectory!.path}/Akses Rekam Medis/${user.uid}");
 
       fileToHealthRecordAccess.writeAsString(jsonEncode(accessEntry.toJson()));
 
@@ -86,7 +86,7 @@ class _EntryAccessScreenState extends State<EntryAccessScreen> {
       return result;
     }
     File downloadToFile = File(
-        '${_externalDocumentsDirectory!.path}/Akses Rekam Medis/blockchain.txt');
+        '${_externalDocumentsDirectory!.path}/Akses Rekam Medis/${user.uid}');
     try {
       await storage
           .child('health-record-access')
@@ -202,33 +202,34 @@ class _EntryAccessScreenState extends State<EntryAccessScreen> {
                     String healthRecordData = snapshot.data!;
                     String healthRecordAccessRaw =
                         File(healthRecordData).readAsStringSync();
-                    print(healthRecordAccessRaw);
                     AccessEntryBlockChain healthRecordAccess =
                         AccessEntryBlockChain.fromJson(
                             jsonDecode(healthRecordAccessRaw));
-                    List<AccessEntry> accessRequest = [];
-                    List<AccessEntry> accessPermit = [];
+                    Map<String, AccessEntry> accessRequest = {};
+                    Map<String, AccessEntry> accessPermit = {};
                     for (AccessEntry healthRecordAccessEntry
                         in healthRecordAccess.data) {
                       if (healthRecordAccessEntry.entryType == "request") {
                         if (healthRecordAccessEntry.enabled) {
-                          accessRequest.add(healthRecordAccessEntry);
+                          accessRequest[healthRecordAccessEntry.uid] =
+                              healthRecordAccessEntry;
                         } else {
-                          accessRequest.remove(healthRecordAccessEntry.entryID);
+                          accessRequest.remove(healthRecordAccessEntry.uid);
                         }
                       } else if (healthRecordAccessEntry.entryType ==
                           "permit") {
                         if (healthRecordAccessEntry.enabled) {
-                          accessPermit.add(healthRecordAccessEntry);
+                          accessPermit[healthRecordAccessEntry.uid] =
+                              healthRecordAccessEntry;
                         } else {
-                          accessPermit.remove(healthRecordAccessEntry.entryID);
+                          accessPermit.remove(healthRecordAccessEntry.uid);
                         }
                       }
                     }
                     return Container(
                       child: ListView(
                         children: [
-                          for (AccessEntry item in accessRequest)
+                          for (AccessEntry item in accessRequest.values)
                             ExpansionTile(
                               title: FutureBuilder<DataSnapshot>(
                                   future: database
@@ -346,7 +347,82 @@ class _EntryAccessScreenState extends State<EntryAccessScreen> {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(snackBar);
                                             },
-                                            onDoubleTap: () async {},
+                                            onDoubleTap: () async {
+                                              bool result = false;
+                                              try {
+                                                healthRecordAccess.data.add(AccessEntry(
+                                                    generateRandomString(10),
+                                                    entryType: item.entryType,
+                                                    enabled: false,
+                                                    uid: item.uid,
+                                                    hash: sha256
+                                                        .convert(utf8.encode(
+                                                            healthRecordAccess
+                                                                .data.last
+                                                                .toJson()
+                                                                .toString()))
+                                                        .toString(),
+                                                    date:
+                                                        "${DateTime.now().toLocal()}"
+                                                            .split(' ')[0]));
+                                                File(healthRecordData)
+                                                    .writeAsString(jsonEncode(
+                                                        healthRecordAccess
+                                                            .toJson()));
+                                                Reference
+                                                    healthRecordAccessref =
+                                                    FirebaseStorage.instance
+                                                        .ref()
+                                                        .child(
+                                                            'health-record-access')
+                                                        .child(user.uid);
+
+                                                try {
+                                                  await healthRecordAccessref
+                                                      .putData(await File(
+                                                              healthRecordData)
+                                                          .readAsBytes());
+                                                  result = true;
+                                                } catch (e) {
+                                                  print(e);
+                                                  try {
+                                                    await healthRecordAccessref
+                                                        .putFile(File(
+                                                            healthRecordData));
+                                                    result = true;
+                                                  } catch (e) {
+                                                    print(e);
+                                                  }
+                                                }
+                                              } catch (e) {
+                                                print(e);
+                                              }
+                                              if (result) {
+                                                final snackBar = SnackBar(
+                                                  content: const Text(
+                                                      "Berhasil.",
+                                                      style: TextStyle(
+                                                          color: Colors.black)),
+                                                  backgroundColor: kYellow,
+                                                );
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(snackBar);
+                                                setState(() {
+                                                  streamData =
+                                                      downloadAccessFile();
+                                                });
+                                              } else {
+                                                final snackBar = SnackBar(
+                                                  content: const Text(
+                                                      "Gagal, cek koneksi anda.",
+                                                      style: TextStyle(
+                                                          color: Colors.black)),
+                                                  backgroundColor: kYellow,
+                                                );
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(snackBar);
+                                              }
+                                            },
                                             child: Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,

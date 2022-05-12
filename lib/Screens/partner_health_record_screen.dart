@@ -1,32 +1,33 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:myhealth/components/health_record.dart';
 import 'package:myhealth/constants.dart';
-import 'package:myhealth/screens/add_health_record_entry_screen.dart';
-import 'package:myhealth/screens/health_record_entry_screen.dart';
+import 'package:myhealth/screens/partner_health_record_entry_screen.dart';
 import 'package:path_provider/path_provider.dart';
 
-enum OptionMenu { import, find, filter, delete }
-
-class HealthRecordScreen extends StatefulWidget {
-  const HealthRecordScreen({Key? key}) : super(key: key);
+class PartnerHealthRecordScreen extends StatefulWidget {
+  final AccessEntry partnerEntry;
+  const PartnerHealthRecordScreen({Key? key, required this.partnerEntry})
+      : super(key: key);
   @override
-  _HealthRecordScreenState createState() => _HealthRecordScreenState();
+  _PartnerHealthRecordScreenState createState() =>
+      _PartnerHealthRecordScreenState();
 }
 
-class _HealthRecordScreenState extends State<HealthRecordScreen> {
-  final user = FirebaseAuth.instance.currentUser!;
+class _PartnerHealthRecordScreenState extends State<PartnerHealthRecordScreen> {
   final database = FirebaseDatabase.instance.ref();
   final storage = FirebaseStorage.instance.ref();
   Directory? _externalDocumentsDirectory;
 
   Future<Iterable<DataSnapshot>> getdata() async {
-    DataSnapshot healthRecordRef =
-        await database.child("health-record").child(user.uid).get();
+    DataSnapshot healthRecordRef = await database
+        .child("health-record")
+        .child(this.widget.partnerEntry.uid)
+        .get();
     Iterable<DataSnapshot> a = healthRecordRef.children;
     return a;
   }
@@ -57,7 +58,6 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
     return result;
   }
 
-  late OptionMenu _selection;
   late Future<Iterable<DataSnapshot>> streamData;
 
   bool basicEntry = true;
@@ -67,23 +67,9 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
 
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: kLightBlue1,
-        onPressed: () => Navigator.of(context)
-            .push(MaterialPageRoute(
-                builder: (context) => AddHealthRecordEntryScreen()))
-            .whenComplete(() => setState(() {
-                  streamData = getdata();
-                })),
-        tooltip: 'Rekam Medis Baru',
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      ),
       appBar: AppBar(
         backgroundColor: kLightBlue1,
-        title: Text("Rekam Medisku"),
+        title: Text("Rekam Medis Partner"),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.refresh_outlined),
@@ -93,27 +79,6 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                 streamData = getdata();
               });
             },
-          ),
-          PopupMenuButton<OptionMenu>(
-            onSelected: (OptionMenu result) {
-              setState(() {
-                _selection = result;
-              });
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<OptionMenu>>[
-              const PopupMenuItem<OptionMenu>(
-                value: OptionMenu.import,
-                child: Text('Import - BELOM'),
-              ),
-              const PopupMenuItem<OptionMenu>(
-                value: OptionMenu.find,
-                child: Text('Cari - BELOM'),
-              ),
-              const PopupMenuItem<OptionMenu>(
-                value: OptionMenu.filter,
-                child: Text('Filter - BELOM'),
-              ),
-            ],
           ),
         ],
       ),
@@ -234,9 +199,12 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                           Navigator.of(context)
                                               .push(MaterialPageRoute(
                                                   builder: (context) =>
-                                                      HealthRecordEntryScreen(
+                                                      PartnerHealthRecordEntryScreen(
                                                         healthRecord:
                                                             healthRecordSnapshot,
+                                                        partnerEntry: this
+                                                            .widget
+                                                            .partnerEntry,
                                                       )))
                                               .whenComplete(() {
                                             setState(() {
@@ -260,91 +228,6 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                     ),
                                   ),
                                   SizedBox(
-                                    height: 60,
-                                    width: 60,
-                                    child: Card(
-                                      color: kRed,
-                                      elevation: 4,
-                                      child: InkWell(
-                                        onTap: () {
-                                          final snackBar = SnackBar(
-                                            content: const Text(
-                                                "Double klik untuk menghapus.",
-                                                style: TextStyle(
-                                                    color: Colors.black)),
-                                            backgroundColor: kYellow,
-                                          );
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(snackBar);
-                                        },
-                                        onDoubleTap: () async {
-                                          try {
-                                            try {
-                                              for (DataSnapshot itemSnapshot
-                                                  in healthRecordSnapshot
-                                                      .children) {
-                                                if (itemSnapshot.value
-                                                    .toString()
-                                                    .startsWith("filename")) {
-                                                  await storage
-                                                      .child('health-record')
-                                                      .child(user.uid)
-                                                      .child(itemSnapshot.value
-                                                          .toString())
-                                                      .delete();
-                                                }
-                                              }
-                                            } catch (e) {
-                                              print(e);
-                                            }
-
-                                            await database
-                                                .child("health-record")
-                                                .child(user.uid)
-                                                .child(
-                                                    healthRecordSnapshot.key!)
-                                                .remove();
-                                            final snackBar = SnackBar(
-                                              content: const Text(
-                                                  "Hapus berhasil.",
-                                                  style: TextStyle(
-                                                      color: Colors.black)),
-                                              backgroundColor: kYellow,
-                                            );
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(snackBar);
-                                            setState(() {
-                                              streamData = getdata();
-                                            });
-                                          } catch (e) {
-                                            print(e.toString());
-                                            final snackBar = SnackBar(
-                                              content: const Text(
-                                                  "Hapus gagal, cek koneksi anda.",
-                                                  style: TextStyle(
-                                                      color: Colors.black)),
-                                              backgroundColor: kYellow,
-                                            );
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(snackBar);
-                                          }
-                                        },
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Icon(
-                                              Icons.delete,
-                                              color: kWhite,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
                                     width: 10,
                                   ),
                                   Expanded(
@@ -355,7 +238,7 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "Buka, berbagi, dan hapus.",
+                                          "Buka",
                                           style: TextStyle(
                                             color: Colors.black54,
                                           ),
@@ -400,7 +283,6 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                         style: TextStyle(color: kBlack),
                                         decoration: InputDecoration(
                                           prefixIcon: icons,
-                                          hintText: title,
                                           hintStyle:
                                               TextStyle(color: Colors.black54),
                                           border: InputBorder.none,
@@ -427,7 +309,6 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                         style: TextStyle(color: kBlack),
                                         decoration: InputDecoration(
                                           prefixIcon: icons,
-                                          hintText: title,
                                           hintStyle:
                                               TextStyle(color: Colors.black54),
                                           border: InputBorder.none,
@@ -453,7 +334,6 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                         style: TextStyle(color: kBlack),
                                         decoration: InputDecoration(
                                           prefixIcon: icons,
-                                          hintText: title,
                                           hintStyle:
                                               TextStyle(color: Colors.black54),
                                           border: InputBorder.none,

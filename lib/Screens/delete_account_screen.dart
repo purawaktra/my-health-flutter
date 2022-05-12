@@ -370,27 +370,43 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                       } catch (e) {
                         print(e.toString());
                       }
+                      Reference ref2 = FirebaseStorage.instance
+                          .ref()
+                          .child('health-record-access')
+                          .child('/' + uid);
+
+                      try {
+                        await ref2.delete();
+                      } catch (e) {
+                        print(e.toString());
+                      }
                       final database = FirebaseDatabase.instance.ref();
-                      await database.child("nik/" + uid).remove();
-                      await database.child("fullname/" + uid).remove();
-                      await database.child("birthplace/" + uid).remove();
-                      await database.child("birthdate/" + uid).remove();
-                      await database.child("gender/" + uid).remove();
-                      await database.child("address/" + uid).remove();
-                      await database.child("city/" + uid).remove();
-                      await database.child("zipcode/" + uid).remove();
-                      await database.child("phonenumber/" + uid).remove();
-                      await database.child("job/" + uid).remove();
+                      await database.child("address" + uid).remove();
+                      await database.child("birthdate" + uid).remove();
+                      await database.child("birthplace" + uid).remove();
+                      await database.child("city" + uid).remove();
+                      await database.child("displayname" + uid).remove();
+                      await database.child("email" + uid).remove();
+                      await database.child("fullname" + uid).remove();
+                      await database.child("gender" + uid).remove();
+                      await database.child("job" + uid).remove();
+                      await database.child("nik" + uid).remove();
+                      await database.child("phonenumber" + uid).remove();
+                      await database.child("photoprofile" + uid).remove();
+                      await database.child("zipcode" + uid).remove();
+
                       DataSnapshot healthRecordRef =
-                          await database.child("health-record/" + uid).get();
+                          await database.child("health-record" + uid).get();
                       for (DataSnapshot healthRecordItem
                           in healthRecordRef.children) {
                         for (DataSnapshot item in healthRecordItem.children) {
-                          if (item.value == "filename") {
+                          if (item.key.toString().startsWith("filename")) {
                             Reference healthRecordID = FirebaseStorage.instance
                                 .ref()
                                 .child('health-record')
-                                .child('/' + healthRecordRef.key.toString());
+                                .child(user.uid)
+                                .child(healthRecordItem.key.toString())
+                                .child(item.value.toString());
                             try {
                               await healthRecordID.delete();
                             } catch (e) {

@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:myhealth/Screens/dashboard_screen.dart';
 import 'package:myhealth/constants.dart';
 import 'package:myhealth/screens/account_screen.dart';
 import 'package:myhealth/screens/partner_screen.dart';
@@ -16,10 +15,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final user = FirebaseAuth.instance.currentUser!;
   final database = FirebaseDatabase.instance.ref();
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
 
   static const List<Widget> _widgetOptions = <Widget>[
-    DashboardScreen(),
     HealthRecordScreen(),
     EntryAccessScreen(),
     AccountScreen(),
@@ -41,12 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.home,
-            ),
-            label: 'BLOM JADI :(',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
               Icons.description_outlined,
             ),
             label: 'Rekam Medis',
@@ -55,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(
               Icons.people_alt_outlined,
             ),
-            label: 'BLOM JADI :\'',
+            label: 'Partner',
           ),
           BottomNavigationBarItem(
             icon: Icon(

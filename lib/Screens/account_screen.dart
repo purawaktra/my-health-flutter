@@ -33,8 +33,11 @@ class _AccountScreenState extends State<AccountScreen> {
   final user = FirebaseAuth.instance.currentUser!;
   final _formKey = GlobalKey<FormState>();
   late StreamSubscription userPhotoProfile;
+  late StreamSubscription userDisplayName;
   final database = FirebaseDatabase.instance.ref();
-  String displayPhotoUrl = "";
+  String displayPhotoUrl =
+      "https://firebasestorage.googleapis.com/v0/b/myhealth-default-storage/o/blank_photo_profile.png?alt=media&token=b7c09a0d-cd6c-4514-9498-647b5df0bd28";
+  String displayName = "Memuat...";
 
   @override
   void initState() {
@@ -46,6 +49,14 @@ class _AccountScreenState extends State<AccountScreen> {
       final Object? userData = event.snapshot.value;
       setState(() {
         displayPhotoUrl = userData.toString();
+      });
+    });
+
+    userPhotoProfile =
+        database.child('displayname').child(user.uid).onValue.listen((event) {
+      final Object? userData = event.snapshot.value;
+      setState(() {
+        displayName = userData.toString();
       });
     });
   }
@@ -92,7 +103,6 @@ class _AccountScreenState extends State<AccountScreen> {
       return link;
     }
 
-    var displayNameText = user.displayName;
     late OptionMenu _selection;
     final TextEditingController displayNameController =
         new TextEditingController(text: user.displayName);
@@ -141,14 +151,14 @@ class _AccountScreenState extends State<AccountScreen> {
                   children: <Widget>[
                     CircleAvatar(
                       radius: 80,
-                      backgroundImage: NetworkImage(displayPhotoUrl!),
+                      backgroundImage: NetworkImage(displayPhotoUrl),
                       key: ValueKey(displayPhotoUrl),
                     ),
                     SizedBox(
                       height: 8,
                     ),
                     Text(
-                      displayNameText!,
+                      displayName,
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 24,
@@ -331,25 +341,30 @@ class _AccountScreenState extends State<AccountScreen> {
                                     onTap: () async {
                                       if (_formKey.currentState!.validate()) {
                                         _formKey.currentState!.save();
-                                      }
+                                        await database.update({
+                                          "displayname/" + user.uid:
+                                              displayNameController.text,
+                                        });
 
-                                      await user
-                                          .updateDisplayName(
-                                              displayNameController.text)
-                                          .whenComplete(() => setState(() {
-                                                displayNameText =
-                                                    displayNameController.text;
-                                              }));
-                                      Navigator.of(alertContext).pop();
-                                      final snackBar = SnackBar(
-                                        content: const Text(
-                                            "Muat ulang untuk melihat perubahan.",
-                                            style:
-                                                TextStyle(color: Colors.black)),
-                                        backgroundColor: kYellow,
-                                      );
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(snackBar);
+                                        await user
+                                            .updateDisplayName(
+                                                displayNameController.text)
+                                            .whenComplete(() => setState(() {
+                                                  displayName =
+                                                      displayNameController
+                                                          .text;
+                                                }));
+                                        Navigator.of(alertContext).pop();
+                                        final snackBar = SnackBar(
+                                          content: const Text(
+                                              "Muat ulang untuk melihat perubahan.",
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                          backgroundColor: kYellow,
+                                        );
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(snackBar);
+                                      }
                                     },
                                     builder: (BuildContext context,
                                         TapDebouncerFunc? onTap) {
@@ -415,6 +430,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 } else {
                   String? photoURL = await uploadPhotoProfile(file);
                   await database.update({"photoprofile/" + user.uid: photoURL});
+                  await user.updatePhotoURL(photoURL);
                   setState(() {
                     displayPhotoUrl = photoURL!;
                   });
