@@ -45,7 +45,7 @@ class _PartnerEntryScreenState extends State<PartnerEntryScreen> {
       return result;
     }
     File downloadToFile = File(
-        '${_externalDocumentsDirectory!.path}/Akses Rekam Medis/blockchain.txt');
+        '${_externalDocumentsDirectory!.path}/Akses Rekam Medis/${user.uid}');
     try {
       await storage
           .child('health-record-access')

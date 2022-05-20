@@ -11,6 +11,7 @@ import 'package:myhealth/Screens/profile_screen.dart';
 import 'package:myhealth/components/sign_method.dart';
 import 'package:myhealth/constants.dart';
 import 'package:myhealth/screens/add_email_provider_screen.dart';
+import 'package:myhealth/screens/blockchain_verification.dart';
 import 'package:myhealth/screens/change_password_screen.dart';
 import 'package:myhealth/screens/delete_account_screen.dart';
 import 'package:myhealth/screens/developer_info_screen.dart';
@@ -19,6 +20,7 @@ import 'package:myhealth/screens/qr_code_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 enum OptionMenu { setting, darkmode, notification, datausage }
 
@@ -110,33 +112,6 @@ class _AccountScreenState extends State<AccountScreen> {
       appBar: AppBar(
         backgroundColor: kLightBlue1,
         title: Text("Akun"),
-        actions: <Widget>[
-          PopupMenuButton<OptionMenu>(
-            onSelected: (OptionMenu result) {
-              setState(() {
-                _selection = result;
-              });
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<OptionMenu>>[
-              const PopupMenuItem<OptionMenu>(
-                value: OptionMenu.notification,
-                child: Text('Notifikasi - BLOM'),
-              ),
-              const PopupMenuItem<OptionMenu>(
-                value: OptionMenu.datausage,
-                child: Text('Penggunaan Data - BLOM'),
-              ),
-              const PopupMenuItem<OptionMenu>(
-                value: OptionMenu.darkmode,
-                child: Text('Mode Malam - BLOM'),
-              ),
-              const PopupMenuItem<OptionMenu>(
-                value: OptionMenu.setting,
-                child: Text('Pengaturan - BLOM'),
-              ),
-            ],
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -688,6 +663,51 @@ class _AccountScreenState extends State<AccountScreen> {
             ),
             InkWell(
               onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => BlockchainVerificationScreen()));
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  SizedBox(
+                    height: 60,
+                    width: 60,
+                    child: Icon(
+                      Icons.fingerprint,
+                      color: kBlack,
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Verifikasi Blockchain',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Text(
+                          "Kalkulasi hash untuk verifikasi list partner.",
+                          style: TextStyle(
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            InkWell(
+              onTap: () {
                 bool state = false;
                 List<UserInfo> listProvider = user.providerData;
                 for (UserInfo provider in listProvider) {
@@ -870,7 +890,21 @@ class _AccountScreenState extends State<AccountScreen> {
               ),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () async {
+                final Uri params = Uri(
+                    scheme: 'mailto',
+                    path: 'akbar.muhammadakbarmaulana@gmail.com',
+                    query: 'subject=myHealth Manajemen Rekam Medis');
+                try {
+                  await launchUrl(params);
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Eror terjadi, error code: $e'),
+                    ),
+                  );
+                }
+              },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -911,42 +945,42 @@ class _AccountScreenState extends State<AccountScreen> {
                 ],
               ),
             ),
-            InkWell(
-              onTap: () {},
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 10,
-                  ),
-                  SizedBox(
-                    height: 60,
-                    width: 60,
-                    child: Icon(
-                      Icons.share,
-                      color: kBlack,
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Bagikan Aplikasi',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // InkWell(
+            //   onTap: () {},
+            //   child: Row(
+            //     crossAxisAlignment: CrossAxisAlignment.center,
+            //     mainAxisAlignment: MainAxisAlignment.start,
+            //     children: [
+            //       SizedBox(
+            //         width: 10,
+            //       ),
+            //       SizedBox(
+            //         height: 60,
+            //         width: 60,
+            //         child: Icon(
+            //           Icons.share,
+            //           color: kBlack,
+            //         ),
+            //       ),
+            //       Expanded(
+            //         child: Column(
+            //           mainAxisAlignment: MainAxisAlignment.start,
+            //           crossAxisAlignment: CrossAxisAlignment.start,
+            //           children: [
+            //             Text(
+            //               'Bagikan Aplikasi',
+            //               style: TextStyle(
+            //                 color: Colors.black,
+            //                 fontSize: 18,
+            //                 overflow: TextOverflow.ellipsis,
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
             InkWell(
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(

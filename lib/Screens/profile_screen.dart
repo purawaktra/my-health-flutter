@@ -456,25 +456,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         backgroundColor: kLightBlue1,
         title: Text("Informasi Pribadi"),
-        actions: <Widget>[
-          PopupMenuButton<WhyFarther>(
-            onSelected: (WhyFarther result) {
-              setState(() {
-                _selection = result;
-              });
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<WhyFarther>>[
-              const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.reload,
-                child: Text('Muat Ulang - BLOM'),
-              ),
-              const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.helpdesk,
-                child: Text('Bantuan - BLOM'),
-              ),
-            ],
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Padding(

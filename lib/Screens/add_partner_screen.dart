@@ -7,19 +7,13 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:myhealth/components/background.dart';
+import 'package:myhealth/components/generate.dart';
 import 'package:myhealth/components/health_record.dart';
 import 'package:myhealth/constants.dart';
 import 'package:myhealth/screens/qr_code_scanner_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
 import 'dart:math';
-
-String generateRandomString(int len) {
-  var r = Random();
-  const _chars =
-      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-  return List.generate(len, (index) => _chars[r.nextInt(_chars.length)]).join();
-}
 
 class AddEntryHealthRecordAccessScreen extends StatefulWidget {
   const AddEntryHealthRecordAccessScreen({Key? key}) : super(key: key);
@@ -114,10 +108,12 @@ class _AddEntryHealthRecordAccessScreenState
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
-    return Background(
-      title: "Entry Baru",
-      description: Text("Deskripsi kosong."),
-      child: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: kLightBlue1,
+        title: Text("Entry Baru"),
+      ),
+      body: SingleChildScrollView(
           child: Column(
         children: [
           SizedBox(
@@ -241,7 +237,7 @@ class _AddEntryHealthRecordAccessScreenState
                           _externalDocumentsDirectory =
                               await getExternalStorageDirectory();
                           File fileToHealthRecordAccess = File(
-                              "${_externalDocumentsDirectory!.path}/Akses Rekam Medis/blockchain.txt");
+                              "${_externalDocumentsDirectory!.path}/Akses Rekam Medis/${user.uid}");
 
                           await storage
                               .child('health-record-access')
@@ -254,19 +250,21 @@ class _AddEntryHealthRecordAccessScreenState
                           AccessEntryBlockChain healthRecordAccess =
                               AccessEntryBlockChain.fromJson(
                                   jsonDecode(healthRecordAccessRaw));
-                          healthRecordAccess.data.add(AccessEntry(
-                              generateRandomString(10),
-                              entryType: dropdownValue,
-                              enabled: true,
-                              uid: userIDController.text,
-                              hash: sha256
-                                  .convert(utf8.encode(healthRecordAccess
-                                      .data.last
-                                      .toJson()
-                                      .toString()))
-                                  .toString(),
-                              date:
-                                  "${DateTime.now().toLocal()}".split(' ')[0]));
+                          healthRecordAccess.data.add(
+                            AccessEntry(generateRandomString(10),
+                                entryType: dropdownValue,
+                                enabled: true,
+                                uid: userIDController.text,
+                                hash: sha256
+                                    .convert(utf8.encode(healthRecordAccess
+                                        .data.last
+                                        .toJson()
+                                        .toString()))
+                                    .toString(),
+                                date:
+                                    "${DateTime.now().toLocal()}".split(' ')[0],
+                                notes: descriptionController.text),
+                          );
 
                           fileToHealthRecordAccess.writeAsString(
                               jsonEncode(healthRecordAccess.toJson()));

@@ -312,17 +312,31 @@ class _DeleteDataScreenState extends State<DeleteDataScreen> {
                   onTap: () async {
                     try {
                       String uid = user.uid;
+                      Reference ref2 = FirebaseStorage.instance
+                          .ref()
+                          .child('health-record-access')
+                          .child('/' + uid);
+
+                      try {
+                        await ref2.delete();
+                      } catch (e) {
+                        print(e.toString());
+                      }
+
                       final database = FirebaseDatabase.instance.ref();
+
                       DataSnapshot healthRecordRef =
-                          await database.child("health-record/" + uid).get();
+                          await database.child("health-record" + uid).get();
                       for (DataSnapshot healthRecordItem
                           in healthRecordRef.children) {
                         for (DataSnapshot item in healthRecordItem.children) {
-                          if (item.value == "filename") {
+                          if (item.key.toString().startsWith("filename")) {
                             Reference healthRecordID = FirebaseStorage.instance
                                 .ref()
                                 .child('health-record')
-                                .child('/' + healthRecordRef.key.toString());
+                                .child(user.uid)
+                                .child(healthRecordItem.key.toString())
+                                .child(item.value.toString());
                             try {
                               await healthRecordID.delete();
                             } catch (e) {
@@ -372,7 +386,7 @@ class _DeleteDataScreenState extends State<DeleteDataScreen> {
                                   .showSnackBar(snackBar);
                             },
                       child: Text(
-                        "Hapus akun",
+                        "Hapus data",
                         style: TextStyle(color: Colors.white),
                       ),
                       style: ButtonStyle(

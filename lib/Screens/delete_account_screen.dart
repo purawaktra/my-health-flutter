@@ -194,7 +194,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                             builder: (context) => DeleteDataScreen()));
                       },
                       child: Text(
-                        "Hapus rekam medis dan entry",
+                        "Hapus rekam medis dan partner",
                         style: TextStyle(color: kWhite),
                       ),
                       style: ButtonStyle(

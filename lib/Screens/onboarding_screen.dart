@@ -32,11 +32,10 @@ class _OnboardingScreen extends State<OnboardingScreen> {
           children: [
             Image.asset(
               urlImage,
-              fit: BoxFit.cover,
-              width: double.infinity,
+              width: MediaQuery.of(context).size.width * 0.8,
             ),
             const SizedBox(
-              height: 64,
+              height: 32,
             ),
             Text(
               title,
@@ -54,6 +53,7 @@ class _OnboardingScreen extends State<OnboardingScreen> {
                     color: kDarkBlue,
                     fontSize: 14,
                     fontWeight: FontWeight.normal),
+                textAlign: TextAlign.center,
               ),
             )
           ],
@@ -83,22 +83,22 @@ class _OnboardingScreen extends State<OnboardingScreen> {
               children: [
                 buildPage(
                     color: Colors.white,
-                    urlImage: "assets/images/dev_logo.png",
-                    title: 'myHealth',
+                    urlImage: "assets/images/welcome_screen_0.png",
+                    title: 'Rekam Medisku',
                     subtitle:
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et ullamcorper tellus, id volutpat quam. Donec non nisl dapibus, consectetur arcu a, tempus mauris. Nam a mollis ex. Cras ultricies leo a odio maximus condimentum. Proin eget euismod mi, vitae luctus justo. Pellentesque ultricies sagittis volutpat."),
+                        "Pernahkah kamu berpikir bagaimana menyimpan hasil laboratoriummu saat medical checkup minggu lalu? Atau terpikir cara mudah untuk melihat hasil itu tanpa harus ribet?. "),
                 buildPage(
                     color: Colors.white,
-                    urlImage: "assets/images/dev_logo.png",
-                    title: 'Manage',
+                    urlImage: "assets/images/welcome_screen_1.png",
+                    title: 'Mengelola?',
                     subtitle:
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et ullamcorper tellus, id volutpat quam. Donec non nisl dapibus, consectetur arcu a, tempus mauris. Nam a mollis ex. Cras ultricies leo a odio maximus condimentum. Proin eget euismod mi, vitae luctus justo. Pellentesque ultricies sagittis volutpat."),
+                        "Selain mengumpulkan dan memilah rekam medismu, kamu juga harus menjaga rekam medismu dari segala resiko yang bisa terjadi loh, seperti basah, kusut, tulisan memudar, atau bahkan hilang!"),
                 buildPage(
                     color: Colors.white,
-                    urlImage: "assets/images/dev_logo.png",
-                    title: 'Sharing',
+                    urlImage: "assets/images/welcome_screen_2.png",
+                    title: 'Berbagi',
                     subtitle:
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi et ullamcorper tellus, id volutpat quam. Donec non nisl dapibus, consectetur arcu a, tempus mauris. Nam a mollis ex. Cras ultricies leo a odio maximus condimentum. Proin eget euismod mi, vitae luctus justo. Pellentesque ultricies sagittis volutpat."),
+                        "Tujuan kamu untuk mengelola adalah untuk menggambarkan riwayat kesehatan secara baik dan lengkap, baik ke kekeluarga, dokter pribadi, ataupun ke fasilitas kesehatan. Pastinya akan ribet kalau harus bawa dokumen sana sini."),
               ],
             ),
           ),

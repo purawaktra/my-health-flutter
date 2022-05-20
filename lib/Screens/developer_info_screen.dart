@@ -32,17 +32,124 @@ class DeveloperInfoScreen extends StatelessWidget {
                               TextSpan(
                                   text:
                                       "\nMuhammad Akbar Maulana\nDepartemen Teknik Biomedik \nInstitut Teknologi Sepuluh Nopember"),
-                              TextSpan(text: "\nv0.2.6 Alpha\n ")
+                              TextSpan(text: "\nv0.3.3 Alpha\n ")
                             ]),
                       ),
                       Text("Many thanks to",
                           style:
                               TextStyle(color: Colors.black54, fontSize: 16)),
                       Text(
-                          "Sam Fatur, Yulyy, Kobas, sama Dekk aslahah, yang ngasih kritik dan saran membangunnya :D.",
+                          "Sam Fatur, Yulyy, Kobas, Aslahah, dan teman temanku yang ngasih kritik dan saran membangunnya, tanpa kalian aku ga akan ada improvement di user experience aplikasi ini :D.",
                           style:
                               TextStyle(color: Colors.black54, fontSize: 16)),
-                      Text("Changelog",
+                      Text("\nChangelog",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text("\nv0.3.3 Alpha",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Benerin qr scanner yang glitch kalau lagi diadepin ke barcode, sekarang kalau sudah dapat info barcode langsung pause stream dari kamera.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text("\nv0.3.2 Alpha",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Working dihalaman partner, tujuannya kalau mau lihat informasi pribadi, rekam medis dan riwayat izin dari partner.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Nambahin fungsi hapus di halaman partner, untuk nambahin entry buat remove partner dari list request blockchain yak.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Rework dihalaman awal ya ges, biar keliatan lebih attraktif hehe.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text("\nv0.3.1 Alpha",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Nambahin button menuju ke qr scanner, dihalaman tambah partner, kalau nambah lewat qr code otomatis masuk ke dalam list request dan list permit yaa.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Nama partner sudah bisa muncul dihalaman utama, instead dari user id nya. Kalau user id mu masuk ke dalam list permit dari partner blockchain, maka kamu bisa liat rekam medis punya merekaa.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text("\nv0.3.0 Alpha",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Halaman partner sekarang udah bisa diakses yaak, setelah nambahin halaman buat nambahin partner, sekarang partner yang termasuk dalam list request rekam medis dapat dilihat dihalaman utama partnerrr!! yeay",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- List akses partner sepenuhnya pakai sistem blockchain ya gais, setiap membuka halaman partner, nanti akan terinisialisasi struktur blockchain baru, kalau misalnya diserver deteksi kalau belum ada strukturnya yang terkait dengan akun.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text("\nv0.2.11 Alpha",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- QR code scannerr yeeeey, sekarang nambahin partner(OTW) ga perlu ribet ribet masukin entry secara manual ya ges yak, tinggal scan aja sudah sukses, change log ini cuma buat qr code ya, Im glad qr scannernya bisa jalan wkw.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text("\nv0.2.10 Alpha",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Mengubah dikit qr code generator, pinginnya sih ditengah biar ada logo aplikasi, tp kayanya masih ga bisa deh huehue.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Ngehapus dashboard screen, yang sebelumnya banyak ikon ikon itu, kayanya model dashboard kya gitu udah ga match ya wkww.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Oh ya sama benerin refresh behaviornya, bisa nih sekarang refresh halaman health record sama halaman partner(OTW) tinggal di swipe down aja.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text("\nv0.2.9 Alpha",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Mengubah tampilan dikit dihalaman tambah health record (bentuk buttonnya sama biar kalau button agar ga keklik berkali kali saat proses upload berlangsung ya).",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Sekarang kalau tambah health record sudah bisa lebih dari satu lampiran ya ges yak, pastikan aja kalau lampirannya tidak berat atau gede ukurannya, biar ga lelet pas upload hehe.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Nambahin qr code generator, rencananya biar bisa scan qr code kalau mau nambahin jadi partner begitu.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text("\nv0.2.8 Alpha",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Rework fetching data lampiran, pingin lampirannya ngga terbatas cuma satu buat satu health record entry ya ges.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Sekarang menambah health record baru ga harus pilih jenis lampiran dulu, sekarang sudah dijadikan satu di satu halaman penuh, nanti kalau mau nambahin jenis lampiran tinggal lewat popup box.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text("\nv0.2.7 Alpha",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Mengubah dikit di kustom kolom, sedikit bug ketika hapus dan tambah.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Nambahin fitur buka dan share di lampiran filenya, jadi sekarang bisa buka halaman health record dan buka lampiran masing masing yaa.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Tampilan dihalaman depan health record sekarang diubah dikit, sudah dimasukkan ke dalam entry screen, nambahin juga option menu.",
                           style:
                               TextStyle(color: Colors.black54, fontSize: 16)),
                       Text("\nv0.2.6 Alpha",

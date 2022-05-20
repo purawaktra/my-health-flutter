@@ -94,27 +94,6 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
               });
             },
           ),
-          PopupMenuButton<OptionMenu>(
-            onSelected: (OptionMenu result) {
-              setState(() {
-                _selection = result;
-              });
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<OptionMenu>>[
-              const PopupMenuItem<OptionMenu>(
-                value: OptionMenu.import,
-                child: Text('Import - BELOM'),
-              ),
-              const PopupMenuItem<OptionMenu>(
-                value: OptionMenu.find,
-                child: Text('Cari - BELOM'),
-              ),
-              const PopupMenuItem<OptionMenu>(
-                value: OptionMenu.filter,
-                child: Text('Filter - BELOM'),
-              ),
-            ],
-          ),
         ],
       ),
       body: RefreshIndicator(
@@ -142,7 +121,7 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                     child: Padding(
                   padding: const EdgeInsets.all(24.0),
                   child: Text(
-                    "Kayanya kamu belum bikin rekam medis sama sekali :) \n Error code: ${snapshot.error.toString()}",
+                    "Kayanya kamu belum bikin rekam medis sama sekali :)",
                     style: TextStyle(
                       color: Colors.black54,
                     ),
