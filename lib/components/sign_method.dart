@@ -84,16 +84,18 @@ class SignProvider extends ChangeNotifier {
           final database = FirebaseDatabase.instance.ref();
           try {
             await database.update({
-              "nik/" + user.uid: "",
-              "fullname/" + user.uid: "",
-              "birthplace/" + user.uid: "",
-              "birthdate/" + user.uid: "",
-              "gender/" + user.uid: "",
               "address/" + user.uid: "",
+              "birthdate/" + user.uid: "",
+              "birthplace/" + user.uid: "",
               "city/" + user.uid: "",
-              "zipcode/" + user.uid: "",
-              "phonenumber/" + user.uid: "",
+              "displayname/" + user.uid: user.email,
+              "email/" + user.uid: user.email,
+              "fullname/" + user.uid: "",
+              "gender/" + user.uid: "",
               "job/" + user.uid: "",
+              "nik/" + user.uid: "",
+              "phonenumber/" + user.uid: "",
+              "zipcode/" + user.uid: "",
               "photoprofile/" + user.uid:
                   "https://firebasestorage.googleapis.com/v0/b/myhealth-default-storage/o/blank_photo_profile.png?alt=media&token=b7c09a0d-cd6c-4514-9498-647b5df0bd28"
             });
@@ -179,21 +181,23 @@ class SignProvider extends ChangeNotifier {
       await user.updateDisplayName(
           RegExp(r"^([^@]+)").stringMatch(user.email.toString()).toString());
       await user.sendEmailVerification();
-      await user.updatePhotoURL(
-          "https://firebasestorage.googleapis.com/v0/b/myhealth-default-storage/o/blank_photo_profile.png?alt=media&token=b7c09a0d-cd6c-4514-9498-647b5df0bd28");
       final database = FirebaseDatabase.instance.ref();
       try {
         await database.update({
-          "nik/" + user.uid: "",
-          "fullname/" + user.uid: "",
-          "birthplace/" + user.uid: "",
-          "birthdate/" + user.uid: "",
-          "gender/" + user.uid: "",
           "address/" + user.uid: "",
+          "birthdate/" + user.uid: "",
+          "birthplace/" + user.uid: "",
           "city/" + user.uid: "",
-          "zipcode/" + user.uid: "",
+          "displayname/" + user.uid: user.email,
+          "email/" + user.uid: user.email,
+          "fullname/" + user.uid: "",
+          "gender/" + user.uid: "",
+          "job/" + user.uid: "",
+          "nik/" + user.uid: "",
           "phonenumber/" + user.uid: "",
-          "job/" + user.uid: ""
+          "zipcode/" + user.uid: "",
+          "photoprofile/" + user.uid:
+              "https://firebasestorage.googleapis.com/v0/b/myhealth-default-storage/o/blank_photo_profile.png?alt=media&token=b7c09a0d-cd6c-4514-9498-647b5df0bd28"
         });
       } catch (e) {
         print(e.toString());

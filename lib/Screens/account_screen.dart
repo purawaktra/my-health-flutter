@@ -107,7 +107,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
     late OptionMenu _selection;
     final TextEditingController displayNameController =
-        new TextEditingController(text: user.displayName);
+        new TextEditingController(text: displayName);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: kLightBlue1,
