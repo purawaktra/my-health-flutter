@@ -127,33 +127,6 @@ class _AddEmailProviderScreenState extends State<AddEmailProviderScreen> {
       appBar: AppBar(
         backgroundColor: kLightBlue1,
         title: Text("Tautkan Email"),
-        actions: <Widget>[
-          PopupMenuButton<WhyFarther>(
-            onSelected: (WhyFarther result) {
-              setState(() {
-                _selection = result;
-              });
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<WhyFarther>>[
-              const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.harder,
-                child: Text('Working a lot harder'),
-              ),
-              const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.smarter,
-                child: Text('Being a lot smarter'),
-              ),
-              const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.selfStarter,
-                child: Text('Being a self-starter'),
-              ),
-              const PopupMenuItem<WhyFarther>(
-                value: WhyFarther.tradingCharter,
-                child: Text('Placed in charge of trading charter'),
-              ),
-            ],
-          ),
-        ],
       ),
       body: SingleChildScrollView(
           child: Padding(
@@ -192,22 +165,6 @@ class _AddEmailProviderScreenState extends State<AddEmailProviderScreen> {
                               children: [
                                 Text(
                                   "\u2022 Layanan login dengan email",
-                                  style: TextStyle(
-                                      color: Colors.black54, fontSize: 16),
-                                ),
-                                SizedBox(
-                                  height: 8,
-                                ),
-                                Text(
-                                  "\u2022 Export rekam medis.",
-                                  style: TextStyle(
-                                      color: Colors.black54, fontSize: 16),
-                                ),
-                                SizedBox(
-                                  height: 8,
-                                ),
-                                Text(
-                                  "\u2022 Export entry partner.",
                                   style: TextStyle(
                                       color: Colors.black54, fontSize: 16),
                                 ),

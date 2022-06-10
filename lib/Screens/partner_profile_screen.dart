@@ -426,25 +426,6 @@ class _PartnerProfileScreenState extends State<PartnerProfileScreen> {
       appBar: AppBar(
         backgroundColor: kLightBlue1,
         title: Text("Informasi Partner"),
-        actions: <Widget>[
-          PopupMenuButton<OptionMenu>(
-            onSelected: (OptionMenu result) {
-              setState(() {
-                _selection = result;
-              });
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<OptionMenu>>[
-              const PopupMenuItem<OptionMenu>(
-                value: OptionMenu.reload,
-                child: Text('Muat Ulang - BLOM'),
-              ),
-              const PopupMenuItem<OptionMenu>(
-                value: OptionMenu.helpdesk,
-                child: Text('Bantuan - BLOM'),
-              ),
-            ],
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
