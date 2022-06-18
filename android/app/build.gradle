@@ -47,8 +47,8 @@ android {
         applicationId "com.eprototype.myhealth"
         minSdkVersion 28
         targetSdkVersion 31
-        versionCode 9
-        versionName "0.3.3d"
+        versionCode 10
+        versionName "0.3.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

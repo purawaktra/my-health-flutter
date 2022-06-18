@@ -19,7 +19,7 @@ import 'package:path/path.dart' as p;
 enum OptionMenu { export, delete }
 
 class HealthRecordEntryScreen extends StatefulWidget {
-  final DataSnapshot healthRecord;
+  final String healthRecord;
   const HealthRecordEntryScreen({Key? key, required this.healthRecord})
       : super(key: key);
 
@@ -59,11 +59,12 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
   Directory? _externalDocumentsDirectory;
 
   bool attachmentFile = false;
-  Future<Iterable<DataSnapshot>> getdata() async {
+
+  Future<Iterable<DataSnapshot>> getMetaData() async {
     DataSnapshot healthRecordRef = await database
         .child("health-record")
         .child(user.uid)
-        .limitToFirst(20)
+        .child(this.widget.healthRecord)
         .get();
     Iterable<DataSnapshot> a = healthRecordRef.children;
     return a;
@@ -111,7 +112,7 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
           .ref()
           .child('health-record')
           .child(user.uid)
-          .child(this.widget.healthRecord.key!)
+          .child(this.widget.healthRecord)
           .child('/' + name);
       try {
         await attachmentRef.putData(await File(path).readAsBytes());
@@ -178,83 +179,30 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
     _activateListener();
   }
 
-  void _activateListener() {
-    basicColumnStream.add(database
-        .child('health-record')
-        .child(user.uid)
-        .child(this.widget.healthRecord.key!)
-        .child("creationdate")
-        .onValue
-        .listen((event) {
-      final Object? itemData = event.snapshot.value;
-      setState(() {
-        displayTextCreationDate = itemData.toString();
-      });
-    }));
+  Future<void> _activateListener() async {
+    Iterable<DataSnapshot> metaDataSnapshot = await getMetaData();
 
-    basicColumnStream.add(database
-        .child('health-record')
-        .child(user.uid)
-        .child(this.widget.healthRecord.key!)
-        .child("description")
-        .onValue
-        .listen((event) {
-      final Object? itemData = event.snapshot.value;
-      setState(() {
-        displayTextDescription = itemData.toString();
-      });
-    }));
-
-    basicColumnStream.add(database
-        .child('health-record')
-        .child(user.uid)
-        .child(this.widget.healthRecord.key!)
-        .child("location")
-        .onValue
-        .listen((event) {
-      final Object? itemData = event.snapshot.value;
-      setState(() {
-        displayTextLocation = itemData.toString();
-      });
-    }));
-
-    basicColumnStream.add(database
-        .child('health-record')
-        .child(user.uid)
-        .child(this.widget.healthRecord.key!)
-        .child("name")
-        .onValue
-        .listen((event) {
-      final Object? itemData = event.snapshot.value;
-      setState(() {
-        displayTextName = itemData.toString();
-      });
-    }));
-
-    basicColumnStream.add(database
-        .child('health-record')
-        .child(user.uid)
-        .child(this.widget.healthRecord.key!)
-        .child("tag")
-        .onValue
-        .listen((event) {
-      final Object? itemData = event.snapshot.value;
-      setState(() {
-        displayTextTag = itemData.toString();
-      });
-    }));
-
-    for (DataSnapshot itemData in this.widget.healthRecord.children) {
-      if (itemData.key != "creationdate" &&
-          itemData.key != "description" &&
-          !itemData.key.toString().startsWith("filename") &&
-          itemData.key != "location" &&
-          itemData.key != "name" &&
-          itemData.key != "tag") {
-        customColumnKey.add(itemData.key.toString());
+    for (DataSnapshot itemData in metaDataSnapshot) {
+      print(itemData.key);
+      if (itemData.key == "creationdate") {
         setState(() {
-          keyControllers.add(TextEditingController());
-          valueControllers.add(TextEditingController());
+          displayTextCreationDate = itemData.value.toString();
+        });
+      } else if (itemData.key == "description") {
+        setState(() {
+          displayTextDescription = itemData.value.toString();
+        });
+      } else if (itemData.key == "location") {
+        setState(() {
+          displayTextLocation = itemData.value.toString();
+        });
+      } else if (itemData.key == "name") {
+        setState(() {
+          displayTextName = itemData.value.toString();
+        });
+      } else if (itemData.key == "tag") {
+        setState(() {
+          displayTextTag = itemData.value.toString();
         });
       } else if (itemData.key!.startsWith("filename")) {
         attachmentCount++;
@@ -263,6 +211,12 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
           attachmentController
               .add(TextEditingController(text: itemData.value.toString()));
         });
+      } else {
+        customColumnKey.add(itemData.key.toString());
+        setState(() {
+          keyControllers.add(TextEditingController());
+          valueControllers.add(TextEditingController());
+        });
       }
     }
   }
@@ -270,7 +224,7 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
   @override
   Widget build(BuildContext context) {
     final TextEditingController idController =
-        new TextEditingController(text: this.widget.healthRecord.key);
+        new TextEditingController(text: this.widget.healthRecord);
     final idField = TextFormField(
       enabled: false,
       readOnly: true,
@@ -449,10 +403,10 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                 var ref = await database
                     .child('health-record')
                     .child(user.uid)
-                    .child(this.widget.healthRecord.key!)
+                    .child(this.widget.healthRecord)
                     .get();
                 final healthRecordExport =
-                    HealthRecordEntry(this.widget.healthRecord.key!);
+                    HealthRecordEntry(this.widget.healthRecord);
                 for (DataSnapshot itemSnapshot2 in ref.children) {
                   if (itemSnapshot2.key == "creationdate") {
                     healthRecordExport.creationDate =
@@ -475,11 +429,11 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
 
                 print(healthRecordExport.toJson());
                 Directory(
-                        '${_externalDocumentsDirectory!.path}/Rekam Medis/${this.widget.healthRecord.key}')
+                        '${_externalDocumentsDirectory!.path}/Rekam Medis/${this.widget.healthRecord}')
                     .createSync(recursive: true);
 
                 File fileToMetaData = File(
-                    "${_externalDocumentsDirectory!.path}/Rekam Medis/${this.widget.healthRecord.key}/metadata-export.txt");
+                    "${_externalDocumentsDirectory!.path}/Rekam Medis/${this.widget.healthRecord}/metadata-export.txt");
 
                 fileToMetaData
                     .writeAsString(healthRecordExport.toJson().toString());
@@ -487,8 +441,7 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                 String result = "false";
                 for (DataSnapshot itemSnapshot2 in ref.children) {
                   if (itemSnapshot2.key.toString().startsWith("filename")) {
-                    result = await downloadAttachment(
-                        this.widget.healthRecord.key!,
+                    result = await downloadAttachment(this.widget.healthRecord,
                         itemSnapshot2.value.toString());
                     if (result == "false") {
                       break;
@@ -508,10 +461,10 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                 } else {
                   try {
                     final zipFile = File(
-                        "${_externalDocumentsDirectory!.path}/Rekam Medis/${this.widget.healthRecord.key}.zip");
+                        "${_externalDocumentsDirectory!.path}/Rekam Medis/${this.widget.healthRecord}.zip");
                     ZipFile.createFromDirectory(
                       sourceDir: Directory(
-                          "${_externalDocumentsDirectory!.path}/Rekam Medis/${this.widget.healthRecord.key}"),
+                          "${_externalDocumentsDirectory!.path}/Rekam Medis/${this.widget.healthRecord}"),
                       zipFile: zipFile,
                     );
                     Share.shareFiles([zipFile.path]);
@@ -610,8 +563,7 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                               DatabaseReference pushIDref = database
                                   .child("health-record")
                                   .child(user.uid)
-                                  .child(
-                                      this.widget.healthRecord.key.toString());
+                                  .child(this.widget.healthRecord.toString());
 
                               await pushIDref.update({
                                 "creationdate": dateController.text,
@@ -619,6 +571,15 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                                 "location": locationController.text,
                                 "name": nameController.text,
                                 "tag": tagController.text,
+                              });
+
+                              setState(() {
+                                displayTextCreationDate = dateController.text;
+                                displayTextName = nameController.text;
+                                displayTextDescription =
+                                    descriptionController.text;
+                                displayTextLocation = locationController.text;
+                                displayTextTag = tagController.text;
                               });
 
                               try {
@@ -731,7 +692,7 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                                               .showSnackBar(snackBar);
                                           String result =
                                               await downloadAttachment(
-                                                  this.widget.healthRecord.key!,
+                                                  this.widget.healthRecord,
                                                   attachmentController[i].text);
                                           print(result);
                                           if (result != "false") {
@@ -767,7 +728,7 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                                               .showSnackBar(snackBar);
                                           String result =
                                               await downloadAttachment(
-                                                  this.widget.healthRecord.key!,
+                                                  this.widget.healthRecord,
                                                   attachmentController[i].text);
                                           print(result);
                                           if (result != "false") {
@@ -820,7 +781,6 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                                             .child(this
                                                 .widget
                                                 .healthRecord
-                                                .key
                                                 .toString())
                                             .child("filename-$i")
                                             .remove();
@@ -1144,8 +1104,7 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                               DatabaseReference pushIDref = database
                                   .child("health-record")
                                   .child(user.uid)
-                                  .child(
-                                      this.widget.healthRecord.key.toString());
+                                  .child(this.widget.healthRecord);
 
                               try {
                                 for (int i = 0;
@@ -1223,7 +1182,7 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                           future: database
                               .child('health-record')
                               .child(user.uid)
-                              .child(this.widget.healthRecord.key!)
+                              .child(this.widget.healthRecord)
                               .child(customColumnKey[i])
                               .get(),
                           builder: (context, snapshot) {
@@ -1287,11 +1246,7 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                                           DatabaseReference pushIDref = database
                                               .child("health-record")
                                               .child(user.uid)
-                                              .child(this
-                                                  .widget
-                                                  .healthRecord
-                                                  .key
-                                                  .toString());
+                                              .child(this.widget.healthRecord);
                                           try {
                                             await pushIDref
                                                 .child(customColumnKey[i])

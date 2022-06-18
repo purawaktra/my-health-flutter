@@ -6,14 +6,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:myhealth/components/background.dart';
 import 'package:myhealth/components/generate.dart';
 import 'package:myhealth/components/health_record.dart';
 import 'package:myhealth/constants.dart';
 import 'package:myhealth/screens/qr_code_scanner_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';
-import 'dart:math';
 
 class AddEntryHealthRecordAccessScreen extends StatefulWidget {
   const AddEntryHealthRecordAccessScreen({Key? key}) : super(key: key);

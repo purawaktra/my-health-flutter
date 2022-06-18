@@ -1,30 +1,26 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:myhealth/constants.dart';
-import 'package:myhealth/screens/add_health_record_entry_screen.dart';
 import 'package:myhealth/screens/health_record_entry_screen.dart';
-import 'package:myhealth/screens/search_health_record_entry.dart';
-import 'package:path_provider/path_provider.dart';
 
-enum OptionMenu { import, find, filter, delete }
-
-class HealthRecordScreen extends StatefulWidget {
-  const HealthRecordScreen({Key? key}) : super(key: key);
+class SearchResultHealthRecordEntryScreen extends StatefulWidget {
+  final String searchType;
+  final String keyPhrase;
+  const SearchResultHealthRecordEntryScreen(
+      {Key? key, required this.searchType, required this.keyPhrase})
+      : super(key: key);
   @override
-  _HealthRecordScreenState createState() => _HealthRecordScreenState();
+  _SearchResultHealthRecordEntryState createState() =>
+      _SearchResultHealthRecordEntryState();
 }
 
-class _HealthRecordScreenState extends State<HealthRecordScreen> {
+class _SearchResultHealthRecordEntryState
+    extends State<SearchResultHealthRecordEntryScreen> {
   final user = FirebaseAuth.instance.currentUser!;
   final database = FirebaseDatabase.instance.ref();
   final storage = FirebaseStorage.instance.ref();
-  Directory? _externalDocumentsDirectory;
-
   Future<Iterable<DataSnapshot>> getdata() async {
     DataSnapshot healthRecordRef =
         await database.child("health-record").child(user.uid).get();
@@ -32,88 +28,16 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
     return a;
   }
 
-  Future<String> downloadFile(String uniquePushID, String filename) async {
-    String result = "false";
-    try {
-      _externalDocumentsDirectory = await getExternalStorageDirectory();
-      print(_externalDocumentsDirectory!.path);
-    } on Exception catch (e) {
-      print(e);
-      return result;
-    }
-    File downloadToFile =
-        File('${_externalDocumentsDirectory!.path}/$filename');
-    try {
-      await storage
-          .child('health-record')
-          .child(uniquePushID)
-          .child('/' + uniquePushID)
-          .writeToFile(downloadToFile);
-
-      result = '${_externalDocumentsDirectory!.path}/$filename';
-    } on FirebaseException catch (e) {
-      // e.g, e.code == 'canceled'
-      print('Download error: $e');
-    }
-    return result;
-  }
-
-  late OptionMenu _selection;
-  late Future<Iterable<DataSnapshot>> streamData;
-
-  bool basicEntry = true;
   @override
   Widget build(BuildContext context) {
     Future<Iterable<DataSnapshot>> streamData = getdata();
 
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: kLightBlue1,
-        onPressed: () => Navigator.of(context)
-            .push(MaterialPageRoute(
-                builder: (context) => AddHealthRecordEntryScreen()))
-            .whenComplete(() => setState(() {
-                  streamData = getdata();
-                })),
-        tooltip: 'Rekam Medis Baru',
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
+        appBar: AppBar(
+          backgroundColor: kLightBlue1,
+          title: Text("Hasil Pencarian"),
         ),
-      ),
-      appBar: AppBar(
-        backgroundColor: kLightBlue1,
-        title: Text("Rekam Medisku"),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.refresh_outlined),
-            tooltip: 'Refresh Halaman',
-            onPressed: () {
-              setState(() {
-                streamData = getdata();
-              });
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.search),
-            tooltip: 'Pencarian',
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => SearchHealthRecordEntryScreen()));
-            },
-          ),
-        ],
-      ),
-      body: RefreshIndicator(
-        displacement: 18,
-        onRefresh: () {
-          setState(() {
-            streamData = getdata();
-          });
-          return getdata();
-        },
-        child: FutureBuilder<Iterable<DataSnapshot>>(
+        body: FutureBuilder<Iterable<DataSnapshot>>(
             future: streamData,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -157,52 +81,68 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                   healthRecordMap[a.key.toString()] = temp;
                 }
                 // print(healthRecordMap);
-                var list = healthRecordMap.entries.toList();
-                list.sort((a, b) => b.value["creationdate"]
+                List healthRecordList = healthRecordMap.entries.toList();
+                List healthRecordSearchedList = [];
+                healthRecordList.sort((a, b) => b.value["creationdate"]
                     .toString()
                     .compareTo(a.value["creationdate"].toString()));
 
-                // List<DataSnapshot> healthRecordDataList =
-                //     healthRecordData!.toList();
-                // healthRecordDataList.sort(
-                //   (DataSnapshot a, DataSnapshot b) {
-                //     String? za;
-                //     String? zb;
-                //     for (DataSnapshot z in a.children)
-                //       if (z.key == "creationdate") za = z.key;
-
-                //     for (DataSnapshot z in b.children)
-                //       if (z.key == "creationdate") zb = z.key;
-
-                //     return za!.compareTo(zb!);
-                //   },
-                // );
-                // for (DataSnapshot a in healthRecordDataList) {
-                //   for (DataSnapshot b in a.children) {
-                //     if (b.key == "creationdate") print(b.value);
-                //   }
-                // };
+                if (this.widget.searchType == "Pencarian berdasarkan tanggal") {
+                  for (MapEntry<String, Map<String, String>> healthRecordEntry
+                      in healthRecordList) {
+                    for (MapEntry<String, String> healthRecordItemEntry
+                        in healthRecordEntry.value.entries) {
+                      if (healthRecordItemEntry.key == "creationdate") {
+                        if (healthRecordItemEntry.value ==
+                            this.widget.keyPhrase) {
+                          healthRecordSearchedList.add(healthRecordEntry);
+                          break;
+                        }
+                      }
+                    }
+                  }
+                }
+                if (this.widget.searchType ==
+                    "Pencarian berdasarkan kata kunci") {
+                  RegExp regExp = new RegExp(
+                    "(${this.widget.keyPhrase})",
+                    caseSensitive: false,
+                    multiLine: false,
+                  );
+                  for (MapEntry<String, Map<String, String>> healthRecordEntry
+                      in healthRecordList) {
+                    for (MapEntry<String, String> healthRecordItemEntry
+                        in healthRecordEntry.value.entries) {
+                      if (healthRecordItemEntry.key == "creationdate") continue;
+                      if (regExp.hasMatch(healthRecordItemEntry.value)) {
+                        healthRecordSearchedList.add(healthRecordEntry);
+                        break;
+                      }
+                    }
+                  }
+                }
 
                 return Container(
                   child: ListView(
                     children: [
                       for (MapEntry<String,
-                          Map<String, String>> healthRecordSnapshot in list)
+                              Map<String, String>> healthRecordEntry
+                          in healthRecordSearchedList)
                         ExpansionTile(
                           title: Builder(builder: (BuildContext context) {
-                            Widget child = Text(
-                                healthRecordSnapshot.value["name"].toString(),
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  overflow: TextOverflow.ellipsis,
-                                ));
+                            Widget child =
+                                Text(healthRecordEntry.value["name"].toString(),
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      overflow: TextOverflow.ellipsis,
+                                    ));
                             return child;
                           }),
                           subtitle: Row(
                             children: [
                               Text(
-                                healthRecordSnapshot.key,
+                                healthRecordEntry.key,
                                 style: TextStyle(
                                   color: Colors.black54,
                                   overflow: TextOverflow.ellipsis,
@@ -211,12 +151,13 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                               SizedBox(
                                 width: 12,
                               ),
-                              for (MapEntry<String, String> itemSnapshot
-                                  in healthRecordSnapshot.value.entries)
-                                if (itemSnapshot.key.toString() ==
+                              for (MapEntry<String,
+                                      String> healthRecordItemEntry
+                                  in healthRecordEntry.value.entries)
+                                if (healthRecordItemEntry.key.toString() ==
                                     "creationdate")
                                   Text(
-                                    itemSnapshot.value.toString(),
+                                    healthRecordItemEntry.value.toString(),
                                     style: TextStyle(
                                       color: Colors.black54,
                                       overflow: TextOverflow.ellipsis,
@@ -241,13 +182,14 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                       child: InkWell(
                                         onTap: () async {
                                           Navigator.of(context)
-                                              .push(MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      HealthRecordEntryScreen(
-                                                        healthRecord:
-                                                            healthRecordSnapshot
-                                                                .key,
-                                                      )))
+                                              .pushReplacement(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          HealthRecordEntryScreen(
+                                                            healthRecord:
+                                                                healthRecordEntry
+                                                                    .key,
+                                                          )))
                                               .whenComplete(() {
                                             setState(() {
                                               streamData = getdata();
@@ -292,7 +234,7 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                             try {
                                               for (MapEntry<String,
                                                       String> itemSnapshot
-                                                  in healthRecordSnapshot
+                                                  in healthRecordEntry
                                                       .value.entries) {
                                                 if (itemSnapshot.value
                                                     .toString()
@@ -312,7 +254,7 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                             await database
                                                 .child("health-record")
                                                 .child(user.uid)
-                                                .child(healthRecordSnapshot.key)
+                                                .child(healthRecordEntry.key)
                                                 .remove();
                                             final snackBar = SnackBar(
                                               content: const Text(
@@ -380,7 +322,7 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                               height: 10,
                             ),
                             for (MapEntry<String, String> itemSnapshot
-                                in healthRecordSnapshot.value.entries)
+                                in healthRecordEntry.value.entries)
                               if (itemSnapshot.key.toString() != "name")
                                 Padding(
                                   padding: const EdgeInsets.only(
@@ -482,8 +424,6 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                   ),
                 );
               }
-            }),
-      ),
-    );
+            }));
   }
 }
