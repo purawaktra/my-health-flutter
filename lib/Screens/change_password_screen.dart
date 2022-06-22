@@ -41,11 +41,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         obscureText: _obscured,
         validator: (value) {
           RegExp regex = new RegExp(r'^.{6,}$');
-          if (value!.isEmpty) {
-            return ("Masukkan kata sandi lama");
-          }
-          if (!regex.hasMatch(value)) {
-            return ('Kata sandi terlalu pendek');
+          if (value!.isEmpty || !regex.hasMatch(value)) {
+            return ("");
           }
           return null;
         },
@@ -69,6 +66,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           border: InputBorder.none,
           labelText: "Kata sandi lama",
           floatingLabelBehavior: FloatingLabelBehavior.auto,
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          errorStyle: TextStyle(height: 0),
         ));
 
     final new1PasswordField = TextFormField(
@@ -78,11 +79,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         validator: (value) {
           RegExp regex = new RegExp(r'^.{6,}$');
 
-          if (value!.isEmpty) {
-            return ("Masukkan kata sandi baru");
-          }
-          if (!regex.hasMatch(value)) {
-            return ('Kata sandi terlalu pendek');
+          if (value!.isEmpty || !regex.hasMatch(value)) {
+            return ("");
           }
           return null;
         },
@@ -108,6 +106,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           border: InputBorder.none,
           labelText: "Kata sandi baru",
           floatingLabelBehavior: FloatingLabelBehavior.auto,
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          errorStyle: TextStyle(height: 0),
         ));
 
     final new2PasswordField = TextFormField(
@@ -117,14 +119,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         validator: (value) {
           RegExp regex = new RegExp(r'^.{6,}$');
           RegExp regex2 = new RegExp(new1PasswordController.text);
-          if (value!.isEmpty) {
-            return ("Masukkan kata sandi baru");
-          }
-          if (!regex.hasMatch(value)) {
-            return ('Kata sandi terlalu pendek');
-          }
-          if (!regex2.hasMatch(value)) {
-            return ('Kata sandi tidak sama');
+          if (value!.isEmpty ||
+              !regex.hasMatch(value) ||
+              !regex2.hasMatch(value)) {
+            return ("");
           }
           return null;
         },
@@ -150,6 +148,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           border: InputBorder.none,
           labelText: "Kata sandi baru",
           floatingLabelBehavior: FloatingLabelBehavior.auto,
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          errorStyle: TextStyle(height: 0),
         ));
     return Scaffold(
       appBar: AppBar(
@@ -161,30 +163,26 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(24.0),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 24, right: 24, top: 12),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.document_scanner,
-                          color: kLightBlue1,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "Lupa password?",
-                          style: TextStyle(color: Colors.black, fontSize: 18),
-                        ),
-                      ],
-                    ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.document_scanner,
+                        color: kLightBlue1,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Lupa password?",
+                        style: TextStyle(color: Colors.black, fontSize: 18),
+                      ),
+                    ],
                   ),
                   SizedBox(
                     height: 8,
@@ -228,27 +226,76 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       ),
                     ],
                   ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 12, right: 12, top: 12),
-                    child: Column(
-                      children: [
-                        Divider(
-                          color: Colors.black54,
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.warning_rounded,
+                        color: Colors.red,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Proses ini akan menghapus:",
+                        style: TextStyle(color: Colors.black, fontSize: 18),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 32,
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "\u2022 Semua rekam medis.",
+                              style: TextStyle(
+                                  color: Colors.black54, fontSize: 16),
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Text(
+                              "\u2022 Akses rekam medis partner",
+                              style: TextStyle(
+                                  color: Colors.black54, fontSize: 16),
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Text(
+                              "\u2022 Akses partner ke rekam medis anda.",
+                              style: TextStyle(
+                                  color: Colors.black54, fontSize: 16),
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Text(
+                              "\u2022 Logout akun anda.",
+                              style: TextStyle(
+                                  color: Colors.black54, fontSize: 16),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 16,
                   ),
                   oldPasswordField,
-                  Padding(
-                    padding: const EdgeInsets.only(left: 12, right: 12),
-                    child: Column(
-                      children: [
-                        Divider(
-                          color: Colors.black54,
-                        ),
-                      ],
-                    ),
+                  Divider(
+                    color: Colors.black54,
                   ),
                   new1PasswordField,
                   new2PasswordField,
@@ -259,13 +306,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     padding: const EdgeInsets.only(left: 12),
                     child: TapDebouncer(
                       onTap: () async {
-                        final snackBar = SnackBar(
-                          content: Text("Memuat...",
-                              style: TextStyle(color: Colors.black)),
-                          backgroundColor: kYellow,
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         if (_formKey.currentState!.validate()) {
+                          final snackBar = SnackBar(
+                            content: Text("Memuat...",
+                                style: TextStyle(color: Colors.black)),
+                            backgroundColor: kYellow,
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           await FirebaseAuth.instance
                               .signInWithEmailAndPassword(
                                   email: user.email.toString(),

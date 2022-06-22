@@ -57,6 +57,7 @@ dependencies:
   flutter_archive: ^4.2.0
   qr_flutter: ^4.0.0
   qr_code_scanner: ^0.7.0
+  string_validator: ^0.3.0
 
 dev_dependencies:
   flutter_test:

@@ -217,12 +217,12 @@ class SignProvider extends ChangeNotifier {
     String logoutcode = "true";
     try {
       await googleSignIn.disconnect();
+      await FirebaseAuth.instance.signOut();
     } catch (e) {
       print(e.toString());
       print("logout");
-
       try {
-        FirebaseAuth.instance.signOut();
+        await FirebaseAuth.instance.signOut();
       } catch (e) {
         print(e.toString());
         print("logout");

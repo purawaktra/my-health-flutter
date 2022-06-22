@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:myhealth/constants.dart';
+import 'package:string_validator/string_validator.dart';
 
 enum WhyFarther { helpdesk, reload }
 
@@ -14,6 +15,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final _formKey = GlobalKey<FormState>();
   final user = FirebaseAuth.instance.currentUser!;
   final database = FirebaseDatabase.instance.ref();
   late StreamSubscription userNIKStream;
@@ -52,7 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         database.child('nik').child(user.uid).onValue.listen((event) {
       final Object? userData = event.snapshot.value;
       setState(() {
-        displayTextUserNIK = userData.toString();
+        nikController.text = userData.toString();
       });
     });
 
@@ -60,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         database.child('fullname').child(user.uid).onValue.listen((event) {
       final Object? userData = event.snapshot.value;
       setState(() {
-        displayTextUserFullname = userData.toString();
+        fullnameController.text = userData.toString();
       });
     });
 
@@ -68,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         database.child('birthplace').child(user.uid).onValue.listen((event) {
       final Object? userData = event.snapshot.value;
       setState(() {
-        displayTextUserBirthPlace = userData.toString();
+        birthPlaceController.text = userData.toString();
       });
     });
 
@@ -76,7 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         database.child('birthdate').child(user.uid).onValue.listen((event) {
       final Object? userData = event.snapshot.value;
       setState(() {
-        displayTextUserBirthDate = userData.toString();
+        dateController.text = userData.toString();
       });
     });
 
@@ -84,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         database.child('gender').child(user.uid).onValue.listen((event) {
       final Object? userData = event.snapshot.value;
       setState(() {
-        displayTextUserGender = userData.toString();
+        genderController.text = userData.toString();
       });
     });
 
@@ -92,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         database.child('address').child(user.uid).onValue.listen((event) {
       final Object? userData = event.snapshot.value;
       setState(() {
-        displayTextUserAddress = userData.toString();
+        addressController.text = userData.toString();
       });
     });
 
@@ -100,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         database.child('city').child(user.uid).onValue.listen((event) {
       final Object? userData = event.snapshot.value;
       setState(() {
-        displayTextUserCity = userData.toString();
+        cityAddressController.text = userData.toString();
       });
     });
 
@@ -108,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         database.child('zipcode').child(user.uid).onValue.listen((event) {
       final Object? userData = event.snapshot.value;
       setState(() {
-        displayTextUserZipcode = userData.toString();
+        zipCodeController.text = userData.toString();
       });
     });
 
@@ -116,7 +118,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         database.child('phonenumber').child(user.uid).onValue.listen((event) {
       final Object? userData = event.snapshot.value;
       setState(() {
-        displayTextUserPhoneNumber = userData.toString();
+        mobilePhoneController.text = userData.toString();
       });
     });
 
@@ -124,82 +126,114 @@ class _ProfileScreenState extends State<ProfileScreen> {
         database.child('job').child(user.uid).onValue.listen((event) {
       final Object? userData = event.snapshot.value;
       setState(() {
-        displayTextUserJob = userData.toString();
+        jobStatusController.text = userData.toString();
       });
     });
   }
 
-  bool editProfile = true;
-  bool enabledForm = false;
+  bool editProfile = false;
+  final TextEditingController nikController = new TextEditingController();
+  final TextEditingController fullnameController = new TextEditingController();
+  final TextEditingController birthPlaceController =
+      new TextEditingController();
+  final TextEditingController dateController =
+      new TextEditingController(); //"${selectedDate.toLocal()}".split(' ')[0]
+  final TextEditingController genderController = new TextEditingController();
+
+  final TextEditingController addressController = new TextEditingController();
+  final TextEditingController cityAddressController =
+      new TextEditingController();
+  final TextEditingController zipCodeController = new TextEditingController();
+  final TextEditingController mobilePhoneController =
+      new TextEditingController();
+  final TextEditingController jobStatusController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController nikController =
-        new TextEditingController(text: displayTextUserNIK);
     final nikField = TextFormField(
-      enabled: enabledForm,
+      enabled: editProfile,
       autofocus: false,
-      readOnly: editProfile,
+      readOnly: !editProfile,
       controller: nikController,
+      keyboardType: TextInputType.number,
       style: TextStyle(color: kBlack),
+      validator: (value) {
+        if (!isNumeric(value.toString()) || value!.length != 16) {
+          return ("");
+        }
+        return null;
+      },
       decoration: InputDecoration(
-        prefixIcon: Icon(
-          Icons.credit_card,
-          color: kBlack,
-        ),
-        hintText: "NIK",
-        hintStyle: TextStyle(color: Colors.black54),
-        border: InputBorder.none,
-        labelText: "NIK",
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-      ),
+          prefixIcon: Icon(
+            Icons.credit_card,
+            color: kBlack,
+          ),
+          hintStyle: TextStyle(color: Colors.black54),
+          border: InputBorder.none,
+          labelText: "NIK",
+          floatingLabelBehavior: FloatingLabelBehavior.auto,
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          errorStyle: TextStyle(height: 0)),
     );
 
-    final TextEditingController fullnameController =
-        new TextEditingController(text: displayTextUserFullname);
     final fullnameField = TextFormField(
-      enabled: enabledForm,
+      enabled: editProfile,
       autofocus: false,
-      readOnly: editProfile,
+      readOnly: !editProfile,
       controller: fullnameController,
       style: TextStyle(color: kBlack),
+      validator: (value) {
+        if (value!.isEmpty) {
+          return ("");
+        }
+        return null;
+      },
       decoration: InputDecoration(
         prefixIcon: Icon(
           Icons.person_outline,
           color: kBlack,
         ),
-        hintText: "Nama Lengkap",
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "Nama Lengkap",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red),
+        ),
+        errorStyle: TextStyle(height: 0),
       ),
     );
 
-    final TextEditingController birthPlaceController =
-        new TextEditingController(text: displayTextUserBirthPlace);
     final birthPlaceField = TextFormField(
-      enabled: enabledForm,
+      enabled: editProfile,
       autofocus: false,
-      readOnly: editProfile,
+      readOnly: !editProfile,
       controller: birthPlaceController,
       style: TextStyle(color: kBlack),
+      validator: (value) {
+        if (value!.isEmpty) {
+          return ("");
+        }
+        return null;
+      },
       decoration: InputDecoration(
         prefixIcon: Icon(
           Icons.location_on_outlined,
           color: kBlack,
         ),
-        hintText: "Tempat Lahir",
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "Tempat Lahir",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red),
+        ),
+        errorStyle: TextStyle(height: 0),
       ),
     );
 
-    final TextEditingController dateController = new TextEditingController(
-        text:
-            displayTextUserBirthDate); //"${selectedDate.toLocal()}".split(' ')[0]
     DateTime selectedDate = DateTime.now();
     Future<void> _selectDate(BuildContext context) async {
       final DateTime? picked = await showDatePicker(
@@ -214,45 +248,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     final dateField = TextFormField(
-      enabled: enabledForm,
+      enabled: true,
       autofocus: false,
       controller: dateController,
-      showCursor: true,
-      readOnly: editProfile,
+      readOnly: true,
       style: TextStyle(color: kBlack),
       onTap: () => _selectDate(context),
+      validator: (value) {
+        if (value!.isEmpty) {
+          return ("");
+        }
+        return null;
+      },
       decoration: InputDecoration(
         prefixIcon: Icon(
           Icons.date_range_outlined,
           color: kBlack,
         ),
-        hintText: "Tanggal Lahir",
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "Tanggal Lahir",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red),
+        ),
+        errorStyle: TextStyle(height: 0),
       ),
     );
 
-    final TextEditingController genderController =
-        new TextEditingController(text: displayTextUserGender);
     final genderField = TextFormField(
-      enabled: enabledForm,
+      enabled: editProfile,
       autofocus: false,
-      readOnly: editProfile,
+      readOnly: !editProfile,
       controller: genderController,
       style: TextStyle(color: kBlack),
       textInputAction: TextInputAction.next,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return ("");
+        }
+        return null;
+      },
       decoration: InputDecoration(
         prefixIcon: Icon(
           Icons.people_alt_outlined,
           color: kBlack,
         ),
-        hintText: "Jenis Kelamin",
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "Jenis Kelamin",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red),
+        ),
+        errorStyle: TextStyle(height: 0),
       ),
     );
     final genderField2 = DropdownButtonFormField(
@@ -273,6 +322,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         setState(() {
           dropdownValue = newValue!;
           displayTextUserGender = newValue;
+          genderController.text = newValue;
         });
       },
       items: <String>['Laki Laki', 'Perempuan']
@@ -284,110 +334,147 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }).toList(),
     );
 
-    final TextEditingController addressController =
-        new TextEditingController(text: displayTextUserAddress);
     final addressField = TextFormField(
-      enabled: enabledForm,
+      enabled: editProfile,
       autofocus: false,
-      readOnly: editProfile,
+      readOnly: !editProfile,
       controller: addressController,
       style: TextStyle(color: kBlack),
       textInputAction: TextInputAction.next,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return ("");
+        }
+        return null;
+      },
       decoration: InputDecoration(
         prefixIcon: Icon(
           Icons.home_work_outlined,
           color: kBlack,
         ),
-        hintText: "Alamat",
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "Alamat",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red),
+        ),
+        errorStyle: TextStyle(height: 0),
       ),
     );
 
-    final TextEditingController cityAddressController =
-        new TextEditingController(text: displayTextUserCity);
     final cityAddressField = TextFormField(
-      enabled: enabledForm,
+      enabled: editProfile,
       autofocus: false,
-      readOnly: editProfile,
+      readOnly: !editProfile,
       controller: cityAddressController,
       keyboardType: TextInputType.text,
       style: TextStyle(color: kBlack),
+      validator: (value) {
+        if (value!.isEmpty) {
+          return ("");
+        }
+        return null;
+      },
       decoration: InputDecoration(
         prefixIcon: Icon(
           Icons.location_city_outlined,
           color: kBlack,
         ),
-        hintText: "Kota Alamat",
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "Kota Alamat",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red),
+        ),
+        errorStyle: TextStyle(height: 0),
       ),
     );
 
-    final TextEditingController zipCodeController =
-        new TextEditingController(text: displayTextUserZipcode);
     final zipCodeField = TextFormField(
-      enabled: enabledForm,
+      enabled: editProfile,
       autofocus: false,
-      readOnly: editProfile,
+      readOnly: !editProfile,
       controller: zipCodeController,
       style: TextStyle(color: kBlack),
+      keyboardType: TextInputType.number,
+      validator: (value) {
+        if (!isNumeric(value.toString()) || value!.length != 5) {
+          return ("");
+        }
+        return null;
+      },
       decoration: InputDecoration(
         prefixIcon: Icon(
           Icons.code_off,
           color: kBlack,
         ),
-        hintText: "Kode Pos",
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "Kode Pos",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red),
+        ),
+        errorStyle: TextStyle(height: 0),
       ),
     );
 
-    final TextEditingController mobilePhoneController =
-        new TextEditingController(text: displayTextUserPhoneNumber);
     final mobilePhoneField = TextFormField(
-      enabled: enabledForm,
+      enabled: editProfile,
       autofocus: false,
-      readOnly: editProfile,
+      readOnly: !editProfile,
       controller: mobilePhoneController,
+      keyboardType: TextInputType.number,
       style: TextStyle(color: kBlack),
+      validator: (value) {
+        if (!isNumeric(value.toString()) || value!.length < 9) {
+          return ("");
+        }
+        return null;
+      },
       decoration: InputDecoration(
         prefixIcon: Icon(
           Icons.phone_android,
           color: kBlack,
         ),
-        hintText: "No HP",
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "No HP",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red),
+        ),
+        errorStyle: TextStyle(height: 0),
       ),
     );
 
-    final TextEditingController jobStatusController =
-        new TextEditingController(text: displayTextUserJob);
     final jobStatusField = TextFormField(
-      enabled: enabledForm,
+      enabled: editProfile,
       autofocus: false,
-      readOnly: editProfile,
+      readOnly: !editProfile,
       controller: jobStatusController,
       style: TextStyle(color: kBlack),
+      validator: (value) {
+        if (value!.isEmpty) {
+          return ("");
+        }
+        return null;
+      },
       decoration: InputDecoration(
         prefixIcon: Icon(
           Icons.work_outline,
           color: kBlack,
         ),
-        hintText: "Pekerjaan",
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "Pekerjaan",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red),
+        ),
+        errorStyle: TextStyle(height: 0),
       ),
     );
 
@@ -460,105 +547,115 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(left: 24, right: 24, top: 12),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              userIDField,
-              displayNameField,
-              emailField,
-              Divider(
-                color: Colors.black54,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 5),
-                child: Row(
-                  children: [
-                    Text(
-                      'Akun',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: kLightBlue1,
-                        fontSize: 18,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 24,
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        setState(() {
-                          editProfile = !editProfile;
-                          enabledForm = !enabledForm;
-                        });
-                        if (enabledForm) {
-                          final snackBar = SnackBar(
-                            content: const Text("Edit akun.",
-                                style: TextStyle(color: Colors.black)),
-                            backgroundColor: kYellow,
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        } else {
-                          try {
-                            await database.update({
-                              "nik/" + user.uid: nikController.text,
-                              "fullname/" + user.uid: fullnameController.text,
-                              "birthplace/" + user.uid:
-                                  birthPlaceController.text,
-                              "birthdate/" + user.uid: dateController.text,
-                              "gender/" + user.uid: displayTextUserGender,
-                              "address/" + user.uid: addressController.text,
-                              "city/" + user.uid: cityAddressController.text,
-                              "zipcode/" + user.uid: zipCodeController.text,
-                              "phonenumber/" + user.uid:
-                                  mobilePhoneController.text,
-                              "job/" + user.uid: jobStatusController.text
-                            });
-
-                            final snackBar = SnackBar(
-                              content: const Text("Tersimpan.",
-                                  style: TextStyle(color: Colors.black)),
-                              backgroundColor: kYellow,
-                            );
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBar);
-                          } catch (e) {
-                            print(e);
-                            final snackBar = SnackBar(
-                              content: const Text(
-                                  "Update gagal, cek koneksi internet.",
-                                  style: TextStyle(color: Colors.black)),
-                              backgroundColor: kYellow,
-                            );
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBar);
-                          }
-                        }
-                      },
-                      child: Text(
-                        enabledForm ? 'Simpan' : 'Edit',
-                        style: TextStyle(color: kWhite),
-                      ),
-                      style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(kLightBlue1),
-                          visualDensity: VisualDensity.compact),
-                    )
-                  ],
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                userIDField,
+                displayNameField,
+                emailField,
+                Divider(
+                  color: Colors.black54,
                 ),
-              ),
-              nikField,
-              fullnameField,
-              birthPlaceField,
-              dateField,
-              editProfile ? genderField : genderField2,
-              addressField,
-              cityAddressField,
-              zipCodeField,
-              mobilePhoneField,
-              jobStatusField,
-            ],
+                Padding(
+                  padding: const EdgeInsets.only(top: 10, bottom: 5),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Akun',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: kLightBlue1,
+                          fontSize: 18,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 24,
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          if (!editProfile) {
+                            setState(() {
+                              editProfile = !editProfile;
+                            });
+                            final snackBar = SnackBar(
+                              content: const Text("Edit akun.",
+                                  style: TextStyle(color: Colors.black)),
+                              backgroundColor: kYellow,
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          } else {
+                            if (_formKey.currentState!.validate()) {
+                              setState(() {
+                                editProfile = !editProfile;
+                              });
+                              try {
+                                await database.update({
+                                  "nik/" + user.uid: nikController.text,
+                                  "fullname/" + user.uid:
+                                      fullnameController.text,
+                                  "birthplace/" + user.uid:
+                                      birthPlaceController.text,
+                                  "birthdate/" + user.uid: dateController.text,
+                                  "gender/" + user.uid: dropdownValue,
+                                  "address/" + user.uid: addressController.text,
+                                  "city/" + user.uid:
+                                      cityAddressController.text,
+                                  "zipcode/" + user.uid: zipCodeController.text,
+                                  "phonenumber/" + user.uid:
+                                      mobilePhoneController.text,
+                                  "job/" + user.uid: jobStatusController.text
+                                });
+
+                                final snackBar = SnackBar(
+                                  content: const Text("Tersimpan.",
+                                      style: TextStyle(color: Colors.black)),
+                                  backgroundColor: kYellow,
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              } catch (e) {
+                                print(e);
+                                final snackBar = SnackBar(
+                                  content: const Text(
+                                      "Update gagal, cek koneksi internet.",
+                                      style: TextStyle(color: Colors.black)),
+                                  backgroundColor: kYellow,
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              }
+                            }
+                          }
+                        },
+                        child: Text(
+                          editProfile ? 'Simpan' : 'Edit',
+                          style: TextStyle(color: kWhite),
+                        ),
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all<Color>(kLightBlue1),
+                            visualDensity: VisualDensity.compact),
+                      )
+                    ],
+                  ),
+                ),
+                nikField,
+                fullnameField,
+                birthPlaceField,
+                dateField,
+                editProfile ? genderField2 : genderField,
+                addressField,
+                cityAddressField,
+                zipCodeField,
+                mobilePhoneField,
+                jobStatusField,
+              ],
+            ),
           ),
         ),
       ),

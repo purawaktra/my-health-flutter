@@ -109,11 +109,17 @@ class _SearchResultHealthRecordEntryState
                     caseSensitive: false,
                     multiLine: false,
                   );
+                  RegExp regExp2 = new RegExp(
+                    "(filename)",
+                    caseSensitive: false,
+                    multiLine: false,
+                  );
                   for (MapEntry<String, Map<String, String>> healthRecordEntry
                       in healthRecordList) {
                     for (MapEntry<String, String> healthRecordItemEntry
                         in healthRecordEntry.value.entries) {
                       if (healthRecordItemEntry.key == "creationdate") continue;
+                      if (regExp2.hasMatch(healthRecordItemEntry.key)) continue;
                       if (regExp.hasMatch(healthRecordItemEntry.value)) {
                         healthRecordSearchedList.add(healthRecordEntry);
                         break;

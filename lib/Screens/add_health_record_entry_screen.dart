@@ -86,7 +86,7 @@ class _AddHealthRecordEntryScreenState
       style: TextStyle(color: kBlack),
       validator: (value) {
         if (value!.isEmpty) {
-          return ("Masukkan nama rekam medis anda.");
+          return ("");
         }
         return null;
       },
@@ -103,6 +103,10 @@ class _AddHealthRecordEntryScreenState
         border: InputBorder.none,
         labelText: "Nama",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red),
+        ),
+        errorStyle: TextStyle(height: 0),
       ),
     );
 
@@ -126,7 +130,7 @@ class _AddHealthRecordEntryScreenState
       style: TextStyle(color: kBlack),
       validator: (value) {
         if (value!.isEmpty) {
-          return ("Masukkan tanggal rekam medis.");
+          return ("");
         }
 
         return null;
@@ -145,6 +149,10 @@ class _AddHealthRecordEntryScreenState
         border: InputBorder.none,
         labelText: "Tanggal",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red),
+        ),
+        errorStyle: TextStyle(height: 0),
       ),
     );
 
@@ -598,12 +606,23 @@ class _AddHealthRecordEntryScreenState
                                 controller: keyControllers[i],
                                 keyboardType: TextInputType.text,
                                 style: TextStyle(color: kBlack),
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return ("");
+                                  }
+
+                                  return null;
+                                },
                                 decoration: InputDecoration(
                                   hintStyle: TextStyle(color: Colors.black54),
                                   border: InputBorder.none,
                                   labelText: "Key" + (i + 1).toString(),
                                   floatingLabelBehavior:
                                       FloatingLabelBehavior.auto,
+                                  errorBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.red),
+                                  ),
+                                  errorStyle: TextStyle(height: 0),
                                 ),
                               ),
                             ),
@@ -617,12 +636,23 @@ class _AddHealthRecordEntryScreenState
                                 controller: valueControllers[i],
                                 keyboardType: TextInputType.text,
                                 style: TextStyle(color: kBlack),
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return ("");
+                                  }
+
+                                  return null;
+                                },
                                 decoration: InputDecoration(
                                   hintStyle: TextStyle(color: Colors.black54),
                                   border: InputBorder.none,
                                   labelText: "Value" + (i + 1).toString(),
                                   floatingLabelBehavior:
                                       FloatingLabelBehavior.auto,
+                                  errorBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.red),
+                                  ),
+                                  errorStyle: TextStyle(height: 0),
                                 ),
                               ),
                             ),
