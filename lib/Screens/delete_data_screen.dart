@@ -50,13 +50,10 @@ class _DeleteDataScreenState extends State<DeleteDataScreen> {
         controller: passwordController,
         obscureText: _obscured,
         validator: (value) {
-          RegExp regex = new RegExp(r'^.{6,}$');
           if (value!.isEmpty) {
-            return ("Kolom Password Masih Kosong");
+            return ("");
           }
-          if (!regex.hasMatch(value)) {
-            return ('Password Terlalu Pendek');
-          }
+          return null;
         },
         onSaved: (value) {
           passwordController.text = value!;
@@ -78,6 +75,10 @@ class _DeleteDataScreenState extends State<DeleteDataScreen> {
           ),
           hintText: "Password",
           border: InputBorder.none,
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          errorStyle: TextStyle(height: 0),
         ));
 
     return Scaffold(

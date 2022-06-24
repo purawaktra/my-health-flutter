@@ -161,6 +161,7 @@ class _AddHealthRecordEntryScreenState
       controller: locationController,
       keyboardType: TextInputType.text,
       style: TextStyle(color: kBlack),
+      textInputAction: TextInputAction.next,
       decoration: InputDecoration(
         prefixIcon: Icon(
           Icons.location_on_outlined,
@@ -182,6 +183,7 @@ class _AddHealthRecordEntryScreenState
       controller: descriptionController,
       keyboardType: TextInputType.text,
       style: TextStyle(color: kBlack),
+      textInputAction: TextInputAction.next,
       decoration: InputDecoration(
         prefixIcon: Icon(
           Icons.list_alt_outlined,
@@ -259,9 +261,11 @@ class _AddHealthRecordEntryScreenState
             "name": nameController.text,
             "tag": tagController.text,
           });
-          for (int i = 0; i < numberCustomField; i++) {
-            await pushIDref
-                .update({keyControllers[i].text: valueControllers[i].text});
+          for (int i = 0; i < keyControllers.length; i++) {
+            await pushIDref.update({
+              "customkey-$i": keyControllers[i].text,
+              "customvalue-$i": valueControllers[i].text
+            });
           }
           for (int i = 0; i < filePicked.length; i++) {
             await pushIDref
@@ -720,6 +724,13 @@ class _AddHealthRecordEntryScreenState
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         }
+                      } else {
+                        final snackBar = SnackBar(
+                          content: const Text("Form isian masih kosong",
+                              style: TextStyle(color: Colors.black)),
+                          backgroundColor: kYellow,
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       }
                     },
                     builder: (BuildContext context, TapDebouncerFunc? onTap) {

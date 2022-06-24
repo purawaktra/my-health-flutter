@@ -244,7 +244,7 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                                               .push(MaterialPageRoute(
                                                   builder: (context) =>
                                                       HealthRecordEntryScreen(
-                                                        healthRecord:
+                                                        healthRecordKey:
                                                             healthRecordSnapshot
                                                                 .key,
                                                       )))

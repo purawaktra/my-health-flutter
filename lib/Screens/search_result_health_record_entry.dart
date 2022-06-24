@@ -192,7 +192,7 @@ class _SearchResultHealthRecordEntryState
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           HealthRecordEntryScreen(
-                                                            healthRecord:
+                                                            healthRecordKey:
                                                                 healthRecordEntry
                                                                     .key,
                                                           )))

@@ -39,7 +39,6 @@ class _AddEntryHealthRecordAccessScreenState
       enabled: false,
       autofocus: false,
       controller: dateController,
-      showCursor: true,
       readOnly: true,
       style: TextStyle(color: kBlack),
       textInputAction: TextInputAction.next,
@@ -48,7 +47,6 @@ class _AddEntryHealthRecordAccessScreenState
           Icons.date_range_outlined,
           color: kBlack,
         ),
-        hintText: "Tanggal",
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
         labelText: "Tanggal",
@@ -58,19 +56,17 @@ class _AddEntryHealthRecordAccessScreenState
 
     final TextEditingController userIDController = new TextEditingController();
     final userIDField = TextFormField(
-      maxLines: null,
+      enabled: true,
       autofocus: false,
       controller: userIDController,
       keyboardType: TextInputType.text,
       style: TextStyle(color: kBlack),
       validator: (value) {
         RegExp regex = new RegExp(r'^.{28,}$');
-        if (value!.isEmpty) {
-          return ("Kolom User ID Masih Kosong");
+        if (!regex.hasMatch(value!)) {
+          return ('');
         }
-        if (!regex.hasMatch(value)) {
-          return ('User ID tidak valid');
-        }
+        return null;
       },
       onSaved: (value) {
         userIDController.text = value!;
@@ -84,6 +80,10 @@ class _AddEntryHealthRecordAccessScreenState
         border: InputBorder.none,
         labelText: "User ID Partner",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red),
+        ),
+        errorStyle: TextStyle(height: 0),
       ),
     );
 
@@ -102,7 +102,7 @@ class _AddEntryHealthRecordAccessScreenState
         ),
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
-        labelText: "Catatan (Opsional)",
+        labelText: "Catatan",
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
@@ -129,7 +129,7 @@ class _AddEntryHealthRecordAccessScreenState
                   width: 10,
                 ),
                 Text(
-                  "Punya Kode QR partner?",
+                  "Punya kode QR partner?",
                   style: TextStyle(color: Colors.black, fontSize: 18),
                 ),
               ],
@@ -175,40 +175,6 @@ class _AddEntryHealthRecordAccessScreenState
                     ),
                   ),
                   dateField,
-                  DropdownButtonFormField(
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(
-                        Icons.account_tree_outlined,
-                        color: kBlack,
-                      ),
-                      hintText: "Belum diatur",
-                      hintStyle: TextStyle(color: Colors.black54),
-                      border: InputBorder.none,
-                      labelText: "Tambahkan ke list",
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                    ),
-                    autofocus: false,
-                    icon: const Icon(Icons.keyboard_arrow_down),
-                    style: const TextStyle(color: Colors.black),
-                    validator: (String? value) {
-                      if (value == null) {
-                        return ("Pilih list");
-                      }
-                    },
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        dropdownValue = newValue!;
-                      });
-                      print(dropdownValue);
-                    },
-                    items: <String>['request', 'permit']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
                   userIDField,
                   descriptionField,
                   Padding(
@@ -250,7 +216,22 @@ class _AddEntryHealthRecordAccessScreenState
                                   jsonDecode(healthRecordAccessRaw));
                           healthRecordAccess.data.add(
                             AccessEntry(generateRandomString(10),
-                                entryType: dropdownValue,
+                                entryType: "request",
+                                enabled: true,
+                                uid: userIDController.text,
+                                hash: sha256
+                                    .convert(utf8.encode(healthRecordAccess
+                                        .data.last
+                                        .toJson()
+                                        .toString()))
+                                    .toString(),
+                                date:
+                                    "${DateTime.now().toLocal()}".split(' ')[0],
+                                notes: descriptionController.text),
+                          );
+                          healthRecordAccess.data.add(
+                            AccessEntry(generateRandomString(10),
+                                entryType: "permit",
                                 enabled: true,
                                 uid: userIDController.text,
                                 hash: sha256
@@ -305,6 +286,13 @@ class _AddEntryHealthRecordAccessScreenState
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         }
+                      } else {
+                        final snackBar = SnackBar(
+                          content: const Text("Form tidak valid.",
+                              style: TextStyle(color: Colors.black)),
+                          backgroundColor: kYellow,
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       }
                     },
                     builder: (BuildContext context, TapDebouncerFunc? onTap) {

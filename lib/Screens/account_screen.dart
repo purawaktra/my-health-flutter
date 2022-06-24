@@ -298,17 +298,28 @@ class _AccountScreenState extends State<AccountScreen> {
                                       autofocus: false,
                                       controller: displayNameController,
                                       style: TextStyle(color: kBlack),
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return ("");
+                                        }
+                                        return null;
+                                      },
                                       decoration: InputDecoration(
                                         prefixIcon: Icon(
                                           Icons.credit_card,
                                           color: kBlack,
                                         ),
-                                        hintText: "Nama tampilan",
+                                        labelText: "Nama Tampilan",
                                         hintStyle:
                                             TextStyle(color: Colors.black54),
                                         border: InputBorder.none,
                                         floatingLabelBehavior:
-                                            FloatingLabelBehavior.never,
+                                            FloatingLabelBehavior.auto,
+                                        errorBorder: OutlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: Colors.red),
+                                        ),
+                                        errorStyle: TextStyle(height: 0),
                                       ),
                                     ),
                                   ),
@@ -331,8 +342,17 @@ class _AccountScreenState extends State<AccountScreen> {
                                                 }));
                                         Navigator.of(alertContext).pop();
                                         final snackBar = SnackBar(
+                                          content: const Text("Memuat...",
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                          backgroundColor: kYellow,
+                                        );
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(snackBar);
+                                      } else {
+                                        final snackBar = SnackBar(
                                           content: const Text(
-                                              "Muat ulang untuk melihat perubahan.",
+                                              "Form isian masih kosong",
                                               style: TextStyle(
                                                   color: Colors.black)),
                                           backgroundColor: kYellow,
@@ -346,7 +366,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                       return ElevatedButton(
                                         onPressed: onTap,
                                         child: Text(
-                                          "Update Data Pribadi",
+                                          "Simpan",
                                           style: TextStyle(color: kWhite),
                                         ),
                                         style: ButtonStyle(
@@ -397,7 +417,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
                 if (file == null) {
                   final snackBar = SnackBar(
-                    content: const Text("Dibatalkan",
+                    content: const Text("Dibatalkan.",
                         style: TextStyle(color: Colors.black)),
                     backgroundColor: kYellow,
                   );
@@ -410,7 +430,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     displayPhotoUrl = photoURL!;
                   });
                   final snackBar = SnackBar(
-                    content: const Text("Muat ulang untuk melihat perubahan.",
+                    content: const Text("Memuat...",
                         style: TextStyle(color: Colors.black)),
                     backgroundColor: kYellow,
                   );
@@ -809,20 +829,15 @@ class _AccountScreenState extends State<AccountScreen> {
             ),
             InkWell(
               onTap: () async {
-                final snackBar = SnackBar(
-                  content: const Text("Memuat...",
-                      style: TextStyle(color: Colors.black)),
-                  backgroundColor: Color(0xFFF8B501),
-                );
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 final provider =
                     Provider.of<SignProvider>(context, listen: false);
                 String logoutstate = await provider.logout();
+
                 if (logoutstate == "true") {
-                  if (FirebaseAuth.instance.currentUser != null) {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => OnboardingScreen()));
-                  }
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                          builder: (context) => OnboardingScreen()),
+                      (Route<dynamic> route) => false);
                 } else if (logoutstate == "false") {
                   final snackBar = SnackBar(
                     content: const Text(

@@ -248,7 +248,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     final dateField = TextFormField(
-      enabled: true,
+      enabled: editProfile,
       autofocus: false,
       controller: dateController,
       readOnly: true,
@@ -629,6 +629,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(snackBar);
                               }
+                            } else {
+                              final snackBar = SnackBar(
+                                content: const Text("Form isian tidak valid",
+                                    style: TextStyle(color: Colors.black)),
+                                backgroundColor: kYellow,
+                              );
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
                             }
                           }
                         },

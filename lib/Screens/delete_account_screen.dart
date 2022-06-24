@@ -49,16 +49,10 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
         controller: passwordController,
         obscureText: _obscured,
         validator: (value) {
-          RegExp regex = new RegExp(r'^.{6,}$');
           if (value!.isEmpty) {
-            return ("Kolom Password Masih Kosong");
+            return ("");
           }
-          if (!regex.hasMatch(value)) {
-            return ('Password Terlalu Pendek');
-          }
-        },
-        onSaved: (value) {
-          passwordController.text = value!;
+          return null;
         },
         textInputAction: TextInputAction.done,
         decoration: InputDecoration(
@@ -75,8 +69,12 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
               color: Colors.black54,
             ),
           ),
-          hintText: "Password",
+          labelText: "Password",
           border: InputBorder.none,
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          errorStyle: TextStyle(height: 0),
         ));
 
     return Scaffold(
