@@ -23,11 +23,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       style: TextStyle(color: kBlack),
       validator: (value) {
         if (value!.isEmpty) {
-          return ("Mohon Masukkan Email Anda");
+          return ("");
         }
 
         if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]").hasMatch(value)) {
-          return ("Mohon Masukkan Email yang Valid");
+          return ("");
         }
 
         return null;
@@ -44,6 +44,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         hintText: "Email",
         hintStyle: TextStyle(color: Colors.black54),
         border: InputBorder.none,
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red),
+        ),
+        errorStyle: TextStyle(height: 0),
       ),
     );
 
@@ -56,9 +60,36 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         child: Text('Reset Password', style: TextStyle(color: Colors.white)),
         onPressed: () {
           if (_formKey.currentState!.validate()) {
-            _auth.sendPasswordResetEmail(email: emailController.text);
+            try {
+              _auth.sendPasswordResetEmail(email: emailController.text);
+              final snackBar = SnackBar(
+                content: const Text("Silahkan cek email anda.",
+                    style: TextStyle(color: Colors.black)),
+                backgroundColor: kYellow,
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            } on FirebaseAuthException catch (e) {
+              if (e.code == "invalid-email") {
+                final snackBar = SnackBar(
+                  content: const Text("Email tidak valid.",
+                      style: TextStyle(color: Colors.black)),
+                  backgroundColor: kYellow,
+                );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              } else if (e.code == "user-not-found") {
+                final snackBar = SnackBar(
+                  content: const Text("Tidak ada akun terdaftar.",
+                      style: TextStyle(color: Colors.black)),
+                  backgroundColor: kYellow,
+                );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              }
+            } catch (e) {
+              print(e.toString());
+            }
+          } else {
             final snackBar = SnackBar(
-              content: const Text("Silahkan cek Email anda.",
+              content: const Text("Form isian tidak valid",
                   style: TextStyle(color: Colors.black)),
               backgroundColor: kYellow,
             );

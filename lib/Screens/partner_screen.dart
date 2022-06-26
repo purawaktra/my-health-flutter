@@ -193,14 +193,29 @@ class _EntryAccessScreenState extends State<EntryAccessScreen> {
                   } else if (snapshot.data == "object-not-found" ||
                       snapshot.data == "unknown") {
                     putAccessFile();
-                    return Center(
-                        child: Text(
-                      "Sepertinya datanya ga ada, coba buat entry dulu deh :) \n Error code: ${snapshot.error.toString()}",
-                      style: TextStyle(
-                        color: Colors.black54,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      textAlign: TextAlign.center,
+                    return Container(
+                        child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          "assets/images/partner_screen.png",
+                          width: MediaQuery.of(context).size.width * 0.8,
+                        ),
+                        const SizedBox(
+                          height: 32,
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 30),
+                          child: Text(
+                            "Kamu belum menambahkan partner, kamu bisa berbagi rekam medis kamu dengan menambahkan partner lewat tombol tambah dibawah ya.",
+                            style: const TextStyle(
+                                color: kBlack,
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
                     ));
                   } else {
                     String healthRecordData = snapshot.data!;
@@ -364,8 +379,24 @@ class _EntryAccessScreenState extends State<EntryAccessScreen> {
                                                       healthRecordAccess.data.add(AccessEntry(
                                                           generateRandomString(
                                                               10),
-                                                          entryType:
-                                                              item.entryType,
+                                                          entryType: "permit",
+                                                          enabled: false,
+                                                          uid: item.uid,
+                                                          hash: sha256
+                                                              .convert(utf8.encode(
+                                                                  healthRecordAccess
+                                                                      .data.last
+                                                                      .toJson()
+                                                                      .toString()))
+                                                              .toString(),
+                                                          date:
+                                                              "${DateTime.now().toLocal()}"
+                                                                  .split(
+                                                                      ' ')[0]));
+                                                      healthRecordAccess.data.add(AccessEntry(
+                                                          generateRandomString(
+                                                              10),
+                                                          entryType: "request",
                                                           enabled: false,
                                                           uid: item.uid,
                                                           hash: sha256
@@ -415,7 +446,7 @@ class _EntryAccessScreenState extends State<EntryAccessScreen> {
                                                     if (result) {
                                                       final snackBar = SnackBar(
                                                         content: const Text(
-                                                            "Berhasil.",
+                                                            "Terhapus.",
                                                             style: TextStyle(
                                                                 color: Colors
                                                                     .black)),
@@ -433,7 +464,7 @@ class _EntryAccessScreenState extends State<EntryAccessScreen> {
                                                     } else {
                                                       final snackBar = SnackBar(
                                                         content: const Text(
-                                                            "Gagal, cek koneksi anda.",
+                                                            "Gagal menghapus, silahkan ulangi kembali.",
                                                             style: TextStyle(
                                                                 color: Colors
                                                                     .black)),
@@ -489,14 +520,30 @@ class _EntryAccessScreenState extends State<EntryAccessScreen> {
                                   ),
                               ],
                             )
-                          : Center(
-                              child: Text(
-                              "Kamu belum menambahkan siapapun disini :)",
-                              style: TextStyle(
-                                color: Colors.black54,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              textAlign: TextAlign.center,
+                          : Container(
+                              child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/images/partner_screen.png",
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
+                                ),
+                                const SizedBox(
+                                  height: 32,
+                                ),
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 30),
+                                  child: Text(
+                                    "Kamu belum menambahkan partner, kamu bisa berbagi rekam medis kamu dengan menambahkan partner lewat tombol tambah dibawah ya.",
+                                    style: const TextStyle(
+                                        color: kBlack,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
                             )),
                     );
                   }

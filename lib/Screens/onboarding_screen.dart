@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:double_back_to_close/double_back_to_close.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:myhealth/Screens/registration_screen.dart';
 import 'package:myhealth/constants.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OnboardingScreen extends StatefulWidget {
   @override
@@ -73,7 +75,7 @@ class _OnboardingScreen extends State<OnboardingScreen> {
             Text(
               title,
               style: TextStyle(
-                  color: kDarkBlue, fontSize: 32, fontWeight: FontWeight.bold),
+                  color: kBlack, fontSize: 32, fontWeight: FontWeight.bold),
             ),
             const SizedBox(
               height: 24,
@@ -83,9 +85,7 @@ class _OnboardingScreen extends State<OnboardingScreen> {
               child: Text(
                 subtitle,
                 style: const TextStyle(
-                    color: kDarkBlue,
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal),
+                    color: kBlack, fontSize: 14, fontWeight: FontWeight.normal),
                 textAlign: TextAlign.center,
               ),
             )
@@ -132,11 +132,93 @@ class _OnboardingScreen extends State<OnboardingScreen> {
                     title: 'Berbagi',
                     subtitle:
                         "Tujuan kamu untuk mengelola adalah untuk menggambarkan riwayat kesehatan secara baik dan lengkap, baik ke kekeluarga, dokter pribadi, ataupun ke fasilitas kesehatan. Pastinya akan ribet kalau harus bawa dokumen sana sini."),
-                buildPage(
-                    color: Colors.white,
-                    urlImage: "",
-                    title: 'Panduan',
-                    subtitle: "Panduan pengunaan"),
+                Container(
+                  color: Colors.white,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        "assets/images/header.png",
+                        width: MediaQuery.of(context).size.width * 0.8,
+                      ),
+                      Image.asset(
+                        "assets/images/welcome_screen_3.png",
+                        width: MediaQuery.of(context).size.width * 0.8,
+                      ),
+                      const SizedBox(
+                        height: 32,
+                      ),
+                      Text(
+                        "Anda Sudah Siap!",
+                        style: TextStyle(
+                            color: kBlack,
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        height: 24,
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 30),
+                        child: Column(
+                          children: [
+                            Text(
+                              "Untuk menggunakan fitur tersebut, kamu diharuskan registrasi akun baru dengan menekan tombol mulai dibawah ini ya. Atau kamu bisa login dengan akun kamu yang sudah terdaftar sebelumnya.",
+                              style: const TextStyle(
+                                  color: kBlack,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(
+                              height: 12,
+                            ),
+                            RichText(
+                                textAlign: TextAlign.center,
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text:
+                                          'Dengan menekan tombol mulai, maka kamu setuju dengan ',
+                                      style: TextStyle(
+                                        color: kBlack,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: 'Syarat dan Ketentuan',
+                                      style: TextStyle(
+                                          color: kBlack,
+                                          decoration: TextDecoration.underline),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () async {
+                                          final Uri params = Uri(
+                                            scheme: 'https',
+                                            host:
+                                                'myhealthmanagementhealthrecord.blogspot.com',
+                                            path:
+                                                "2022/04/terms-and-policy.html",
+                                          );
+                                          try {
+                                            await launchUrl(params);
+                                          } catch (e) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                    'Eror terjadi, error code: $e'),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                    ),
+                                  ],
+                                )),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                )
               ],
             ),
           ),

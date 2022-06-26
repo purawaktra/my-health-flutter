@@ -126,14 +126,29 @@ class _PartnerEntryScreenState extends State<PartnerEntryScreen> {
                 ));
               } else if (snapshot.data == "object-not-found" ||
                   snapshot.data == "unknown") {
-                return Center(
-                    child: Text(
-                  "Partner belum menginisialisasi akun. \n Error code: ${snapshot.error.toString()}",
-                  style: TextStyle(
-                    color: Colors.black54,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  textAlign: TextAlign.center,
+                return Container(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      "assets/images/partner_entry_screen.png",
+                      width: MediaQuery.of(context).size.width * 0.8,
+                    ),
+                    const SizedBox(
+                      height: 32,
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 30),
+                      child: Text(
+                        "Kamu belum menambahkan partner, kamu bisa berbagi rekam medis kamu dengan menambahkan partner lewat tombol tambah dibawah ya.",
+                        style: const TextStyle(
+                            color: kBlack,
+                            fontSize: 14,
+                            fontWeight: FontWeight.normal),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
                 ));
               } else {
                 String healthRecordData = snapshot.data!;
@@ -443,16 +458,30 @@ class _PartnerEntryScreenState extends State<PartnerEntryScreen> {
                           ),
                         ]));
                   } else {
-                    return Center(
-                        child: Text(
-                      "Partner belum menambahkan anda dalam list partner. \n Error code: ${snapshot.error.toString()}",
-                      style: TextStyle(
-                        color: Colors.black54,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      textAlign: TextAlign.center,
+                    return Container(
+                        child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          "assets/images/partner_entry_screen.png",
+                          width: MediaQuery.of(context).size.width * 0.6,
+                        ),
+                        const SizedBox(
+                          height: 32,
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 30),
+                          child: Text(
+                            "Kamu tidak punya akses partner! Kemungkinan partner kamu belum mengizinkan kamu melihat informasi miliknya, coba scan kode QR mu pada partner mu, atau tambahkan userid mu secara manual.",
+                            style: const TextStyle(
+                                color: kBlack,
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
                     ));
-                    ;
                   }
                 }));
               }

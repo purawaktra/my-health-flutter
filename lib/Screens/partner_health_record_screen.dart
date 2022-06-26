@@ -103,16 +103,29 @@ class _PartnerHealthRecordScreenState extends State<PartnerHealthRecordScreen> {
                   ),
                 ));
               } else if (snapshot.data!.isEmpty) {
-                return Center(
-                    child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Text(
-                    "Kayanya kamu belum bikin rekam medis sama sekali :) \n Error code: ${snapshot.error.toString()}",
-                    style: TextStyle(
-                      color: Colors.black54,
+                return Container(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      "assets/images/health_record_screen.png",
+                      width: MediaQuery.of(context).size.width * 0.6,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
+                    const SizedBox(
+                      height: 32,
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 30),
+                      child: Text(
+                        "Rekam medis partner kamu masih kosong. Partner kamu belum menambahkan rekam medis pertamanya.",
+                        style: const TextStyle(
+                            color: kBlack,
+                            fontSize: 14,
+                            fontWeight: FontWeight.normal),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
                 ));
               } else if (!snapshot.hasData) {
                 return Center(

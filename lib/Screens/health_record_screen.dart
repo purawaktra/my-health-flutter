@@ -126,16 +126,29 @@ class _HealthRecordScreenState extends State<HealthRecordScreen> {
                   ),
                 ));
               } else if (snapshot.data!.isEmpty) {
-                return Center(
-                    child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Text(
-                    "Kayanya kamu belum bikin rekam medis sama sekali :)",
-                    style: TextStyle(
-                      color: Colors.black54,
+                return Container(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      "assets/images/health_record_screen.png",
+                      width: MediaQuery.of(context).size.width * 0.6,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
+                    const SizedBox(
+                      height: 32,
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 30),
+                      child: Text(
+                        "Rekam medis kamu masih kosong. Ayoo tambahkan rekam medis pertamamu dengan menekan tombol tambah dibawah ini ya. Nantinya rekam medis kamu akan muncul pada halaman ini!",
+                        style: const TextStyle(
+                            color: kBlack,
+                            fontSize: 14,
+                            fontWeight: FontWeight.normal),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
                 ));
               } else if (!snapshot.hasData) {
                 return Center(

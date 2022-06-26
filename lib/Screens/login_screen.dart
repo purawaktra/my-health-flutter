@@ -49,11 +49,11 @@ class _LoginScreenState extends State<LoginScreen> {
       keyboardType: TextInputType.emailAddress,
       validator: (value) {
         if (value!.isEmpty) {
-          return ("Mohon Masukkan Email Anda");
+          return ("");
         }
 
         if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]").hasMatch(value)) {
-          return ("Mohon Masukkan Email yang Valid");
+          return ("");
         }
 
         return null;
@@ -69,6 +69,10 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         hintText: "Email",
         border: InputBorder.none,
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red),
+        ),
+        errorStyle: TextStyle(height: 0),
       ),
     );
 
@@ -77,12 +81,8 @@ class _LoginScreenState extends State<LoginScreen> {
         controller: passwordController,
         obscureText: _obscured,
         validator: (value) {
-          RegExp regex = new RegExp(r'^.{6,}$');
           if (value!.isEmpty) {
-            return ("Kolom Password Masih Kosong");
-          }
-          if (!regex.hasMatch(value)) {
-            return ('Password Terlalu Pendek');
+            return ("");
           }
         },
         onSaved: (value) {
@@ -105,6 +105,10 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           hintText: "Password",
           border: InputBorder.none,
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          errorStyle: TextStyle(height: 0),
         ));
 
     final loginButton = ElevatedButton(
@@ -171,6 +175,13 @@ class _LoginScreenState extends State<LoginScreen> {
               );
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
             }
+          } else {
+            final snackBar = SnackBar(
+              content: const Text("Form isian tidak valid",
+                  style: TextStyle(color: Colors.black)),
+              backgroundColor: kYellow,
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
         });
 

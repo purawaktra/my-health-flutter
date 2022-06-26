@@ -32,17 +32,69 @@ class DeveloperInfoScreen extends StatelessWidget {
                               TextSpan(
                                   text:
                                       "\nMuhammad Akbar Maulana\nDepartemen Teknik Biomedik \nInstitut Teknologi Sepuluh Nopember"),
-                              TextSpan(text: "\nv0.3.3 Alpha\n ")
+                              TextSpan(text: "\nv0.4.0 Alpha\n ")
                             ]),
                       ),
-                      Text("Many thanks to",
-                          style:
-                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      // Text("Many thanks to",
+                      //     style:
+                      //         TextStyle(color: Colors.black54, fontSize: 16)),
+                      // Text(
+                      //     "- Allah, Alhamdulillah, segala rahmat dan karunia-Nya, syukurku kepada-Nya tak bisa dan tak akan pernah bisa dijelaskan oleh kata kata.",
+                      //     style:
+                      //         TextStyle(color: Colors.black54, fontSize: 16)),
+                      // Text(
+                      //     "- Dr. Achmad Arifin, S.T., M. Eng. selaku dosen pembimbing, yang senantiasa membimbing, mengarahkan, dan memotivasi selama pengerjaan aplikasi ini.",
+                      //     style:
+                      //         TextStyle(color: Colors.black54, fontSize: 16)),
+                      // Text(
+                      //     "- Prof. Dr. Ir. Mohammad NUH, DEA. selaku dosen pembimbing, memberikan motivasi yang sangat besar berkat pengalaman dan pengetahuan beliau untuk dapat menyelesaikan aplikasi ini.",
+                      //     style:
+                      //         TextStyle(color: Colors.black54, fontSize: 16)),
+                      // Text(
+                      //     "- Sam Fatur, Yulyy, Kobas, Aslahah, teman temanku, kuisioner, dan pengguna yang ngasih kritik dan saran membangunnya, tanpa kalian aku ga akan ada improvement di user experience aplikasi ini :D.",
+                      //     style:
+                      //         TextStyle(color: Colors.black54, fontSize: 16)),
                       Text(
-                          "Sam Fatur, Yulyy, Kobas, Aslahah, dan teman temanku yang ngasih kritik dan saran membangunnya, tanpa kalian aku ga akan ada improvement di user experience aplikasi ini :D.",
+                          "Special thanks to freepik.com that provide the design apps for User Interface. You are the legends!",
                           style:
                               TextStyle(color: Colors.black54, fontSize: 16)),
                       Text("\nChangelog",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text("\nv0.4.0 Alpha",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text("- Rework UI nya, biar cantikkk.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text("\nv0.3.5 Alpha",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Rework all the validation form, dari form login, registrasi, lupa password, berkas baru rekam medis, partner baru, informasi pribadi, ganti nama tampilan, semuanyaa.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Working untuk perubahan metode partner, sekarang file partner akan di create ketika pendaftaran akun. Akun akun lama mungkin harus direcreate untuk bisa pakai aplikasinya",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Automasi pada halaman depan, sekarang udah bisa gerak gerak sendiri dengan timer yang diset di interval lima detik.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text("\nv0.3.4 Alpha",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Nambahkan fitur search pada halaman rekam medis, sekarang kamu ngga kesulitan lagi cari rekam medismu, pilihannya sih bisa pakai kata kunci atau berdasarkan tanggal.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Rework attachment, sama custom column buat adding berkas rekam medis baru, ada bug baru kalau modify rekam medisnya, kolomnya bisa ke submit dua kali.",
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 16)),
+                      Text(
+                          "- Nambahin validasi pada form berkas baru rekam medis, rework error code nya biar pakai snackbar instead pakai textform error.",
                           style:
                               TextStyle(color: Colors.black54, fontSize: 16)),
                       Text("\nv0.3.3 Alpha",

@@ -40,7 +40,6 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
   List<TextEditingController> keyControllersList = [];
   List<TextEditingController> valueControllersList = [];
   List<TextEditingController> attachmentControllerList = [];
-  String displayTextFilename = "Memuat...";
 
   bool basicColumnEditState = false;
 
@@ -153,7 +152,8 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
       await uploadAttachment(image!.path);
 
       setState(() {
-        attachmentControllerList.add(TextEditingController(text: image.path));
+        attachmentControllerList
+            .add(TextEditingController(text: p.basename(image.path)));
       });
       DatabaseReference pushIDref = database
           .child("health-record")
@@ -181,8 +181,8 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
       await uploadAttachment(result!.files.single.path.toString());
 
       setState(() {
-        attachmentControllerList.add(
-            TextEditingController(text: result.files.single.path.toString()));
+        attachmentControllerList.add(TextEditingController(
+            text: p.basename(result.files.single.path.toString())));
       });
       DatabaseReference pushIDref = database
           .child("health-record")
