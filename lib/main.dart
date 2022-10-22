@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:myhealth/Screens/welcome_screen.dart';
+import 'package:myhealth/screens/welcome_screen.dart';
 import 'package:myhealth/components/sign_method.dart';
 import 'package:myhealth/constants.dart';
 import 'package:firebase_core/firebase_core.dart';

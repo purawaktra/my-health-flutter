@@ -39,7 +39,7 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
   List<StreamSubscription> basicColumnStream = [];
   List<TextEditingController> keyControllersList = [];
   List<TextEditingController> valueControllersList = [];
-  List<TextEditingController> attachmentControllerList = [];
+  List<TextEditingController> attachmentControllers = [];
 
   bool basicColumnEditState = false;
 
@@ -53,7 +53,7 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
   TextEditingController nameController =
       new TextEditingController(text: "Memuat");
   TextEditingController dateController = new TextEditingController(
-      text: "Memuat"); //"${selectedDate.toLocal()}".split(' ')[0]
+      text: "2000-01-01"); //"${selectedDate.toLocal()}".split(' ')[0]
   TextEditingController locationController =
       new TextEditingController(text: "Memuat");
   TextEditingController descriptionController =
@@ -91,12 +91,20 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
     File downloadToFile =
         File(directoryToFile.path + "/" + p.basename(filename));
     try {
+      DateTime start = DateTime.now();
+      int startTime = start.millisecondsSinceEpoch;
       await storage
           .child('health-record')
           .child(user.uid)
           .child('/' + uniquePushID)
           .child('/' + filename)
-          .writeToFile(downloadToFile);
+          .writeToFile(downloadToFile)
+          .whenComplete(() {
+        DateTime finish = DateTime.now();
+        int finishTime = finish.millisecondsSinceEpoch;
+        int intervalTime = finishTime - startTime;
+        print(intervalTime.toString());
+      });
 
       result = downloadToFile.path;
       print(result);
@@ -121,13 +129,29 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
           .child(user.uid)
           .child(this.widget.healthRecordKey)
           .child('/' + p.basename(path));
+      DateTime start = DateTime.now();
+      int startTime = start.millisecondsSinceEpoch;
+
       try {
-        await attachmentRef.putData(await File(path).readAsBytes());
+        await attachmentRef
+            .putData(await File(path).readAsBytes())
+            .whenComplete(() {
+          DateTime finish = DateTime.now();
+          int finishTime = finish.millisecondsSinceEpoch;
+          int intervalTime = finishTime - startTime;
+          print(intervalTime.toString());
+        });
+
         status = true;
       } catch (e) {
         print(e);
         try {
-          await attachmentRef.putFile(File(path));
+          await attachmentRef.putFile(File(path)).whenComplete(() {
+            DateTime finish = DateTime.now();
+            int finishTime = finish.microsecondsSinceEpoch;
+            int intervalTime = finishTime - finishTime;
+            print(intervalTime.toString());
+          });
           status = true;
         } catch (e) {
           print(e);
@@ -140,8 +164,8 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
     return status;
   }
 
-  Future<bool> pickImage(ImageSource source) async {
-    bool status = false;
+  Future<String> pickImage(ImageSource source) async {
+    String status = "failed-to-start";
     try {
       final image = await ImagePicker().pickImage(
         source: source,
@@ -149,10 +173,18 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
         maxHeight: 1800,
       );
 
+      for (TextEditingController attachmentController
+          in attachmentControllers) {
+        if (attachmentController.text == p.basename(image!.path)) {
+          status = "name-already-used";
+          return status;
+        }
+      }
+
       await uploadAttachment(image!.path);
 
       setState(() {
-        attachmentControllerList
+        attachmentControllers
             .add(TextEditingController(text: p.basename(image.path)));
       });
       DatabaseReference pushIDref = database
@@ -160,28 +192,37 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
           .child(user.uid)
           .child(this.widget.healthRecordKey.toString());
       for (MapEntry<int, TextEditingController> attachmentController
-          in attachmentControllerList.asMap().entries) {
+          in attachmentControllers.asMap().entries) {
         await pushIDref.update({
           "filename-${attachmentController.key}":
               attachmentController.value.text,
         });
       }
-      status = true;
+      status = "upload-success";
     } catch (e) {
       print(e);
     }
     return status;
   }
 
-  Future<bool> pickFile() async {
-    bool status = false;
+  Future<String> pickFile() async {
+    String status = "failed-to-start";
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+      for (TextEditingController attachmentController
+          in attachmentControllers) {
+        if (attachmentController.text ==
+            p.basename(result!.files.single.path.toString())) {
+          status = "name-already-used";
+          return status;
+        }
+      }
 
       await uploadAttachment(result!.files.single.path.toString());
 
       setState(() {
-        attachmentControllerList.add(TextEditingController(
+        attachmentControllers.add(TextEditingController(
             text: p.basename(result.files.single.path.toString())));
       });
       DatabaseReference pushIDref = database
@@ -189,13 +230,13 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
           .child(user.uid)
           .child(this.widget.healthRecordKey.toString());
       for (MapEntry<int, TextEditingController> attachmentController
-          in attachmentControllerList.asMap().entries) {
+          in attachmentControllers.asMap().entries) {
         await pushIDref.update({
           "filename-${attachmentController.key}":
               attachmentController.value.text,
         });
       }
-      status = true;
+      status = "upload-success";
     } catch (e) {
       print(e);
     }
@@ -238,7 +279,7 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
         });
       } else if (itemData.key!.startsWith("filename")) {
         setState(() {
-          attachmentControllerList
+          attachmentControllers
               .add(TextEditingController(text: itemData.value.toString()));
         });
       } else if (itemData.key!.startsWith("customkey")) {
@@ -662,10 +703,10 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                   locationField,
                   descriptionField,
                   tagField,
-                  if (attachmentControllerList.isNotEmpty)
+                  if (attachmentControllers.isNotEmpty)
                     for (MapEntry<int,
                             TextEditingController> attachmentController
-                        in attachmentControllerList.asMap().entries)
+                        in attachmentControllers.asMap().entries)
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -789,20 +830,20 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                                             .healthRecordKey
                                             .toString());
                                     for (int a = 0;
-                                        a < attachmentControllerList.length;
+                                        a < attachmentControllers.length;
                                         a++) {
                                       await pushIDref
                                           .child("filename-$a")
                                           .remove();
                                     }
                                     setState(() {
-                                      attachmentControllerList
+                                      attachmentControllers
                                           .remove(attachmentController.value);
                                     });
 
                                     for (MapEntry<int,
                                             TextEditingController> attachmentController1
-                                        in attachmentControllerList
+                                        in attachmentControllers
                                             .asMap()
                                             .entries) {
                                       await pushIDref.update({
@@ -838,10 +879,10 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                                   children: [
                                     TapDebouncer(onTap: () async {
                                       Navigator.of(alertContext).pop();
-                                      bool status =
+                                      String status =
                                           await pickImage(ImageSource.camera);
 
-                                      if (status) {
+                                      if (status == "upload-success") {
                                         final snackBar = SnackBar(
                                           content: const Text(
                                               "Lampiran ditambahkan.",
@@ -851,7 +892,18 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                                         );
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(snackBar);
-                                      } else {
+                                      } else if (status ==
+                                          "name-already-used") {
+                                        final snackBar = SnackBar(
+                                          content: const Text(
+                                              "Nama lampiran telah digunakan.",
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                          backgroundColor: kYellow,
+                                        );
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(snackBar);
+                                      } else if (status == "failed-to-start") {
                                         final snackBar = SnackBar(
                                           content: const Text("Dibatalkan.",
                                               style: TextStyle(
@@ -914,10 +966,10 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                                     }),
                                     TapDebouncer(onTap: () async {
                                       Navigator.of(alertContext).pop();
-                                      bool status =
+                                      String status =
                                           await pickImage(ImageSource.gallery);
 
-                                      if (status) {
+                                      if (status == "upload-success") {
                                         final snackBar = SnackBar(
                                           content: const Text(
                                               "Lampiran ditambahkan.",
@@ -927,7 +979,18 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                                         );
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(snackBar);
-                                      } else {
+                                      } else if (status ==
+                                          "name-already-used") {
+                                        final snackBar = SnackBar(
+                                          content: const Text(
+                                              "Nama lampiran telah digunakan.",
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                          backgroundColor: kYellow,
+                                        );
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(snackBar);
+                                      } else if (status == "failed-to-start") {
                                         final snackBar = SnackBar(
                                           content: const Text("Dibatalkan.",
                                               style: TextStyle(
@@ -993,9 +1056,9 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                                     }),
                                     TapDebouncer(onTap: () async {
                                       Navigator.of(alertContext).pop();
-                                      bool status = await pickFile();
+                                      String status = await pickFile();
 
-                                      if (status) {
+                                      if (status == "upload-success") {
                                         final snackBar = SnackBar(
                                           content: const Text(
                                               "Lampiran ditambahkan.",
@@ -1005,7 +1068,18 @@ class _HealthRecordEntryScreenState extends State<HealthRecordEntryScreen> {
                                         );
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(snackBar);
-                                      } else {
+                                      } else if (status ==
+                                          "name-already-used") {
+                                        final snackBar = SnackBar(
+                                          content: const Text(
+                                              "Nama lampiran telah digunakan.",
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                          backgroundColor: kYellow,
+                                        );
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(snackBar);
+                                      } else if (status == "failed-to-start") {
                                         final snackBar = SnackBar(
                                           content: const Text("Dibatalkan.",
                                               style: TextStyle(

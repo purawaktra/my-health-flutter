@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:myhealth/Screens/forgot_password_screen.dart';
+import 'package:myhealth/screens/forgot_password_screen.dart';
 import 'package:myhealth/components/sign_method.dart';
 import 'package:myhealth/screens/home_screen.dart';
 import 'package:provider/provider.dart';
@@ -49,10 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
       keyboardType: TextInputType.emailAddress,
       validator: (value) {
         if (value!.isEmpty) {
-          return ("");
-        }
-
-        if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]").hasMatch(value)) {
           return ("");
         }
 

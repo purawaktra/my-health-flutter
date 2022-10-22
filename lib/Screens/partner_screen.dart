@@ -28,13 +28,13 @@ class EntryHealthRecord {
       this.accesstype, this.userid, this.enabled, this.date, this.hash);
 }
 
-class EntryAccessScreen extends StatefulWidget {
-  const EntryAccessScreen({Key? key}) : super(key: key);
+class PartnerAccessScreen extends StatefulWidget {
+  const PartnerAccessScreen({Key? key}) : super(key: key);
   @override
-  _EntryAccessScreenState createState() => _EntryAccessScreenState();
+  _PartnerAccessScreenState createState() => _PartnerAccessScreenState();
 }
 
-class _EntryAccessScreenState extends State<EntryAccessScreen> {
+class _PartnerAccessScreenState extends State<PartnerAccessScreen> {
   Directory? _externalDocumentsDirectory;
   late OptionMenu _selection;
   late Future<String> streamData;

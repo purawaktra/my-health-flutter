@@ -7,7 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:myhealth/Screens/profile_screen.dart';
+import 'package:myhealth/screens/profile_screen.dart';
 import 'package:myhealth/components/sign_method.dart';
 import 'package:myhealth/constants.dart';
 import 'package:myhealth/screens/add_email_provider_screen.dart';

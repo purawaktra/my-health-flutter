@@ -3,7 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:myhealth/Screens/welcome_screen.dart';
+import 'package:myhealth/screens/welcome_screen.dart';
 import 'package:myhealth/constants.dart';
 import 'package:myhealth/screens/delete_data_screen.dart';
 import 'package:tap_debouncer/tap_debouncer.dart';

@@ -59,6 +59,7 @@ dependencies:
   qr_code_scanner: ^1.0.0
   string_validator: ^0.3.0
   intl: ^0.17.0
+  web3dart: ^2.3.5
 
 dev_dependencies:
   flutter_test:
@@ -110,8 +111,8 @@ flutter:
   fonts:
     - family: Inter
       fonts:
-        - asset: assets\font\Inter-Regular.ttf
-        - asset: assets\font\Inter-Bold.ttf
+        - asset: assets/font/Inter-Regular.ttf
+        - asset: assets/font/Inter-Bold.ttf
           weight: 700
 
 flutter_launcher_name:

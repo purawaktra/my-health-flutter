@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:myhealth/constants.dart';
 import 'package:myhealth/screens/account_screen.dart';
+import 'package:myhealth/screens/_partner_screen.dart';
 import 'package:myhealth/screens/partner_screen.dart';
 import 'package:myhealth/screens/health_record_screen.dart';
 
@@ -19,8 +20,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     HealthRecordScreen(),
-    EntryAccessScreen(),
+    PartnerAccessScreen(),
     AccountScreen(),
+    TestPartnerAccessScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -55,6 +57,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             label: 'Akun',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.warning),
+            label: 'Blockchain Test',
+          )
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: kLightBlue1,

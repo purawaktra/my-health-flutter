@@ -40,3 +40,4 @@ android/key.properties
 export_build/keystore_eprototype.jks
 export_build/pepk.jar
 export_build/output.zip
+keystore_eprototype.jks

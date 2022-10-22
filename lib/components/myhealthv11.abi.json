@@ -1,0 +1,273 @@
+[
+	{
+		"inputs": [],
+		"name": "AddBalanceToSender",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_senderUid",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_receiverUid",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_note",
+				"type": "string"
+			}
+		],
+		"name": "AddPermission",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_uid",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_receiverUid",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_note",
+				"type": "string"
+			}
+		],
+		"name": "ChangePermissionNote",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "result",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_uid",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_receiverUid",
+				"type": "string"
+			}
+		],
+		"name": "DeletePermission",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "result",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"stateMutability": "payable",
+		"type": "receive"
+	},
+	{
+		"stateMutability": "payable",
+		"type": "fallback"
+	},
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [],
+		"name": "GetBalance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_uid",
+				"type": "string"
+			}
+		],
+		"name": "GetGrantedPermissionList",
+		"outputs": [
+			{
+				"internalType": "string[]",
+				"name": "",
+				"type": "string[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_uid",
+				"type": "string"
+			}
+		],
+		"name": "GetIncomingPermissionList",
+		"outputs": [
+			{
+				"internalType": "string[]",
+				"name": "",
+				"type": "string[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_uid",
+				"type": "string"
+			}
+		],
+		"name": "GetPendingPermissionList",
+		"outputs": [
+			{
+				"internalType": "string[]",
+				"name": "",
+				"type": "string[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_uid",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_receiverUid",
+				"type": "string"
+			}
+		],
+		"name": "GetPermission",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "result",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_uid",
+				"type": "string"
+			}
+		],
+		"name": "GetPermissionList",
+		"outputs": [
+			{
+				"internalType": "string[]",
+				"name": "",
+				"type": "string[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_uid",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_receiverUid",
+				"type": "string"
+			}
+		],
+		"name": "GetPermissionNote",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "note",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_uid",
+				"type": "string"
+			}
+		],
+		"name": "isExist",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address payable",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]

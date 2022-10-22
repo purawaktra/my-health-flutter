@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:double_back_to_close/double_back_to_close.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:myhealth/Screens/registration_screen.dart';
+import 'package:myhealth/screens/registration_screen.dart';
 import 'package:myhealth/constants.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';

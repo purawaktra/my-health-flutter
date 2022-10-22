@@ -40,13 +40,8 @@ class _EmailSignUpScreenState extends State<EmailSignUpScreen> {
       style: TextStyle(color: kBlack),
       validator: (value) {
         if (value!.isEmpty) {
-          return ("Mohon Masukkan Email Anda");
+          return ("");
         }
-
-        if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]").hasMatch(value)) {
-          return ("Mohon Masukkan Email yang Valid");
-        }
-
         return null;
       },
       onSaved: (value) {
@@ -71,11 +66,12 @@ class _EmailSignUpScreenState extends State<EmailSignUpScreen> {
         validator: (value) {
           RegExp regex = new RegExp(r'^.{6,}$');
           if (value!.isEmpty) {
-            return ("Kolom Password Masih Kosong");
+            return ("");
           }
           if (!regex.hasMatch(value)) {
-            return ('Password Terlalu Pendek');
+            return ("");
           }
+          return null;
         },
         onSaved: (value) {
           passwordController.text = value!;
@@ -128,6 +124,13 @@ class _EmailSignUpScreenState extends State<EmailSignUpScreen> {
                 backgroundColor: kYellow,
               );
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            } else if (emailstate == "invalid-email") {
+              final snackBar = SnackBar(
+                content: const Text("Email yang digunakan tidak valid.",
+                    style: TextStyle(color: Colors.black)),
+                backgroundColor: kYellow,
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
             } else if (emailstate == "weak-password") {
               final snackBar = SnackBar(
                 content: const Text("Password yang digunakan terlalu lemah.",
@@ -151,6 +154,13 @@ class _EmailSignUpScreenState extends State<EmailSignUpScreen> {
               );
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
             }
+          } else {
+            final snackBar = SnackBar(
+              content: const Text("Form isian masih kosong",
+                  style: TextStyle(color: Colors.black)),
+              backgroundColor: kYellow,
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
         });
 
